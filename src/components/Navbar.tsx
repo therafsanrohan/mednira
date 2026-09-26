@@ -66,6 +66,8 @@ export default function Navbar() {
     router.refresh();
   };
 
+  if (pathname.startsWith('/dashboard')) return null;
+
   return (
     <header
       style={{
