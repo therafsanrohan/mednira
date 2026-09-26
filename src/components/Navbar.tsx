@@ -17,9 +17,9 @@ import {
 } from 'lucide-react';
 
 const NAV_LINKS = [
-  { href: '/dashboard', label: 'Home', icon: Home },
-  { href: '/dashboard/emergency-id', label: 'Emergency ID', icon: QrCode },
-  { href: '/dashboard/activity', label: 'Activity', icon: Activity },
+  { href: '/dashboard?tab=HOME', label: 'Home', icon: Home },
+  { href: '/dashboard?tab=DEVICES', label: 'Emergency ID', icon: QrCode },
+  { href: '/dashboard?tab=ACTIVITY', label: 'Activity', icon: Activity },
 ];
 
 export default function Navbar() {
@@ -114,10 +114,10 @@ export default function Navbar() {
                         <span>{user?.email}</span>
                       </div>
                       <div className="apple-dropdown-divider" />
-                      <Link href="/dashboard" className="apple-dropdown-item" onClick={() => setDropdownOpen(false)}><Home size={16} /> Dashboard</Link>
-                      <Link href="/dashboard/emergency-id" className="apple-dropdown-item" onClick={() => setDropdownOpen(false)}><QrCode size={16} /> Emergency ID</Link>
-                      <Link href="/dashboard/profile" className="apple-dropdown-item" onClick={() => setDropdownOpen(false)}><User size={16} /> Profile</Link>
-                      <Link href="/dashboard/settings" className="apple-dropdown-item" onClick={() => setDropdownOpen(false)}><Settings size={16} /> Settings</Link>
+                      <Link href="/dashboard?tab=HOME" className="apple-dropdown-item" onClick={() => setDropdownOpen(false)}><Home size={16} /> Dashboard</Link>
+                      <Link href="/dashboard?tab=DEVICES" className="apple-dropdown-item" onClick={() => setDropdownOpen(false)}><QrCode size={16} /> Emergency ID</Link>
+                      <Link href="/dashboard?tab=PROFILE" className="apple-dropdown-item" onClick={() => setDropdownOpen(false)}><User size={16} /> Profile</Link>
+                      <Link href="/dashboard?tab=SETTINGS" className="apple-dropdown-item" onClick={() => setDropdownOpen(false)}><Settings size={16} /> Settings</Link>
                       <div className="apple-dropdown-divider" />
                       <button className="apple-dropdown-item text-danger" onClick={handleSignOut}><LogOut size={16} /> Sign out</button>
                     </div>
@@ -153,8 +153,8 @@ export default function Navbar() {
                 </Link>
               ))}
               <div style={{ height: '1px', background: 'rgba(255,255,255,0.1)', margin: '1.5rem 1rem' }} />
-              <Link href="/dashboard/profile" className="mobile-nav-item" onClick={() => setMobileMenuOpen(false)}><User size={22} /> Profile</Link>
-              <Link href="/dashboard/settings" className="mobile-nav-item" onClick={() => setMobileMenuOpen(false)}><Settings size={22} /> Settings</Link>
+              <Link href="/dashboard?tab=PROFILE" className="mobile-nav-item" onClick={() => setMobileMenuOpen(false)}><User size={22} /> Profile</Link>
+              <Link href="/dashboard?tab=SETTINGS" className="mobile-nav-item" onClick={() => setMobileMenuOpen(false)}><Settings size={22} /> Settings</Link>
               <button className="mobile-nav-item text-danger" style={{ border: 'none', background: 'none', width: '100%' }} onClick={handleSignOut}>
                 <LogOut size={22} /> Sign out
               </button>

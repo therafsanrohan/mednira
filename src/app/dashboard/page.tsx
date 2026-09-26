@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import QRCode from 'react-qr-code';
 
-type Tab = 'HOME' | 'PROFILE' | 'ITEMS' | 'DEVICES' | 'CONTACTS';
+type Tab = 'HOME' | 'PROFILE' | 'ITEMS' | 'DEVICES' | 'CONTACTS' | 'FAMILY' | 'STORE' | 'SETTINGS' | 'ACTIVITY';
 
 type MedicalItem = { id?: string; category: string; name: string; description: string; severity: string; visibility: string; };
 type Contact = { id?: string; name: string; relationship: string; phone: string; priority: number; notifyOnIncident: boolean; };
@@ -22,9 +22,19 @@ export default function MemberDashboard() {
 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
+  
+  // Tab state
   const [activeTab, setActiveTab] = useState<Tab>('HOME');
 
-  const [profile, setProfile] = useState<Profile>({ bloodType: '', dateOfBirth: '', organDonor: false, dnrStatus: false, emergencyNotes: '', readinessScore: 0 });
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const tab = params.get('tab');
+    if (tab && ['HOME', 'PROFILE', 'ITEMS', 'DEVICES', 'CONTACTS', 'FAMILY', 'STORE', 'SETTINGS', 'ACTIVITY'].includes(tab)) {
+      setActiveTab(tab as Tab);
+    }
+  }, []);
+
+  const [profile, setProfile] = useState<Profile & { height?: string, weight?: string, insuranceInfo?: string }>({ bloodType: '', dateOfBirth: '', organDonor: false, dnrStatus: false, emergencyNotes: '', readinessScore: 0, height: '', weight: '', insuranceInfo: '' });
   const [items, setItems] = useState<MedicalItem[]>([]);
   const [newItemName, setNewItemName] = useState('');
   const [newItemCategory, setNewItemCategory] = useState('ALLERGY');
@@ -149,11 +159,15 @@ export default function MemberDashboard() {
           {([
             { key: 'HOME', label: 'Overview', icon: Home },
             { key: 'PROFILE', label: 'Clinical Data', icon: HeartPulse },
-            { key: 'ITEMS', label: `Items (${items.length})`, icon: Shield },
-            { key: 'DEVICES', label: `Devices (${devices.length})`, icon: QrCode },
-            { key: 'CONTACTS', label: `Contacts (${contacts.length})`, icon: Phone },
+            { key: 'ITEMS', label: 'Items', icon: Shield },
+            { key: 'DEVICES', label: 'Emergency IDs', icon: QrCode },
+            { key: 'CONTACTS', label: 'Contacts', icon: Phone },
+            { key: 'ACTIVITY', label: 'Activity', icon: Activity },
+            { key: 'FAMILY', label: 'Family Access', icon: Home },
+            { key: 'STORE', label: 'Order Card', icon: Droplet },
+            { key: 'SETTINGS', label: 'Settings', icon: Settings },
           ] as const).map(({ key, label, icon: Icon }) => (
-            <button key={key} onClick={() => setActiveTab(key)} className={`nav-btn ${activeTab === key ? 'active' : ''}`}>
+            <button key={key} onClick={() => { setActiveTab(key); window.history.pushState(null, '', `?tab=${key}`); }} className={`nav-btn ${activeTab === key ? 'active' : ''}`}>
               <Icon size={16} /> <span className="nav-label">{label}</span>
             </button>
           ))}
@@ -232,6 +246,19 @@ export default function MemberDashboard() {
                   <label>Date of Birth</label>
                   <input type="date" className="apple-input" value={profile.dateOfBirth} onChange={(e) => setProfile({ ...profile, dateOfBirth: e.target.value })} />
                 </div>
+                <div className="input-group">
+                  <label>Height</label>
+                  <input type="text" className="apple-input" placeholder="e.g. 5'9'' or 175cm" value={profile.height || ''} onChange={(e) => setProfile({ ...profile, height: e.target.value })} />
+                </div>
+                <div className="input-group">
+                  <label>Weight</label>
+                  <input type="text" className="apple-input" placeholder="e.g. 70kg or 154lbs" value={profile.weight || ''} onChange={(e) => setProfile({ ...profile, weight: e.target.value })} />
+                </div>
+              </div>
+
+              <div className="input-group mt-4 mb-4">
+                <label>Health Insurance Provider & Policy No (Optional)</label>
+                <input type="text" className="apple-input" placeholder="e.g. BlueCross BlueShield - Policy #12345678" value={profile.insuranceInfo || ''} onChange={(e) => setProfile({ ...profile, insuranceInfo: e.target.value })} />
               </div>
 
               <div className="toggles-box">
@@ -375,6 +402,85 @@ export default function MemberDashboard() {
                 <input type="text" className="apple-input" placeholder="Phone (+1...)" value={newContactPhone} onChange={(e) => setNewContactPhone(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && addContact()} />
                 <button className="apple-btn" onClick={addContact}><Plus size={16} /> Add</button>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── NEW TABS MOCKS ─────────────────────────────── */}
+        {activeTab === 'ACTIVITY' && (
+          <div className="fade-in-up delay-1">
+            <div className="dash-card full-width">
+              <h2 className="card-title"><Activity size={20} color="#0071e3"/> System Activity & Scan History</h2>
+              <p className="card-desc">Log of all access events and emergency dispatches for your devices.</p>
+              <div className="item-list">
+                <div className="empty-state">No recent activity detected. Your devices are secure.</div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'FAMILY' && (
+          <div className="fade-in-up delay-1">
+            <div className="dash-card full-width">
+              <h2 className="card-title"><User size={20} color="#16a34a"/> Family Master Access</h2>
+              <p className="card-desc">Manage profiles for your children or dependents under one master account.</p>
+              <div className="empty-state-card" style={{ padding: '2rem' }}>
+                <Shield size={40} className="empty-icon" />
+                <h3 style={{ marginBottom: '0.5rem', color: '#1d1d1f' }}>Family Plan Needed</h3>
+                <p>Upgrade to a Family Plan to add up to 5 dependents and manage their IDs from this dashboard.</p>
+                <button className="apple-btn primary-btn mt-4" onClick={() => setActiveTab('STORE')}>View Plans</button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'STORE' && (
+          <div className="fade-in-up delay-1">
+            <div className="dash-card full-width">
+              <h2 className="card-title"><QrCode size={20} color="#8b5cf6"/> Subscription & Physical Cards</h2>
+              <p className="card-desc">Order physical NFC tags, wallet cards, or upgrade your plan.</p>
+              
+              <div className="bento-grid mt-4">
+                <div className="dash-card" style={{ border: '2px solid #0071e3' }}>
+                  <h3 style={{ fontSize: '1.2rem', marginBottom: '0.5rem' }}>Basic Digital (Current)</h3>
+                  <p style={{ fontSize: '1.5rem', fontWeight: 800 }}>$0 <span style={{ fontSize: '0.9rem', fontWeight: 400 }}>/ month</span></p>
+                  <ul className="checklist mt-4" style={{ gridTemplateColumns: '1fr' }}>
+                    <li className="check-item done"><CheckCircle size={14}/> 1 Digital QR Profile</li>
+                    <li className="check-item done"><CheckCircle size={14}/> Standard Contacts</li>
+                  </ul>
+                </div>
+                <div className="dash-card">
+                  <h3 style={{ fontSize: '1.2rem', marginBottom: '0.5rem' }}>Pro Premium</h3>
+                  <p style={{ fontSize: '1.5rem', fontWeight: 800 }}>$4.99 <span style={{ fontSize: '0.9rem', fontWeight: 400 }}>/ month</span></p>
+                  <ul className="checklist mt-4" style={{ gridTemplateColumns: '1fr' }}>
+                    <li className="check-item done"><CheckCircle size={14}/> Unlimited Devices & NFC Tags</li>
+                    <li className="check-item done"><CheckCircle size={14}/> Global SMS & Phone Alerts</li>
+                    <li className="check-item done"><CheckCircle size={14}/> Physical Metal Card Included</li>
+                  </ul>
+                  <button className="apple-btn primary-btn mt-4" style={{ width: '100%' }}>Upgrade Now</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'SETTINGS' && (
+          <div className="fade-in-up delay-1">
+            <div className="dash-card full-width">
+              <h2 className="card-title"><Settings size={20} color="#475569"/> Account Settings</h2>
+              <p className="card-desc">Manage your email, password, and security preferences.</p>
+              
+              <div className="form-grid">
+                <div className="input-group">
+                  <label>Email Address</label>
+                  <input type="email" className="apple-input" value={session?.user?.email || ''} disabled />
+                </div>
+                <div className="input-group">
+                  <label>Full Name</label>
+                  <input type="text" className="apple-input" value={session?.user?.name || ''} disabled />
+                </div>
+              </div>
+              <button className="apple-btn mt-4">Change Password</button>
             </div>
           </div>
         )}
