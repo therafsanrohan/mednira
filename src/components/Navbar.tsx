@@ -132,8 +132,8 @@ export default function Navbar() {
           </span>
         </Link>
 
-        {/* Desktop Nav Links (only when authenticated) */}
-        {isAuthenticated && !isAuthPage && (
+        {/* Desktop Nav Links (only when authenticated and not on landing page) */}
+        {isAuthenticated && !isAuthPage && pathname !== '/' && (
           <nav
             style={{
               display: 'flex',
@@ -188,6 +188,11 @@ export default function Navbar() {
               }}
             />
           ) : isAuthenticated ? (
+            pathname === '/' ? (
+              <Link href="/dashboard" className="btn btn-primary" style={{ minHeight: '38px', padding: '0.5rem 1rem', fontSize: '0.9rem' }}>
+                Dashboard
+              </Link>
+            ) : (
             <div className="nav-user-menu" ref={dropdownRef}>
               <button
                 className="nav-avatar"
@@ -253,6 +258,7 @@ export default function Navbar() {
                 </div>
               )}
             </div>
+            )
           ) : !isAuthPage ? (
             <div style={{ display: 'flex', gap: '0.5rem' }}>
               <Link href="/auth/login" className="btn btn-secondary" style={{ minHeight: '38px', padding: '0.5rem 1rem', fontSize: '0.9rem' }}>
