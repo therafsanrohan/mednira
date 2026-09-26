@@ -539,6 +539,8 @@ export default function MemberDashboard() {
           </div>
         )}
 
+          </div>
+        </section>
       </main>
 
       <style>{`
