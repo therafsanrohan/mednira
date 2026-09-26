@@ -23,6 +23,7 @@ const NAV_LINKS = [
 ];
 
 const MARKETING_LINKS = [
+  { href: '#about', label: 'About' },
   { href: '#features', label: 'Features' },
   { href: '#how-it-works', label: 'How it works' },
   { href: '#security', label: 'Security' },
@@ -62,7 +63,7 @@ export default function Navbar() {
 
   const isAuthenticated = status === 'authenticated' && session?.user;
   const isAuthPage = pathname.startsWith('/auth/');
-  const isLandingPage = pathname === '/';
+  const isPublicPage = pathname === '/' || pathname === '/privacy' || pathname === '/terms';
   const user = session?.user;
 
   const initials = user?.name
@@ -84,15 +85,13 @@ export default function Navbar() {
       <div className="navbar-container">
         {/* Logo */}
         <Link href="/" className="nav-brand" onClick={() => setMobileMenuOpen(false)}>
-          <div className="brand-logo-container">
-            <Shield size={18} color="white" strokeWidth={2.5} />
-          </div>
+          <Shield size={22} color="#0071e3" strokeWidth={2.5} />
           <span className="brand-text">MedNira</span>
         </Link>
 
         {/* Desktop Nav Links */}
         <nav className="desktop-nav desktop-only">
-          {isLandingPage ? (
+          {isPublicPage ? (
             MARKETING_LINKS.map(({ href, label }) => (
               <a key={href} href={href} className="nav-link">
                 <span>{label}</span>
@@ -113,7 +112,7 @@ export default function Navbar() {
 
         {/* Right section */}
         <div className="nav-right">
-          {isLandingPage ? (
+          {isPublicPage ? (
             <div className="nav-auth-buttons desktop-only">
               <Link href="/auth/login" className="btn btn-secondary premium-btn-outline">Sign in</Link>
               <Link href="/auth/register" className="btn btn-primary premium-btn">Get started</Link>
@@ -159,7 +158,7 @@ export default function Navbar() {
       {/* Mobile Fullscreen Menu */}
       <div className={`mobile-menu-overlay ${mobileMenuOpen ? 'open' : ''}`}>
         <div className="mobile-menu-content">
-          {isLandingPage ? (
+          {isPublicPage ? (
             <>
               <div className="mobile-nav-links" style={{ marginBottom: '2rem' }}>
                 {MARKETING_LINKS.map(({ href, label }) => (
@@ -510,7 +509,7 @@ export default function Navbar() {
         .py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
         .mt-3 { margin-top: 0.75rem; }
 
-        @media (max-width: 768px) {
+        @media (max-width: 1024px) {
           .desktop-only { display: none !important; }
           .mobile-menu-btn { display: flex; align-items: center; justify-content: center; }
         }

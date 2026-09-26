@@ -1,141 +1,218 @@
-export default function TermsOfService() {
+'use client';
+
+import React from 'react';
+import { Shield } from 'lucide-react';
+import Link from 'next/link';
+
+export default function TermsOfServicePage() {
   return (
-    <div className="legal-page">
-      <div className="legal-container">
-        <h1>Terms of Service</h1>
-        <p className="last-updated">Last Updated: October 2026</p>
+    <div className="policy-page">
+      <div className="policy-header">
+        <div className="policy-icon">
+          <Shield size={32} color="#16a34a" strokeWidth={2} />
+        </div>
+        <h1 className="policy-title">Terms of Service</h1>
+        <p className="policy-subtitle">Clear rules. Total transparency.</p>
+        <p className="policy-date">Last Updated: October 2026</p>
+      </div>
 
-        <section>
-          <h2>1. Acceptance of Terms</h2>
+      <div className="policy-content">
+        <section className="policy-section">
+          <h2>1. Agreement to Terms</h2>
           <p>
-            By accessing or using the MedNira Emergency OS and associated services (the "Services"), you agree to be bound by these Terms of Service. If you do not agree to these terms, you may not access or use our Services.
+            By accessing or using MedNira, you agree to be bound by these Terms of Service. If you do not agree, please do not use the service.
           </p>
         </section>
 
-        <section>
-          <h2>2. Description of Service</h2>
+        <section className="policy-section">
+          <h2>2. Medical Disclaimer</h2>
           <p>
-            MedNira provides a platform for users to store, manage, and instantly share critical emergency health information via a unique QR code or NFC tag. When scanned by a first responder or any smartphone, the configured public profile is displayed, and designated emergency contacts may receive automated SMS alerts.
-          </p>
-          <p>
-            <strong>Disclaimer:</strong> MedNira is not a healthcare provider, and the Services do not constitute medical advice, diagnosis, or treatment. You are solely responsible for the accuracy of the medical information you input into the system.
+            MedNira is an information delivery platform designed to assist first responders. <strong>We do not provide medical advice, diagnosis, or treatment.</strong> The accuracy of the medical information on your profile is entirely your responsibility. We strongly recommend reviewing your profile with a qualified healthcare provider.
           </p>
         </section>
 
-        <section>
-          <h2>3. User Responsibilities</h2>
+        <section className="policy-section">
+          <h2>3. Service Reliability</h2>
+          <p>
+            While our infrastructure is engineered for 99.99% uptime and high availability during emergencies, MedNira should not be your <em>only</em> method of communicating critical health information. Always wear standard medical alert jewelry if recommended by your doctor.
+          </p>
+        </section>
+
+        <section className="policy-section">
+          <h2>4. User Responsibilities</h2>
           <ul>
-            <li><strong>Accuracy of Information:</strong> You agree to provide accurate, current, and complete information, and to update this information as necessary. Incorrect medical data could result in adverse medical treatment during an emergency.</li>
-            <li><strong>Account Security:</strong> You are responsible for safeguarding your password and authentication credentials. MedNira cannot and will not be liable for any loss or damage arising from your failure to comply with this requirement.</li>
-            <li><strong>Authorized Use:</strong> You agree to use the Services only for lawful purposes and in accordance with these Terms. You will not use the Service to transmit malicious code, spam, or engage in any activity that disrupts the platform.</li>
+            <li>Maintain accurate and up-to-date information on your profile.</li>
+            <li>Protect your account credentials.</li>
+            <li>Do not upload false or misleading medical information that could impact emergency care.</li>
           </ul>
         </section>
 
-        <section>
-          <h2>4. Emergency Alerts & SMS</h2>
-          <p>
-            By adding emergency contacts, you represent that you have obtained their consent to receive automated SMS alerts from MedNira on your behalf. MedNira relies on third-party telecommunication providers to deliver these messages and does not guarantee delivery times or successful transmission, which can be affected by network outages or carrier restrictions.
-          </p>
-        </section>
-
-        <section>
+        <section className="policy-section">
           <h2>5. Limitation of Liability</h2>
           <p>
-            TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT SHALL MEDNIRA, ITS AFFILIATES, AGENTS, DIRECTORS, EMPLOYEES, SUPPLIERS, OR LICENSORS BE LIABLE FOR ANY DIRECT, INDIRECT, PUNITIVE, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR EXEMPLARY DAMAGES, INCLUDING WITHOUT LIMITATION DAMAGES FOR LOSS OF PROFITS, GOODWILL, USE, DATA, OR OTHER INTANGIBLE LOSSES, THAT RESULT FROM THE USE OF, OR INABILITY TO USE, THIS SERVICE.
+            MedNira and its creators shall not be held liable for any damages, injuries, or loss of life resulting from inaccurate information provided by the user, or rare service interruptions.
           </p>
-          <p>
-            MedNira assumes no liability or responsibility for any errors, mistakes, or inaccuracies of the medical profile data you provide.
-          </p>
-        </section>
-
-        <section>
-          <h2>6. Termination</h2>
-          <p>
-            We may terminate or suspend your account and bar access to the Services immediately, without prior notice or liability, under our sole discretion, for any reason whatsoever and without limitation, including but not limited to a breach of the Terms.
-          </p>
-        </section>
-
-        <section>
-          <h2>7. Governing Law</h2>
-          <p>
-            These Terms shall be governed and construed in accordance with the laws of the jurisdiction in which MedNira is headquartered, without regard to its conflict of law provisions.
-          </p>
-        </section>
-
-        <section>
-          <h2>8. Changes to Terms</h2>
-          <p>
-            We reserve the right, at our sole discretion, to modify or replace these Terms at any time. By continuing to access or use our Service after those revisions become effective, you agree to be bound by the revised terms.
-          </p>
-        </section>
-
-        <section>
-          <h2>9. Contact Us</h2>
-          <p>If you have any questions about these Terms, please contact us at legal@mednira.com.</p>
         </section>
       </div>
 
+      <div className="policy-footer">
+        <Link href="/" className="apple-btn-primary">Return to Home</Link>
+      </div>
+
       <style>{`
-        .legal-page {
-          background-color: #fbfbfd;
+        .policy-page {
           min-height: 100vh;
-          padding: 6rem 1rem 4rem;
+          background-color: #fbfbfd;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+          padding: 80px 20px 100px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .policy-header {
+          text-align: center;
+          margin-bottom: 4rem;
+          max-width: 600px;
+          animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .policy-icon {
+          width: 72px;
+          height: 72px;
+          background: rgba(22, 163, 74, 0.1);
+          border-radius: 20px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin: 0 auto 1.5rem;
+        }
+
+        .policy-title {
+          font-size: clamp(2.5rem, 5vw, 4rem);
+          font-weight: 800;
+          letter-spacing: -0.03em;
           color: #1d1d1f;
-          font-family: var(--font-sans);
-        }
-        .legal-container {
-          max-width: 800px;
-          margin: 0 auto;
-          background: #ffffff;
-          padding: 4rem;
-          border-radius: 24px;
-          box-shadow: 0 4px 24px rgba(0,0,0,0.04);
-        }
-        .legal-container h1 {
-          font-size: 2.5rem;
-          font-weight: 700;
-          letter-spacing: -0.02em;
           margin-bottom: 0.5rem;
         }
-        .last-updated {
-          color: #86868b;
-          font-size: 0.95rem;
-          margin-bottom: 3rem;
-          padding-bottom: 2rem;
-          border-bottom: 1px solid #e5e5ea;
-        }
-        .legal-container section {
-          margin-bottom: 2.5rem;
-        }
-        .legal-container h2 {
-          font-size: 1.35rem;
+
+        .policy-subtitle {
+          font-size: 1.25rem;
+          color: #16a34a;
           font-weight: 600;
           margin-bottom: 1rem;
-          color: #1d1d1f;
         }
-        .legal-container p {
-          font-size: 1.05rem;
+
+        .policy-date {
+          font-size: 0.95rem;
+          color: #86868b;
+          font-weight: 500;
+        }
+
+        .policy-content {
+          max-width: 720px;
+          width: 100%;
+          background: #ffffff;
+          border-radius: 32px;
+          padding: 4rem;
+          box-shadow: 0 20px 40px rgba(0,0,0,0.04);
+          border: 1px solid rgba(0,0,0,0.05);
+          animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+          animation-delay: 0.2s;
+          opacity: 0;
+        }
+
+        .policy-section {
+          margin-bottom: 3rem;
+        }
+        
+        .policy-section:last-child {
+          margin-bottom: 0;
+        }
+
+        .policy-section h2 {
+          font-size: 1.5rem;
+          font-weight: 700;
+          color: #1d1d1f;
+          margin-bottom: 1rem;
+          letter-spacing: -0.02em;
+        }
+
+        .policy-section p {
+          font-size: 1.1rem;
           line-height: 1.6;
           color: #424245;
           margin-bottom: 1rem;
         }
-        .legal-container ul {
-          margin-left: 1.5rem;
-          margin-bottom: 1.5rem;
+
+        .policy-section ul {
+          list-style: none;
+          padding: 0;
+          margin: 1.5rem 0;
         }
-        .legal-container li {
+
+        .policy-section li {
+          position: relative;
+          padding-left: 1.5rem;
+          margin-bottom: 1rem;
           font-size: 1.05rem;
-          line-height: 1.6;
+          line-height: 1.5;
           color: #424245;
-          margin-bottom: 0.5rem;
         }
-        .legal-container strong {
+
+        .policy-section li::before {
+          content: "•";
+          color: #16a34a;
+          font-size: 1.5rem;
+          position: absolute;
+          left: 0;
+          top: -4px;
+        }
+
+        .policy-section li strong {
           color: #1d1d1f;
+          font-weight: 600;
         }
+
+        .policy-footer {
+          margin-top: 4rem;
+          opacity: 0;
+          animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+          animation-delay: 0.4s;
+        }
+
+        .apple-btn-primary {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          padding: 1rem 2rem;
+          border-radius: 999px;
+          background: #16a34a;
+          color: white;
+          font-weight: 600;
+          font-size: 1.1rem;
+          text-decoration: none;
+          transition: all 0.2s ease;
+          box-shadow: 0 4px 12px rgba(22, 163, 74, 0.2);
+        }
+
+        .apple-btn-primary:hover {
+          background: #15803d;
+          transform: translateY(-2px);
+          box-shadow: 0 6px 16px rgba(22, 163, 74, 0.3);
+        }
+
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
         @media (max-width: 768px) {
-          .legal-page { padding: 4rem 1rem 2rem; }
-          .legal-container { padding: 2rem; border-radius: 16px; }
-          .legal-container h1 { font-size: 2rem; }
+          .policy-content {
+            padding: 2.5rem 1.5rem;
+            border-radius: 24px;
+          }
+          .policy-title { font-size: 2.2rem; }
         }
       `}</style>
     </div>

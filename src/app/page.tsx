@@ -28,7 +28,7 @@ export default function Home() {
 
         <div className="hero-content">
           <h1 className="apple-title-massive fade-in-up">
-            Medical identity.<br />
+            Your Medical ID.<br />
             <span className="text-gradient">Always with you.</span>
           </h1>
           
@@ -203,7 +203,7 @@ export default function Home() {
       </section>
 
       {/* Ultra-Wide Bento Grid Features */}
-      <section className="apple-features-wide">
+      <section id="features" className="apple-features-wide">
         <div className="section-header fade-in-up">
           <h2 className="section-title">
             Built for emergencies.<br />Designed for privacy.
@@ -257,8 +257,28 @@ export default function Home() {
         </div>
       </section>
 
+      {/* About Section */}
+      <section id="about" className="apple-about-section">
+        <div className="about-container">
+          <div className="about-content fade-in-up">
+            <h2 className="section-title">The MedNira Mission</h2>
+            <p className="about-text">
+              In an emergency, every second counts. Too often, first responders arrive on the scene without knowing a patient's critical health history, severe allergies, or emergency contacts. We built MedNira to bridge that gap. 
+            </p>
+            <p className="about-text">
+              By combining secure cloud architecture with universal NFC and QR technology, we ensure that your vital medical identity is always speaking for you, even when you can't.
+            </p>
+          </div>
+          <div className="about-visual fade-in-up delay-1">
+            <div className="about-badge">
+              <Shield size={48} color="#0071e3" strokeWidth={1.5} />
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Clearer UX How it Works Section */}
-      <section className="clear-how-it-works">
+      <section id="how-it-works" className="clear-how-it-works">
         <div className="section-header fade-in-up">
           <h2 className="section-title">How MedNira Works</h2>
           <p className="section-subtitle">Three clear steps to secure your medical identity.</p>
@@ -295,7 +315,7 @@ export default function Home() {
       </section>
 
       {/* Solutions / Ecosystem Section */}
-      <section className="apple-solutions">
+      <section id="security" className="apple-solutions">
         <div className="section-header fade-in-up">
           <h2 className="section-title">Built for Everyone.</h2>
           <p className="section-subtitle">MedNira scales from individual protection to massive organizational safety.</p>
@@ -359,9 +379,21 @@ export default function Home() {
         .hero-content { position: relative; z-index: 10; text-align: center; display: flex; flex-direction: column; align-items: center; padding: 0 1.25rem; width: 100%; max-width: 1000px; margin-top: 2rem; }
         
         .apple-title-massive { font-size: clamp(2.8rem, 8vw, 6rem); font-weight: 800; letter-spacing: -0.04em; line-height: 1.05; margin-bottom: 1.25rem; color: #1d1d1f; }
+        .text-gradient { background: linear-gradient(135deg, #0071e3 0%, #43b9ff 50%, #8b5cf6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; color: transparent; }
         .apple-subtitle-large { font-size: clamp(1rem, 2.5vw, 1.3rem); color: #424245; max-width: 700px; line-height: 1.5; margin-bottom: 2.5rem; font-weight: 500; }
-        .apple-btn-large { display: inline-flex; align-items: center; gap: 0.5rem; padding: 1rem 2rem; border-radius: 999px; font-size: 1.1rem; font-weight: 600; transition: all 0.3s ease; text-decoration: none; }
-        .apple-link-large { display: inline-flex; align-items: center; gap: 0.3rem; font-size: 1.1rem; color: #0071e3; font-weight: 500; text-decoration: none; }
+        
+        .apple-btn-large { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 1rem 2rem; border-radius: 999px; font-size: 1.1rem; font-weight: 600; transition: all 0.3s ease; text-decoration: none; cursor: pointer; border: none; }
+        .apple-btn-primary { background: #0071e3; color: white; box-shadow: 0 4px 14px rgba(0,113,227,0.3); }
+        .apple-btn-primary:hover { background: #0077ed; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,113,227,0.4); }
+        .apple-link-large { display: inline-flex; align-items: center; justify-content: center; gap: 0.3rem; font-size: 1.1rem; color: #0071e3; font-weight: 500; text-decoration: none; }
+        
+        .apple-about-section { padding: 6rem 1.5rem; background: #ffffff; width: 100%; border-bottom: 1px solid #f5f5f7; display: flex; justify-content: center; }
+        .about-container { max-width: 1000px; width: 100%; display: flex; align-items: center; gap: 4rem; }
+        .about-content { flex: 1; }
+        .about-text { font-size: 1.15rem; color: #424245; line-height: 1.6; margin-top: 1.5rem; }
+        .about-visual { flex: 0.8; display: flex; justify-content: center; align-items: center; }
+        .about-badge { width: 150px; height: 150px; border-radius: 40px; background: rgba(0,113,227,0.05); display: flex; align-items: center; justify-content: center; border: 1px solid rgba(0,113,227,0.1); box-shadow: 0 20px 40px rgba(0,0,0,0.03); }
+        @media (max-width: 768px) { .about-container { flex-direction: column; text-align: center; gap: 2rem; } }
 
         /* Ambient Background */
         .ambient-bg { position: absolute; top: 0; left: 0; right: 0; bottom: 0; overflow: hidden; z-index: 0; pointer-events: none; }
