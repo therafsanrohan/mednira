@@ -81,7 +81,8 @@ export default function Navbar() {
   if (pathname.startsWith('/dashboard')) return null;
 
   return (
-    <header className={`premium-navbar ${mobileMenuOpen ? 'mobile-open' : ''}`}>
+    <>
+      <header className={`premium-navbar ${mobileMenuOpen ? 'mobile-open' : ''}`}>
       <div className="navbar-container">
         {/* Logo */}
         <Link href="/" className="nav-brand" onClick={() => setMobileMenuOpen(false)}>
@@ -154,6 +155,7 @@ export default function Navbar() {
           </button>
         </div>
       </div>
+    </header>
 
       {/* Mobile Fullscreen Menu */}
       <div className={`mobile-menu-overlay ${mobileMenuOpen ? 'open' : ''}`}>
@@ -514,6 +516,6 @@ export default function Navbar() {
           .mobile-menu-btn { display: flex; align-items: center; justify-content: center; }
         }
       `}</style>
-    </header>
+    </>
   );
 }
