@@ -58,6 +58,10 @@ export default function Navbar() {
   const isAuthenticated = status === 'authenticated' && session?.user;
   const isAuthPage = pathname.startsWith('/auth/');
   const user = session?.user;
+
+  if (pathname.startsWith('/dashboard')) {
+    return null;
+  }
   const initials = user?.name
     ? user.name.split(' ').map((n) => n[0]).slice(0, 2).join('').toUpperCase()
     : '?';
