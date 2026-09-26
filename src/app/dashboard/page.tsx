@@ -134,13 +134,7 @@ export default function MemberDashboard() {
 
   return (
     <div className="apple-dashboard-layout">
-      {/* Dynamic Header */}
-      <header className="dash-header">
-        <div className="dash-header-inner">
-          <div className="brand-badge"><Shield size={20} /> MedNira</div>
-          <div className="user-badge">{userName.charAt(0)}</div>
-        </div>
-      </header>
+
 
       <main className="dash-main">
         {/* Alerts */}
@@ -501,11 +495,20 @@ export default function MemberDashboard() {
         @keyframes spin { to { transform: rotate(360deg); } }
 
         @media (max-width: 768px) {
+          .dash-main { padding: 1rem; }
           .bento-grid { grid-template-columns: 1fr; }
-          .add-row { grid-template-columns: 1fr; }
-          .segmented-nav { flex-wrap: wrap; justify-content: flex-start; }
-          .nav-btn { flex: auto; }
-          .btn-save-master { width: 100%; margin-top: 0.5rem; }
+          .add-row { display: flex; flex-direction: column; gap: 0.75rem; }
+          .add-row input, .add-row select, .add-row button { width: 100%; }
+          .segmented-nav { flex-wrap: wrap; justify-content: space-between; border-radius: 16px; padding: 0.5rem; gap: 0.5rem; }
+          .nav-btn { flex: 1 1 calc(50% - 0.5rem); padding: 0.6rem 0.5rem; font-size: 0.8rem; border-radius: 12px; }
+          .btn-save-master { flex: 1 1 100%; margin-top: 0.5rem; padding: 1rem; font-size: 1rem; border-radius: 12px; }
+          .form-grid { grid-template-columns: 1fr; }
+          .toggles-box { flex-direction: column; gap: 1rem; }
+          .data-row { flex-direction: column; align-items: flex-start; }
+          .data-actions { width: 100%; justify-content: space-between; margin-top: 0.5rem; }
+          .device-header { flex-direction: column; gap: 0.5rem; }
+          .device-actions { flex-direction: column; }
+          .device-actions button { width: 100%; }
         }
       `}</style>
     </div>
