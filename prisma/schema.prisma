@@ -1,0 +1,471 @@
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ─────────────────────────────────────────────
+// AUTH TABLES (NextAuth.js v5 / Auth.js)
+// ─────────────────────────────────────────────
+
+model Account {
+  id                String  @id @default(uuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ─────────────────────────────────────────────
+// CORE USER & ROLE
+// ─────────────────────────────────────────────
+
+model User {
+  id             String          @id @default(uuid())
+  email          String          @unique
+  emailVerified  DateTime?
+  name           String?
+  fullName       String          @default("")
+  image          String?
+  passwordHash   String?         // null for OAuth users
+  role           UserRole        @default(USER)
+  status         UserStatus      @default(ACTIVE)
+  profile        MedicalProfile?
+  deviceTokens   DeviceToken[]
+  accounts       Account[]
+  sessions       Session[]
+  incidents      Incident[]      @relation("UserIncidents")
+  auditLogs      AuditLog[]
+  accessLogs     AccessLog[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+}
+
+enum UserRole {
+  USER
+  RESPONDER
+  DOCTOR
+  ORGANISATION_ADMIN
+  ORGANISATION_STAFF
+  MEDNIRA_SUPPORT
+  MEDNIRA_OPERATIONS
+  MEDNIRA_ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+  DELETED
+}
+
+// ─────────────────────────────────────────────
+// MEDICAL PROFILE & ITEMS
+// ─────────────────────────────────────────────
+
+model MedicalProfile {
+  id             String             @id @default(uuid())
+  userId         String             @unique
+  user           User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bloodType      String?
+  dateOfBirth    String?
+  organDonor     Boolean            @default(false)
+  dnrStatus      Boolean            @default(false)
+  emergencyNotes String?
+  items          MedicalItem[]
+  contacts       EmergencyContact[]
+  readinessScore Int                @default(0) // 0-100 calculated score
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+}
+
+model MedicalItem {
+  id          String         @id @default(uuid())
+  profileId   String
+  profile     MedicalProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  category    MedicalCategory
+  name        String
+  description String?
+  severity    Severity?
+  visibility  Visibility     @default(EMERGENCY)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
+
+enum MedicalCategory {
+  ALLERGY
+  CONDITION
+  MEDICATION
+  PROCEDURE
+  OTHER
+}
+
+enum Severity {
+  CRITICAL
+  MODERATE
+  LOW
+}
+
+enum Visibility {
+  EMERGENCY  // publicly visible on QR scan
+  TRUSTED    // visible to verified doctors/responders
+  PRIVATE    // never auto-shared
+}
+
+model EmergencyContact {
+  id               String         @id @default(uuid())
+  profileId        String
+  profile          MedicalProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  name             String
+  relationship     String
+  phone            String
+  priority         Int            @default(1)
+  notifyOnIncident Boolean        @default(true)
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+}
+
+// ─────────────────────────────────────────────
+// EMERGENCY IDENTITY & DEVICE TOKENS
+// ─────────────────────────────────────────────
+
+model DeviceToken {
+  id            String       @id @default(uuid())
+  token         String       @unique
+  label         String       @default("Emergency QR Card")
+  deviceType    DeviceType   @default(QR)
+  status        DeviceStatus @default(ACTIVE)
+  userId        String?
+  user          User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+  lastScannedAt DateTime?
+  incidents     Incident[]
+  accessLogs    AccessLog[]
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+}
+
+enum DeviceType {
+  QR
+  NFC
+}
+
+enum DeviceStatus {
+  UNASSIGNED
+  ACTIVE
+  FROZEN
+  REVOKED
+  REPLACED
+}
+
+// ─────────────────────────────────────────────
+// INCIDENTS & NOTIFICATIONS
+// ─────────────────────────────────────────────
+
+model Incident {
+  id               String          @id @default(uuid())
+  deviceTokenId    String?
+  deviceToken      DeviceToken?    @relation(fields: [deviceTokenId], references: [id])
+  userId           String
+  user             User            @relation("UserIncidents", fields: [userId], references: [id])
+  status           IncidentStatus  @default(CREATED)
+  locationLat      Float?
+  locationLng      Float?
+  locationAddress  String?
+  responderNote    String?
+  responderContact String?
+  notifications    NotificationLog[]
+  events           IncidentEvent[]
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  resolvedAt       DateTime?
+}
+
+enum IncidentStatus {
+  CREATED
+  ACKNOWLEDGED
+  RESPONDING
+  ESCALATED
+  HANDOFF
+  RESOLVED
+  FALSE_ALARM
+  CANCELLED
+}
+
+model IncidentEvent {
+  id          String   @id @default(uuid())
+  incidentId  String
+  incident    Incident @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+  eventType   String   // CREATED, STATUS_CHANGED, NOTE_ADDED, CONTACT_NOTIFIED, etc.
+  description String?
+  actorId     String?  // userId of who triggered this event
+  metadata    Json?
+  createdAt   DateTime @default(now())
+}
+
+model NotificationLog {
+  id           String             @id @default(uuid())
+  incidentId   String
+  incident     Incident           @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+  contactId    String?
+  channel      NotificationChannel
+  status       NotificationStatus @default(QUEUED)
+  attemptCount Int                @default(0)
+  errorMsg     String?
+  sentAt       DateTime?
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+}
+
+enum NotificationChannel {
+  SMS
+  EMAIL
+  PUSH
+}
+
+enum NotificationStatus {
+  QUEUED
+  SENT
+  DELIVERED
+  FAILED
+}
+
+// ─────────────────────────────────────────────
+// CARDS & ORDERS
+// ─────────────────────────────────────────────
+
+model CardOrder {
+  id              String      @id @default(uuid())
+  userId          String
+  cardType        String      @default("STANDARD") // STANDARD, PREMIUM, SILICONE
+  status          CardOrderStatus @default(PENDING)
+  deliveryName    String
+  deliveryAddress String
+  deliveryCity    String
+  deliveryCountry String      @default("BD")
+  trackingNumber  String?
+  card            Card?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+}
+
+enum CardOrderStatus {
+  PENDING
+  PAYMENT_CONFIRMED
+  PRODUCED
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+model Card {
+  id            String      @id @default(uuid())
+  orderId       String      @unique
+  order         CardOrder   @relation(fields: [orderId], references: [id])
+  userId        String
+  serialNumber  String      @unique
+  status        CardStatus  @default(INACTIVE)
+  activatedAt   DateTime?
+  deactivatedAt DateTime?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+enum CardStatus {
+  INACTIVE
+  ACTIVE
+  SUSPENDED
+  REPLACED
+  DEACTIVATED
+}
+
+// ─────────────────────────────────────────────
+// SUBSCRIPTIONS & BILLING
+// ─────────────────────────────────────────────
+
+model Plan {
+  id            String         @id @default(uuid())
+  name          String         @unique // FREE, ESSENTIAL, PROFESSIONAL, FAMILY
+  displayName   String
+  price         Float          @default(0)
+  currency      String         @default("BDT")
+  billingPeriod String         @default("MONTHLY") // MONTHLY, YEARLY
+  features      Json           // Array of feature strings
+  isActive      Boolean        @default(true)
+  subscriptions Subscription[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+model Subscription {
+  id                String             @id @default(uuid())
+  userId            String
+  planId            String
+  plan              Plan               @relation(fields: [planId], references: [id])
+  status            SubscriptionStatus @default(ACTIVE)
+  currentPeriodStart DateTime
+  currentPeriodEnd   DateTime
+  cancelAtPeriodEnd  Boolean           @default(false)
+  externalRef       String?            // Stripe/payment provider reference
+  payments          Payment[]
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  PAST_DUE
+  CANCELLED
+  EXPIRED
+  TRIALING
+}
+
+model Payment {
+  id             String        @id @default(uuid())
+  subscriptionId String
+  subscription   Subscription  @relation(fields: [subscriptionId], references: [id])
+  amount         Float
+  currency       String        @default("BDT")
+  status         PaymentStatus @default(PENDING)
+  externalRef    String?       // Payment provider transaction ID
+  invoiceUrl     String?
+  paidAt         DateTime?
+  createdAt      DateTime      @default(now())
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+  REFUNDED
+}
+
+// ─────────────────────────────────────────────
+// ORGANISATIONS
+// ─────────────────────────────────────────────
+
+model Organisation {
+  id           String               @id @default(uuid())
+  name         String
+  type         OrgType
+  email        String?
+  phone        String?
+  address      String?
+  country      String               @default("BD")
+  status       OrgStatus            @default(PENDING_VERIFICATION)
+  members      OrganisationMember[]
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+}
+
+enum OrgType {
+  HOSPITAL
+  CLINIC
+  AMBULANCE_SERVICE
+  SCHOOL
+  UNIVERSITY
+  COMPANY
+  OTHER
+}
+
+enum OrgStatus {
+  PENDING_VERIFICATION
+  VERIFIED
+  SUSPENDED
+}
+
+model OrganisationMember {
+  id             String       @id @default(uuid())
+  organisationId String
+  organisation   Organisation @relation(fields: [organisationId], references: [id], onDelete: Cascade)
+  userId         String
+  role           String       @default("STAFF") // ADMIN, STAFF
+  joinedAt       DateTime     @default(now())
+}
+
+// ─────────────────────────────────────────────
+// VERIFICATION (Doctors & Responders)
+// ─────────────────────────────────────────────
+
+model Verification {
+  id           String             @id @default(uuid())
+  userId       String             @unique
+  type         VerificationType
+  status       VerificationStatus @default(PENDING)
+  credentials  Json?              // License numbers, registrations, etc.
+  reviewedBy   String?            // Admin userId
+  reviewNote   String?
+  submittedAt  DateTime           @default(now())
+  reviewedAt   DateTime?
+  updatedAt    DateTime           @updatedAt
+}
+
+enum VerificationType {
+  DOCTOR
+  RESPONDER
+  ORGANISATION
+}
+
+enum VerificationStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+  SUSPENDED
+}
+
+// ─────────────────────────────────────────────
+// AUDIT & ACCESS LOGS
+// ─────────────────────────────────────────────
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id])
+  action     String   // e.g. USER_CREATED, INCIDENT_STARTED, CARD_ACTIVATED
+  resource   String?  // Resource type e.g. Incident, DeviceToken
+  resourceId String?
+  metadata   Json?
+  ip         String?
+  userAgent  String?
+  createdAt  DateTime @default(now())
+}
+
+model AccessLog {
+  id            String      @id @default(uuid())
+  deviceTokenId String?
+  deviceToken   DeviceToken? @relation(fields: [deviceTokenId], references: [id])
+  userId        String?
+  user          User?       @relation(fields: [userId], references: [id])
+  ip            String?
+  userAgent     String?
+  accessType    String      @default("QR_SCAN") // QR_SCAN, NFC_TAP, LINK_ACCESS
+  createdAt     DateTime    @default(now())
+}
