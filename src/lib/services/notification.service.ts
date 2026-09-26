@@ -1,4 +1,10 @@
 import { prisma } from '@/lib/prisma';
+import twilio from 'twilio';
+import { Resend } from 'resend';
+
+const resend = new Resend(process.env.RESEND_API_KEY);
+const twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+
 
 export interface DispatchNotificationPayload {
   incidentId: string;
@@ -63,8 +69,22 @@ export class NotificationService {
           .filter(Boolean)
           .join(' ');
 
-        // TODO: Replace with real Twilio/Resend calls
-        console.log(`[SMS STUB] To: ${payload.phone} | Body: ${messageBody}`);
+        // Send SMS via Twilio
+        if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN && process.env.TWILIO_PHONE_NUMBER) {
+          await twilioClient.messages.create({
+            body: messageBody,
+            from: process.env.TWILIO_PHONE_NUMBER,
+            to: payload.phone,
+          });
+        } else {
+          console.log(`[SMS STUB] To: ${payload.phone} | Body: ${messageBody}`);
+        }
+
+        // We can also send an email if the contact has an email (not currently tracked in schema, but good placeholder)
+        if (process.env.RESEND_API_KEY && process.env.MEDNIRA_EMAIL_FROM) {
+          // Placeholder for when contacts have emails
+          // await resend.emails.send({ ... })
+        }
 
         await prisma.notificationLog.update({
           where: { id: logId },
