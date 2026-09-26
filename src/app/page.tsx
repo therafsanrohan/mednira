@@ -389,7 +389,7 @@ export default function Home() {
         .apple-cta-group { display: flex; align-items: center; justify-content: center; gap: 1.5rem; flex-wrap: wrap; width: 100%; margin-top: 1rem; }
         
         .apple-about-section { padding: 6rem 1.5rem; background: #ffffff; width: 100%; border-bottom: 1px solid #f5f5f7; display: flex; justify-content: center; }
-        .about-container { max-width: 1000px; width: 100%; display: flex; align-items: center; gap: 4rem; }
+        .about-container { max-width: 1100px; width: 100%; display: flex; align-items: center; gap: 4rem; margin: 0 auto; }
         .about-content { flex: 1; }
         .about-text { font-size: 1.15rem; color: #424245; line-height: 1.6; margin-top: 1.5rem; }
         .about-visual { flex: 0.8; display: flex; justify-content: center; align-items: center; }
@@ -520,7 +520,7 @@ export default function Home() {
         .section-header { text-align: center; margin-bottom: 4rem; }
         .section-title { font-size: clamp(2.2rem, 5vw, 3.5rem); font-weight: 700; letter-spacing: -0.03em; color: #1d1d1f; line-height: 1.1; }
         .section-subtitle { font-size: 1.25rem; color: #86868b; margin-top: 1rem; max-width: 600px; margin-left: auto; margin-right: auto; }
-        .bento-grid-wide { display: flex; flex-direction: column; gap: 1.5rem; width: 100%; max-width: 1400px; margin: 0 auto; }
+        .bento-grid-wide { display: flex; flex-direction: column; gap: 1.5rem; width: 100%; max-width: 1100px; margin: 0 auto; }
         .bento-card-wide { border-radius: 28px; padding: 3rem; box-shadow: 0 10px 40px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.02); }
         .bento-row { display: flex; align-items: center; gap: 3rem; }
         .bento-icon-large { width: 100px; height: 100px; border-radius: 28px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(0,0,0,0.05); flex-shrink: 0; }
@@ -533,7 +533,7 @@ export default function Home() {
 
         /* Clear UX How it Works */
         .clear-how-it-works { padding: 6rem 1.5rem; background: #fbfbfd; width: 100%; border-bottom: 1px solid #f5f5f7; }
-        .process-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; max-width: 1200px; margin: 0 auto; }
+        .process-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; max-width: 1100px; margin: 0 auto; }
         .process-card { background: white; padding: 3rem 2rem; border-radius: 24px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.03); }
         
         .process-icon-wrapper { position: relative; width: 80px; height: 80px; border-radius: 24px; display: flex; align-items: center; justify-content: center; margin: 0 auto 2rem; background: white; }
@@ -548,7 +548,7 @@ export default function Home() {
 
         /* Solutions Section */
         .apple-solutions { padding: 8rem 1.5rem; background: #ffffff; width: 100%; }
-        .solutions-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; max-width: 1400px; margin: 0 auto; }
+        .solutions-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; max-width: 1100px; margin: 0 auto; }
         .solution-card { background: #fbfbfd; border-radius: 28px; padding: 3rem 2rem; border: 1px solid #e5e5ea; display: flex; flex-direction: column; align-items: flex-start; }
         .solution-icon { width: 64px; height: 64px; border-radius: 20px; background: #f3e8ff; color: #9333ea; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; }
         .solution-card h3 { font-size: 1.6rem; font-weight: 700; color: #1d1d1f; margin-bottom: 1rem; }
@@ -561,7 +561,7 @@ export default function Home() {
         .footer-cta { text-align: center; max-width: 600px; margin: 0 auto 6rem; }
         .footer-cta h2 { font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; margin-bottom: 1rem; letter-spacing: -0.02em; color: white; }
         .footer-cta p { font-size: 1.25rem; color: #a1a1a6; }
-        .footer-bottom { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 2rem; }
+        .footer-bottom { max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 2rem; }
         .footer-logo { display: flex; align-items: center; gap: 0.5rem; font-weight: 700; font-size: 1.25rem; color: white; }
         .footer-links { display: flex; gap: 2rem; }
         .footer-links a { color: #a1a1a6; text-decoration: none; font-size: 0.95rem; transition: color 0.2s ease; }
