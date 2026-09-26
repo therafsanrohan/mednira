@@ -28,12 +28,12 @@ export default function Home() {
 
         <div className="hero-content">
           <h1 className="apple-title-massive fade-in-up">
-            Your Digital Medical ID<br />
-            <span className="text-gradient">For Emergencies.</span>
+            Medical identity.<br />
+            <span className="text-gradient">Always with you.</span>
           </h1>
           
           <p className="apple-subtitle-large fade-in-up delay-1">
-            Instantly share your critical health data, severe allergies, and emergency contacts with first responders through a simple QR scan or NFC tap. No app required.
+            Life-saving data, severe allergies, and emergency contacts instantly accessible to first responders. Just a tap away. No app required.
           </p>
           
           <div className="apple-cta-group fade-in-up delay-2">

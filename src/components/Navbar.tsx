@@ -22,6 +22,12 @@ const NAV_LINKS = [
   { href: '/dashboard/activity', label: 'Activity', icon: Activity },
 ];
 
+const MARKETING_LINKS = [
+  { href: '#features', label: 'Features' },
+  { href: '#how-it-works', label: 'How it works' },
+  { href: '#security', label: 'Security' },
+];
+
 export default function Navbar() {
   const { data: session, status } = useSession();
   const pathname = usePathname();
@@ -56,6 +62,7 @@ export default function Navbar() {
 
   const isAuthenticated = status === 'authenticated' && session?.user;
   const isAuthPage = pathname.startsWith('/auth/');
+  const isLandingPage = pathname === '/';
   const user = session?.user;
 
   const initials = user?.name
@@ -75,16 +82,24 @@ export default function Navbar() {
   return (
     <header className={`premium-navbar ${mobileMenuOpen ? 'mobile-open' : ''}`}>
       <div className="navbar-container">
-        <Link href={isAuthenticated ? '/dashboard' : '/'} className="nav-brand" onClick={() => setMobileMenuOpen(false)}>
+        {/* Logo */}
+        <Link href="/" className="nav-brand" onClick={() => setMobileMenuOpen(false)}>
           <div className="brand-logo-container">
             <Shield size={18} color="white" strokeWidth={2.5} />
           </div>
           <span className="brand-text">MedNira</span>
         </Link>
 
-        {isAuthenticated && !isAuthPage && pathname !== '/' && (
-          <nav className="desktop-nav">
-            {NAV_LINKS.map(({ href, label, icon: Icon }) => {
+        {/* Desktop Nav Links */}
+        <nav className="desktop-nav desktop-only">
+          {isLandingPage ? (
+            MARKETING_LINKS.map(({ href, label }) => (
+              <a key={href} href={href} className="nav-link">
+                <span>{label}</span>
+              </a>
+            ))
+          ) : isAuthenticated && !isAuthPage ? (
+            NAV_LINKS.map(({ href, label, icon: Icon }) => {
               const active = href === '/dashboard' ? pathname === '/dashboard' : pathname.startsWith(href);
               return (
                 <Link key={href} href={href} className={`nav-link ${active ? 'active' : ''}`}>
@@ -92,41 +107,41 @@ export default function Navbar() {
                   <span>{label}</span>
                 </Link>
               );
-            })}
-          </nav>
-        )}
+            })
+          ) : null}
+        </nav>
 
+        {/* Right section */}
         <div className="nav-right">
-          {status === 'loading' ? (
+          {isLandingPage ? (
+            <div className="nav-auth-buttons desktop-only">
+              <Link href="/auth/login" className="btn btn-secondary premium-btn-outline">Sign in</Link>
+              <Link href="/auth/register" className="btn btn-primary premium-btn">Get started</Link>
+            </div>
+          ) : status === 'loading' ? (
             <div className="nav-loading-pulse" />
           ) : isAuthenticated ? (
-            pathname === '/' ? (
-              <Link href="/dashboard" className="btn btn-primary premium-btn desktop-only">
-                Dashboard
-              </Link>
-            ) : (
-              <div className="nav-user-menu desktop-only" ref={dropdownRef}>
-                <button className="nav-avatar" onClick={() => setDropdownOpen(!dropdownOpen)}>
-                  {initials}
-                </button>
+            <div className="nav-user-menu desktop-only" ref={dropdownRef}>
+              <button className="nav-avatar" onClick={() => setDropdownOpen(!dropdownOpen)}>
+                {initials}
+              </button>
 
-                {dropdownOpen && (
-                  <div className="nav-dropdown">
-                    <div className="nav-user-info">
-                      <div className="nav-user-name">{user?.name || 'User'}</div>
-                      <div className="nav-user-email">{user?.email}</div>
-                    </div>
-                    <div className="nav-separator" />
-                    <Link href="/dashboard" className="nav-dropdown-item" onClick={() => setDropdownOpen(false)}><Home size={16} /> Dashboard</Link>
-                    <Link href="/dashboard/emergency-id" className="nav-dropdown-item" onClick={() => setDropdownOpen(false)}><QrCode size={16} /> Emergency ID</Link>
-                    <Link href="/dashboard/profile" className="nav-dropdown-item" onClick={() => setDropdownOpen(false)}><User size={16} /> Profile</Link>
-                    <Link href="/dashboard/settings" className="nav-dropdown-item" onClick={() => setDropdownOpen(false)}><Settings size={16} /> Settings</Link>
-                    <div className="nav-separator" />
-                    <button className="nav-dropdown-item danger" onClick={handleSignOut}><LogOut size={16} /> Sign out</button>
+              {dropdownOpen && (
+                <div className="nav-dropdown">
+                  <div className="nav-user-info">
+                    <div className="nav-user-name">{user?.name || 'User'}</div>
+                    <div className="nav-user-email">{user?.email}</div>
                   </div>
-                )}
-              </div>
-            )
+                  <div className="nav-separator" />
+                  <Link href="/dashboard" className="nav-dropdown-item" onClick={() => setDropdownOpen(false)}><Home size={16} /> Dashboard</Link>
+                  <Link href="/dashboard/emergency-id" className="nav-dropdown-item" onClick={() => setDropdownOpen(false)}><QrCode size={16} /> Emergency ID</Link>
+                  <Link href="/dashboard/profile" className="nav-dropdown-item" onClick={() => setDropdownOpen(false)}><User size={16} /> Profile</Link>
+                  <Link href="/dashboard/settings" className="nav-dropdown-item" onClick={() => setDropdownOpen(false)}><Settings size={16} /> Settings</Link>
+                  <div className="nav-separator" />
+                  <button className="nav-dropdown-item danger" onClick={handleSignOut}><LogOut size={16} /> Sign out</button>
+                </div>
+              )}
+            </div>
           ) : !isAuthPage ? (
             <div className="nav-auth-buttons desktop-only">
               <Link href="/auth/login" className="btn btn-secondary premium-btn-outline">Sign in</Link>
@@ -135,18 +150,34 @@ export default function Navbar() {
           ) : null}
 
           {/* Mobile Menu Toggle */}
-          {!isAuthPage && (
-            <button className="mobile-menu-btn" onClick={toggleMobileMenu}>
-              {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
-            </button>
-          )}
+          <button className="mobile-menu-btn" onClick={toggleMobileMenu}>
+            {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+          </button>
         </div>
       </div>
 
       {/* Mobile Fullscreen Menu */}
       <div className={`mobile-menu-overlay ${mobileMenuOpen ? 'open' : ''}`}>
         <div className="mobile-menu-content">
-          {isAuthenticated ? (
+          {isLandingPage ? (
+            <>
+              <div className="mobile-nav-links" style={{ marginBottom: '2rem' }}>
+                {MARKETING_LINKS.map(({ href, label }) => (
+                  <a key={href} href={href} className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
+                    {label}
+                  </a>
+                ))}
+              </div>
+              <div className="mobile-auth-actions" style={{ marginTop: 'auto' }}>
+                <Link href="/auth/register" className="btn btn-primary premium-btn w-full text-center py-3" style={{ justifyContent: 'center' }} onClick={() => setMobileMenuOpen(false)}>
+                  Create your Emergency ID
+                </Link>
+                <Link href="/auth/login" className="btn btn-secondary premium-btn-outline w-full text-center py-3 mt-3" style={{ justifyContent: 'center' }} onClick={() => setMobileMenuOpen(false)}>
+                  Sign in to account
+                </Link>
+              </div>
+            </>
+          ) : isAuthenticated ? (
             <>
               <div className="mobile-user-profile">
                 <div className="nav-avatar large">{initials}</div>
@@ -156,26 +187,17 @@ export default function Navbar() {
                 </div>
               </div>
               <div className="mobile-nav-links">
-                {pathname !== '/' && NAV_LINKS.map(({ href, label, icon: Icon }) => (
+                {NAV_LINKS.map(({ href, label, icon: Icon }) => (
                   <Link key={href} href={href} className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
                     <Icon size={20} /> {label}
                   </Link>
                 ))}
-                {pathname === '/' && (
-                  <Link href="/dashboard" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
-                    <Home size={20} /> Dashboard
-                  </Link>
-                )}
-                {pathname !== '/' && (
-                  <>
-                    <Link href="/dashboard/profile" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
-                      <User size={20} /> Profile
-                    </Link>
-                    <Link href="/dashboard/settings" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
-                      <Settings size={20} /> Settings
-                    </Link>
-                  </>
-                )}
+                <Link href="/dashboard/profile" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
+                  <User size={20} /> Profile
+                </Link>
+                <Link href="/dashboard/settings" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
+                  <Settings size={20} /> Settings
+                </Link>
               </div>
               <button className="mobile-nav-link danger" onClick={handleSignOut} style={{ marginTop: 'auto' }}>
                 <LogOut size={20} /> Sign out
