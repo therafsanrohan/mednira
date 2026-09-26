@@ -594,8 +594,8 @@ export default function MemberDashboard() {
         .page-heading { font-size: 2.5rem; font-weight: 800; letter-spacing: -0.04em; color: #1d1d1f; }
         .dash-subtitle { font-size: 1.1rem; color: #86868b; font-weight: 500; margin-top: -2rem; margin-bottom: 2.5rem; }
 
-        .btn-save-master.glass-btn { background: rgba(0, 113, 227, 0.1); color: #0071e3; border: 1px solid rgba(0,113,227,0.2); padding: 0.75rem 1.5rem; border-radius: 99px; font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 4px 15px rgba(0,113,227,0.05); }
-        .btn-save-master.glass-btn:hover { background: #0071e3; color: white; transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,113,227,0.25); }
+        .btn-save-master.glass-btn { background: #1d1d1f; color: #ffffff; padding: 0.85rem 1.75rem; border-radius: 99px; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: none; }
+        .btn-save-master.glass-btn:hover { background: #000000; transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
         .btn-save-master.glass-btn:active { transform: scale(0.96); }
 
         .dash-alert { padding: 1rem 1.25rem; border-radius: 16px; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem; font-weight: 600; font-size: 0.95rem; animation: slideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
@@ -605,8 +605,8 @@ export default function MemberDashboard() {
         @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
         .bento-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
-        .dash-card { background: white; border-radius: 24px; padding: 2rem; box-shadow: 0 10px 40px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.04); transition: transform 0.3s ease, box-shadow 0.3s ease; }
-        .dash-card:hover { box-shadow: 0 15px 50px rgba(0,0,0,0.06); }
+        .dash-card { background: white; border-radius: 28px; padding: 2.5rem; box-shadow: 0 4px 24px rgba(0,0,0,0.02); border: 1px solid rgba(0,0,0,0.04); transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .dash-card:hover { box-shadow: 0 12px 32px rgba(0,0,0,0.05); }
         .full-width { grid-column: 1 / -1; }
         
         .readiness-card { grid-column: 1 / -1; display: flex; flex-direction: column; gap: 1rem; background: linear-gradient(145deg, #ffffff, #fbfbfd); }
@@ -628,9 +628,9 @@ export default function MemberDashboard() {
         .action-link:hover { gap: 0.5rem; }
 
         .quick-action { cursor: pointer; text-align: left; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); border: 1px solid rgba(0,0,0,0.04); display: flex; flex-direction: column; align-items: flex-start; background: #ffffff; }
-        .quick-action:hover { transform: translateY(-4px); box-shadow: 0 15px 40px rgba(0,0,0,0.06); border-color: rgba(0,0,0,0.08); }
-        .qa-icon { margin-bottom: 1.25rem; background: #f5f5f7; padding: 0.75rem; border-radius: 14px; }
-        .quick-action h3 { font-size: 1.2rem; font-weight: 800; color: #1d1d1f; margin-bottom: 0.4rem; letter-spacing: -0.02em; }
+        .quick-action:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.05); border-color: rgba(0,0,0,0.08); }
+        .qa-icon { margin-bottom: 1.25rem; background: #fbfbfd; padding: 0.75rem; border-radius: 16px; border: 1px solid rgba(0,0,0,0.03); }
+        .quick-action h3 { font-size: 1.25rem; font-weight: 800; color: #1d1d1f; margin-bottom: 0.4rem; letter-spacing: -0.02em; }
         .quick-action p { font-size: 0.95rem; color: #86868b; line-height: 1.5; }
 
         .card-title { font-size: 1.35rem; font-weight: 800; color: #1d1d1f; display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem; letter-spacing: -0.02em; }
@@ -701,19 +701,22 @@ export default function MemberDashboard() {
         @keyframes spin { to { transform: rotate(360deg); } }
 
         @media (max-width: 1024px) {
-          .dash-sidebar { width: 240px; }
+          .dash-sidebar { display: none; }
           .bento-grid { grid-template-columns: 1fr; }
+          .dash-container { flex-direction: column; height: 100vh; overflow: hidden; }
+          .mobile-header { display: flex; }
+          .content-scroll-area { padding: 1.5rem 1rem 6rem 1rem; }
+          
+          /* Bottom Nav for Mobile & Tablet */
+          .mobile-bottom-nav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; background: rgba(251, 251, 253, 0.9); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: 1px solid rgba(0,0,0,0.08); padding: 0.75rem 1rem; padding-bottom: calc(0.75rem + env(safe-area-inset-bottom)); justify-content: space-around; z-index: 100; }
+          .bottom-nav-btn { background: none; border: none; padding: 0.5rem; color: #86868b; display: flex; flex-direction: column; align-items: center; gap: 0.2rem; cursor: pointer; transition: color 0.2s; }
+          .bottom-nav-btn.active { color: #1d1d1f; }
         }
 
         @media (max-width: 768px) {
-          .dash-container { flex-direction: column; height: 100vh; overflow: hidden; }
-          .dash-sidebar { display: none; }
-          .mobile-header { display: flex; }
-          .content-scroll-area { padding: 1.5rem 1rem 6rem 1rem; }
           .page-heading { font-size: 2rem; }
           .top-action-bar { flex-direction: column; align-items: flex-start; gap: 1rem; margin-bottom: 1.5rem; }
           .btn-save-master.glass-btn { width: 100%; text-align: center; }
-
           .add-row { display: flex; flex-direction: column; gap: 0.75rem; padding: 1rem; }
           .add-row input, .add-row select, .add-row button { width: 100%; }
           .form-grid { grid-template-columns: 1fr; gap: 1rem; }
@@ -725,11 +728,6 @@ export default function MemberDashboard() {
           .device-actions button { width: 100%; }
           .dash-card { padding: 1.25rem; border-radius: 20px; }
           .devices-grid { grid-template-columns: 1fr; }
-
-          /* Bottom Nav */
-          .mobile-bottom-nav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; background: rgba(251, 251, 253, 0.9); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: 1px solid rgba(0,0,0,0.08); padding: 0.75rem 1rem; padding-bottom: calc(0.75rem + env(safe-area-inset-bottom)); justify-content: space-around; z-index: 100; }
-          .bottom-nav-btn { background: none; border: none; padding: 0.5rem; color: #86868b; display: flex; flex-direction: column; align-items: center; gap: 0.2rem; cursor: pointer; transition: color 0.2s; }
-          .bottom-nav-btn.active { color: #0071e3; }
         }
       `}</style>
     </div>
