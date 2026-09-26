@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { Shield, Mail, Lock, AlertCircle, ArrowRight, Eye, EyeOff } from 'lucide-react';
+import { Shield, AlertCircle, ArrowRight, Eye, EyeOff } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -39,52 +39,42 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="auth-page">
-      <div className="auth-card">
+    <div className="apple-auth-container">
+      <div className="apple-auth-card fade-in-up">
         {/* Logo & Header */}
-        <div className="auth-header">
-          <div className="auth-logo">
-            <Shield size={28} />
-          </div>
-          <h1 className="auth-title">Welcome back</h1>
-          <p className="auth-subtitle">Sign in to your MedNira account</p>
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem', color: '#0071e3' }}>
+          <Shield size={42} strokeWidth={1.5} />
         </div>
+        <h2>Sign In</h2>
+        <p>Access your MedNira account</p>
 
         {/* Error Banner */}
         {error && (
-          <div className="auth-error">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.8rem', backgroundColor: '#ffe4e6', color: '#9f1239', borderRadius: '12px', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
             <AlertCircle size={16} />
             <span>{error}</span>
           </div>
         )}
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="auth-form" noValidate>
-          <div className="form-field">
-            <label htmlFor="email" className="form-label">
-              Email address
-            </label>
-            <div className="input-wrapper">
-              <Mail size={18} className="input-icon" />
-              <input
-                id="email"
-                type="email"
-                placeholder="you@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                autoComplete="email"
-                className="auth-input"
-              />
-            </div>
+        <form onSubmit={handleSubmit} noValidate>
+          <div className="apple-input-group">
+            <label htmlFor="email">Email address</label>
+            <input
+              id="email"
+              type="email"
+              placeholder="name@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              autoComplete="email"
+              className="apple-input"
+            />
           </div>
 
-          <div className="form-field">
-            <label htmlFor="password" className="form-label">
-              Password
-            </label>
-            <div className="input-wrapper">
-              <Lock size={18} className="input-icon" />
+          <div className="apple-input-group">
+            <label htmlFor="password">Password</label>
+            <div style={{ position: 'relative' }}>
               <input
                 id="password"
                 type={showPassword ? 'text' : 'password'}
@@ -93,13 +83,13 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 autoComplete="current-password"
-                className="auth-input has-toggle"
+                className="apple-input"
+                style={{ paddingRight: '2.5rem' }}
               />
               <button
                 type="button"
-                className="input-toggle"
                 onClick={() => setShowPassword(!showPassword)}
-                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                style={{ position: 'absolute', right: '0.8rem', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: '#86868b', cursor: 'pointer' }}
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
@@ -109,34 +99,18 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading || !email || !password}
-            className="btn btn-primary btn-full auth-submit"
+            className="apple-auth-submit"
           >
-            {loading ? (
-              <>
-                <span className="spinner" />
-                Signing in...
-              </>
-            ) : (
-              <>
-                Sign in <ArrowRight size={18} />
-              </>
-            )}
+            {loading ? 'Signing in...' : 'Sign in'}
           </button>
         </form>
 
-        <div className="auth-divider">
-          <span>Don&apos;t have an account?</span>
+        <div className="apple-auth-footer">
+          <p style={{ marginBottom: '1rem', marginTop: '2rem' }}>New to MedNira?</p>
+          <Link href="/auth/register" className="apple-link">
+            Create an account <ArrowRight size={16} />
+          </Link>
         </div>
-
-        <Link href="/auth/register" className="btn btn-secondary btn-full">
-          Create a free account
-        </Link>
-
-        <p className="auth-legal">
-          By signing in, you agree to MedNira&apos;s{' '}
-          <a href="/privacy">Privacy Policy</a> and{' '}
-          <a href="/terms">Terms of Service</a>.
-        </p>
       </div>
     </div>
   );

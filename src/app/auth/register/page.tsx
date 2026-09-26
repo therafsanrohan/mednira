@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Shield, Mail, Lock, User, AlertCircle, CheckCircle, ArrowRight, Eye, EyeOff } from 'lucide-react';
+import { Shield, AlertCircle, CheckCircle, ArrowRight, Eye, EyeOff } from 'lucide-react';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -27,7 +27,7 @@ export default function RegisterPage() {
     if (score <= 1) return { label: 'Weak', color: '#e11d48', width: '25%' };
     if (score === 2) return { label: 'Fair', color: '#d97706', width: '50%' };
     if (score === 3) return { label: 'Good', color: '#16a34a', width: '75%' };
-    return { label: 'Strong', color: '#0284c7', width: '100%' };
+    return { label: 'Strong', color: '#0071e3', width: '100%' };
   })();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -72,86 +72,69 @@ export default function RegisterPage() {
 
   if (success) {
     return (
-      <div className="auth-page">
-        <div className="auth-card" style={{ textAlign: 'center' }}>
-          <div style={{ color: 'var(--success-green)', marginBottom: '1rem' }}>
-            <CheckCircle size={56} strokeWidth={1.5} style={{ margin: '0 auto' }} />
+      <div className="apple-auth-container">
+        <div className="apple-auth-card fade-in-up" style={{ textAlign: 'center' }}>
+          <div style={{ color: '#16a34a', marginBottom: '1rem', display: 'flex', justifyContent: 'center' }}>
+            <CheckCircle size={56} strokeWidth={1.5} />
           </div>
-          <h1 className="auth-title">Account created!</h1>
-          <p className="auth-subtitle">Redirecting you to sign in...</p>
+          <h2>Account created!</h2>
+          <p>Redirecting you to sign in...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="auth-page">
-      <div className="auth-card">
+    <div className="apple-auth-container">
+      <div className="apple-auth-card fade-in-up">
         {/* Logo & Header */}
-        <div className="auth-header">
-          <div className="auth-logo">
-            <Shield size={28} />
-          </div>
-          <h1 className="auth-title">Create your account</h1>
-          <p className="auth-subtitle">
-            Set up your emergency health identity in minutes
-          </p>
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem', color: '#0071e3' }}>
+          <Shield size={42} strokeWidth={1.5} />
         </div>
+        <h2>Create Account</h2>
+        <p>Set up your emergency identity</p>
 
         {/* Error Banner */}
         {error && (
-          <div className="auth-error">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.8rem', backgroundColor: '#ffe4e6', color: '#9f1239', borderRadius: '12px', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
             <AlertCircle size={16} />
             <span>{error}</span>
           </div>
         )}
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="auth-form" noValidate>
-          <div className="form-field">
-            <label htmlFor="fullName" className="form-label">
-              Full name
-            </label>
-            <div className="input-wrapper">
-              <User size={18} className="input-icon" />
-              <input
-                id="fullName"
-                type="text"
-                placeholder="Your full name"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                required
-                autoComplete="name"
-                className="auth-input"
-              />
-            </div>
+        <form onSubmit={handleSubmit} noValidate>
+          <div className="apple-input-group">
+            <label htmlFor="fullName">Full name</label>
+            <input
+              id="fullName"
+              type="text"
+              placeholder="John Doe"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              required
+              autoComplete="name"
+              className="apple-input"
+            />
           </div>
 
-          <div className="form-field">
-            <label htmlFor="email" className="form-label">
-              Email address
-            </label>
-            <div className="input-wrapper">
-              <Mail size={18} className="input-icon" />
-              <input
-                id="email"
-                type="email"
-                placeholder="you@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                autoComplete="email"
-                className="auth-input"
-              />
-            </div>
+          <div className="apple-input-group">
+            <label htmlFor="email">Email address</label>
+            <input
+              id="email"
+              type="email"
+              placeholder="name@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              autoComplete="email"
+              className="apple-input"
+            />
           </div>
 
-          <div className="form-field">
-            <label htmlFor="password" className="form-label">
-              Password
-            </label>
-            <div className="input-wrapper">
-              <Lock size={18} className="input-icon" />
+          <div className="apple-input-group">
+            <label htmlFor="password">Password</label>
+            <div style={{ position: 'relative' }}>
               <input
                 id="password"
                 type={showPassword ? 'text' : 'password'}
@@ -160,13 +143,13 @@ export default function RegisterPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 autoComplete="new-password"
-                className="auth-input has-toggle"
+                className="apple-input"
+                style={{ paddingRight: '2.5rem' }}
               />
               <button
                 type="button"
-                className="input-toggle"
                 onClick={() => setShowPassword(!showPassword)}
-                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                style={{ position: 'absolute', right: '0.8rem', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: '#86868b', cursor: 'pointer' }}
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
@@ -174,22 +157,20 @@ export default function RegisterPage() {
 
             {/* Password strength indicator */}
             {passwordStrength && (
-              <div className="password-strength">
-                <div className="strength-bar">
+              <div style={{ marginTop: '0.75rem' }}>
+                <div style={{ width: '100%', height: '4px', backgroundColor: '#e5e5ea', borderRadius: '2px', overflow: 'hidden' }}>
                   <div
-                    className="strength-fill"
                     style={{
                       width: passwordStrength.width,
                       backgroundColor: passwordStrength.color,
+                      height: '100%',
+                      transition: 'width 0.3s ease, background-color 0.3s ease'
                     }}
                   />
                 </div>
-                <span
-                  className="strength-label"
-                  style={{ color: passwordStrength.color }}
-                >
+                <div style={{ fontSize: '0.8rem', marginTop: '0.3rem', color: passwordStrength.color, fontWeight: 500, textAlign: 'right' }}>
                   {passwordStrength.label}
-                </span>
+                </div>
               </div>
             )}
           </div>
@@ -197,34 +178,24 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={loading || !fullName || !email || !password}
-            className="btn btn-primary btn-full auth-submit"
+            className="apple-auth-submit"
           >
-            {loading ? (
-              <>
-                <span className="spinner" />
-                Creating account...
-              </>
-            ) : (
-              <>
-                Create account <ArrowRight size={18} />
-              </>
-            )}
+            {loading ? 'Creating account...' : 'Create account'}
           </button>
         </form>
 
-        <div className="auth-divider">
-          <span>Already have an account?</span>
+        <div className="apple-auth-footer">
+          <p style={{ marginBottom: '1rem', marginTop: '1.5rem' }}>Already have an account?</p>
+          <Link href="/auth/login" className="apple-link">
+            Sign in <ArrowRight size={16} />
+          </Link>
+          
+          <p style={{ marginTop: '2rem', fontSize: '0.85rem', color: '#86868b', lineHeight: 1.5 }}>
+            By creating an account, you agree to MedNira&apos;s{' '}
+            <Link href="/privacy" style={{ color: '#0071e3', textDecoration: 'none' }}>Privacy Policy</Link> and{' '}
+            <Link href="/terms" style={{ color: '#0071e3', textDecoration: 'none' }}>Terms of Service</Link>.
+          </p>
         </div>
-
-        <Link href="/auth/login" className="btn btn-secondary btn-full">
-          Sign in
-        </Link>
-
-        <p className="auth-legal">
-          By creating an account, you agree to MedNira&apos;s{' '}
-          <a href="/privacy">Privacy Policy</a> and{' '}
-          <a href="/terms">Terms of Service</a>.
-        </p>
       </div>
     </div>
   );

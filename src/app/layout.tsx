@@ -43,21 +43,7 @@ export default async function RootLayout({
         <SessionProvider session={session}>
           <Navbar />
           <main>{children}</main>
-          <footer
-            style={{
-              borderTop: '1px solid #e2e8f0',
-              backgroundColor: '#ffffff',
-              padding: '2rem 1.25rem',
-              marginTop: '4rem',
-              textAlign: 'center',
-              color: 'var(--text-muted)',
-              fontSize: '0.85rem',
-            }}
-          >
-            <div style={{ maxWidth: '1120px', margin: '0 auto' }}>
-              <p>© 2026 MedNira Emergency Health Identity &amp; Response. Privacy-First. Field-Level Access Control.</p>
-            </div>
-          </footer>
+
         </SessionProvider>
       </body>
     </html>
