@@ -161,7 +161,7 @@ export default function MemberDashboard() {
               { key: 'FAMILY', label: 'Family Access', icon: User },
               { key: 'STORE', label: 'Card Store', icon: Droplet },
             ] as const).map(({ key, label, icon: Icon }) => (
-              <button key={key} onClick={() => { setActiveTab(key); window.history.pushState(null, '', `?tab=${key}`); }} className={`side-nav-btn ${activeTab === key ? 'active' : ''}`}>
+              <button key={key} onClick={() => { setActiveTab(key); window.history.pushState(null, '', '?tab=' + key); }} className={`side-nav-btn ${activeTab === key ? 'active' : ''}`}>
                 <Icon size={18} className="nav-icon" /> <span>{label}</span>
               </button>
             ))}
@@ -175,7 +175,7 @@ export default function MemberDashboard() {
               { key: 'DEVICES', label: 'Emergency IDs', icon: QrCode },
               { key: 'CONTACTS', label: 'Contacts', icon: Phone },
             ] as const).map(({ key, label, icon: Icon }) => (
-              <button key={key} onClick={() => { setActiveTab(key); window.history.pushState(null, '', `?tab=${key}`); }} className={`side-nav-btn ${activeTab === key ? 'active' : ''}`}>
+              <button key={key} onClick={() => { setActiveTab(key); window.history.pushState(null, '', '?tab=' + key); }} className={`side-nav-btn ${activeTab === key ? 'active' : ''}`}>
                 <Icon size={18} className="nav-icon" /> <span>{label}</span>
                 {['ITEMS', 'DEVICES', 'CONTACTS'].includes(key) && (
                   <span className="nav-count">
@@ -188,7 +188,7 @@ export default function MemberDashboard() {
 
           <div className="nav-group-label" style={{ marginTop: 'auto' }}>Account</div>
           <nav className="sidebar-nav">
-             <button onClick={() => { setActiveTab('SETTINGS'); window.history.pushState(null, '', `?tab=SETTINGS`); }} className={`side-nav-btn ${activeTab === 'SETTINGS' ? 'active' : ''}`}>
+             <button onClick={() => { setActiveTab('SETTINGS'); window.history.pushState(null, '', '?tab=SETTINGS'); }} className={`side-nav-btn ${activeTab === 'SETTINGS' ? 'active' : ''}`}>
                 <Settings size={18} className="nav-icon" /> <span>Settings</span>
              </button>
           </nav>
@@ -684,7 +684,7 @@ export default function MemberDashboard() {
           { key: 'STORE', icon: Droplet },
           { key: 'SETTINGS', icon: Settings },
         ] as const).map(({ key, icon: Icon }) => (
-          <button key={key} onClick={() => { setActiveTab(key); window.history.pushState(null, '', `?tab=${key}`); }} className={`bottom-nav-btn ${activeTab === key ? 'active' : ''}`}>
+          <button key={key} onClick={() => { setActiveTab(key); window.history.pushState(null, '', '?tab=' + key); }} className={`bottom-nav-btn ${activeTab === key ? 'active' : ''}`}>
             <Icon size={22} className="nav-icon" />
           </button>
         ))}
