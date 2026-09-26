@@ -5,7 +5,8 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import {
   Shield, Plus, QrCode, Phone, RefreshCw, Snowflake, Ban, CheckCircle, Trash2, 
-  ExternalLink, Lock, Eye, HeartPulse, Home, Activity, ChevronRight, ScanFace, Droplet
+  ExternalLink, Lock, Eye, HeartPulse, Home, Activity, ChevronRight, ScanFace, Droplet,
+  Settings, User
 } from 'lucide-react';
 import QRCode from 'react-qr-code';
 
