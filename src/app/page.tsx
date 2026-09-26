@@ -28,7 +28,7 @@ export default function Home() {
 
         <div className="hero-content">
           <h1 className="apple-title-massive fade-in-up">
-            Your Medical ID.<br />
+            Your Medical ID<br />
             <span className="text-gradient">Always with you.</span>
           </h1>
           
@@ -386,6 +386,7 @@ export default function Home() {
         .apple-btn-primary { background: #0071e3; color: white; box-shadow: 0 4px 14px rgba(0,113,227,0.3); }
         .apple-btn-primary:hover { background: #0077ed; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,113,227,0.4); }
         .apple-link-large { display: inline-flex; align-items: center; justify-content: center; gap: 0.3rem; font-size: 1.1rem; color: #0071e3; font-weight: 500; text-decoration: none; }
+        .apple-cta-group { display: flex; align-items: center; justify-content: center; gap: 1.5rem; flex-wrap: wrap; width: 100%; margin-top: 1rem; }
         
         .apple-about-section { padding: 6rem 1.5rem; background: #ffffff; width: 100%; border-bottom: 1px solid #f5f5f7; display: flex; justify-content: center; }
         .about-container { max-width: 1000px; width: 100%; display: flex; align-items: center; gap: 4rem; }
