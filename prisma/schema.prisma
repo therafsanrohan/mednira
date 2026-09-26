@@ -60,6 +60,7 @@ model User {
   passwordHash   String?         // null for OAuth users
   role           UserRole        @default(USER)
   status         UserStatus      @default(ACTIVE)
+  userProfile    Profile?
   profile        MedicalProfile?
   deviceTokens   DeviceToken[]
   accounts       Account[]
@@ -69,6 +70,22 @@ model User {
   accessLogs     AccessLog[]
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
+}
+
+model Profile {
+  id             String    @id @default(uuid())
+  userId         String    @unique
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  phoneNumber    String?
+  address        String?
+  city           String?
+  country        String?
+  gender         String?
+  dateOfBirth    String?
+  avatarUrl      String?
+  bio            String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 }
 
 enum UserRole {
