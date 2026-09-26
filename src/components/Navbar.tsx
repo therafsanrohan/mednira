@@ -12,7 +12,6 @@ import {
   User,
   LogOut,
   Settings,
-  ChevronDown,
   Menu,
   X,
 } from 'lucide-react';
@@ -28,10 +27,9 @@ export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdown on outside click
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
@@ -42,25 +40,31 @@ export default function Navbar() {
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
 
-  // Close mobile menu on route change
   useEffect(() => {
-    setMobileOpen(false);
+    setMobileMenuOpen(false);
+    if (document.body) {
+      document.body.style.overflow = 'auto';
+    }
   }, [pathname]);
+
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
+    if (document.body) {
+      document.body.style.overflow = !mobileMenuOpen ? 'hidden' : 'auto';
+    }
+  };
 
   const isAuthenticated = status === 'authenticated' && session?.user;
   const isAuthPage = pathname.startsWith('/auth/');
   const user = session?.user;
+
   const initials = user?.name
-    ? user.name
-        .split(' ')
-        .map((n) => n[0])
-        .slice(0, 2)
-        .join('')
-        .toUpperCase()
+    ? user.name.split(' ').map((n) => n[0]).slice(0, 2).join('').toUpperCase()
     : '?';
 
   const handleSignOut = async () => {
     setDropdownOpen(false);
+    setMobileMenuOpen(false);
     await signOut({ redirect: false });
     router.push('/');
     router.refresh();
@@ -69,216 +73,424 @@ export default function Navbar() {
   if (pathname.startsWith('/dashboard')) return null;
 
   return (
-    <header
-      style={{
-        position: 'sticky',
-        top: 0,
-        zIndex: 100,
-        backgroundColor: 'rgba(255, 255, 255, 0.92)',
-        backdropFilter: 'blur(16px)',
-        WebkitBackdropFilter: 'blur(16px)',
-        borderBottom: '1px solid var(--border-subtle)',
-        height: '64px',
-        display: 'flex',
-        alignItems: 'center',
-      }}
-    >
-      <div
-        style={{
-          width: '100%',
-          maxWidth: '1120px',
-          margin: '0 auto',
-          padding: '0 1.25rem',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: '1.5rem',
-        }}
-      >
-        {/* Logo */}
-        <Link
-          href={isAuthenticated ? '/dashboard' : '/'}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.625rem',
-            textDecoration: 'none',
-            flexShrink: 0,
-          }}
-        >
-          <div
-            style={{
-              width: '34px',
-              height: '34px',
-              borderRadius: '9px',
-              background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              boxShadow: '0 2px 8px rgba(2,132,199,0.3)',
-            }}
-          >
+    <header className={`premium-navbar ${mobileMenuOpen ? 'mobile-open' : ''}`}>
+      <div className="navbar-container">
+        <Link href={isAuthenticated ? '/dashboard' : '/'} className="nav-brand" onClick={() => setMobileMenuOpen(false)}>
+          <div className="brand-logo-container">
             <Shield size={18} color="white" strokeWidth={2.5} />
           </div>
-          <span
-            style={{
-              fontWeight: 900,
-              fontSize: '1.15rem',
-              color: '#0f172a',
-              letterSpacing: '-0.025em',
-            }}
-          >
-            MedNira
-          </span>
+          <span className="brand-text">MedNira</span>
         </Link>
 
-        {/* Desktop Nav Links (only when authenticated and not on landing page) */}
         {isAuthenticated && !isAuthPage && pathname !== '/' && (
-          <nav
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.25rem',
-              flex: 1,
-            }}
-            aria-label="Main navigation"
-          >
+          <nav className="desktop-nav">
             {NAV_LINKS.map(({ href, label, icon: Icon }) => {
-              const active =
-                href === '/dashboard'
-                  ? pathname === '/dashboard'
-                  : pathname.startsWith(href);
+              const active = href === '/dashboard' ? pathname === '/dashboard' : pathname.startsWith(href);
               return (
-                <Link
-                  key={href}
-                  href={href}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.4rem',
-                    padding: '0.45rem 0.875rem',
-                    borderRadius: '0.5rem',
-                    fontSize: '0.9rem',
-                    fontWeight: active ? 700 : 600,
-                    color: active ? 'var(--brand-blue)' : 'var(--text-secondary)',
-                    backgroundColor: active ? '#e0f2fe' : 'transparent',
-                    textDecoration: 'none',
-                    transition: 'all 0.15s ease',
-                  }}
-                  aria-current={active ? 'page' : undefined}
-                >
+                <Link key={href} href={href} className={`nav-link ${active ? 'active' : ''}`}>
                   <Icon size={16} />
-                  <span className="nav-label">{label}</span>
+                  <span>{label}</span>
                 </Link>
               );
             })}
           </nav>
         )}
 
-        {/* Right section */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexShrink: 0 }}>
+        <div className="nav-right">
           {status === 'loading' ? (
-            <div
-              style={{
-                width: '36px',
-                height: '36px',
-                borderRadius: '50%',
-                background: 'var(--border-subtle)',
-                animation: 'pulse 1.5s ease infinite',
-              }}
-            />
+            <div className="nav-loading-pulse" />
           ) : isAuthenticated ? (
             pathname === '/' ? (
-              <Link href="/dashboard" className="btn btn-primary" style={{ minHeight: '38px', padding: '0.5rem 1rem', fontSize: '0.9rem' }}>
+              <Link href="/dashboard" className="btn btn-primary premium-btn desktop-only">
                 Dashboard
               </Link>
             ) : (
-            <div className="nav-user-menu" ref={dropdownRef}>
-              <button
-                className="nav-avatar"
-                onClick={() => setDropdownOpen(!dropdownOpen)}
-                aria-label="Open user menu"
-                aria-expanded={dropdownOpen}
-                aria-haspopup="true"
-              >
-                {initials}
-              </button>
+              <div className="nav-user-menu desktop-only" ref={dropdownRef}>
+                <button className="nav-avatar" onClick={() => setDropdownOpen(!dropdownOpen)}>
+                  {initials}
+                </button>
 
-              {dropdownOpen && (
-                <div className="nav-dropdown" role="menu">
-                  {/* User info */}
-                  <div className="nav-user-info">
-                    <div className="nav-user-name">{user?.name || 'User'}</div>
-                    <div className="nav-user-email">{user?.email}</div>
+                {dropdownOpen && (
+                  <div className="nav-dropdown">
+                    <div className="nav-user-info">
+                      <div className="nav-user-name">{user?.name || 'User'}</div>
+                      <div className="nav-user-email">{user?.email}</div>
+                    </div>
+                    <div className="nav-separator" />
+                    <Link href="/dashboard" className="nav-dropdown-item" onClick={() => setDropdownOpen(false)}><Home size={16} /> Dashboard</Link>
+                    <Link href="/dashboard/emergency-id" className="nav-dropdown-item" onClick={() => setDropdownOpen(false)}><QrCode size={16} /> Emergency ID</Link>
+                    <Link href="/dashboard/profile" className="nav-dropdown-item" onClick={() => setDropdownOpen(false)}><User size={16} /> Profile</Link>
+                    <Link href="/dashboard/settings" className="nav-dropdown-item" onClick={() => setDropdownOpen(false)}><Settings size={16} /> Settings</Link>
+                    <div className="nav-separator" />
+                    <button className="nav-dropdown-item danger" onClick={handleSignOut}><LogOut size={16} /> Sign out</button>
                   </div>
-                  <div className="nav-dropdown-separator" />
-
-                  <Link
-                    href="/dashboard"
-                    className="nav-dropdown-item"
-                    role="menuitem"
-                    onClick={() => setDropdownOpen(false)}
-                  >
-                    <Home size={16} /> Dashboard
-                  </Link>
-                  <Link
-                    href="/dashboard/emergency-id"
-                    className="nav-dropdown-item"
-                    role="menuitem"
-                    onClick={() => setDropdownOpen(false)}
-                  >
-                    <QrCode size={16} /> Emergency ID
-                  </Link>
-                  <Link
-                    href="/dashboard/profile"
-                    className="nav-dropdown-item"
-                    role="menuitem"
-                    onClick={() => setDropdownOpen(false)}
-                  >
-                    <User size={16} /> Profile
-                  </Link>
-                  <Link
-                    href="/dashboard/settings"
-                    className="nav-dropdown-item"
-                    role="menuitem"
-                    onClick={() => setDropdownOpen(false)}
-                  >
-                    <Settings size={16} /> Settings
-                  </Link>
-
-                  <div className="nav-dropdown-separator" />
-
-                  <button
-                    className="nav-dropdown-item danger"
-                    role="menuitem"
-                    onClick={handleSignOut}
-                  >
-                    <LogOut size={16} /> Sign out
-                  </button>
-                </div>
-              )}
-            </div>
+                )}
+              </div>
             )
           ) : !isAuthPage ? (
-            <div style={{ display: 'flex', gap: '0.5rem' }}>
-              <Link href="/auth/login" className="btn btn-secondary" style={{ minHeight: '38px', padding: '0.5rem 1rem', fontSize: '0.9rem' }}>
-                Sign in
-              </Link>
-              <Link href="/auth/register" className="btn btn-primary" style={{ minHeight: '38px', padding: '0.5rem 1rem', fontSize: '0.9rem' }}>
-                Get started
-              </Link>
+            <div className="nav-auth-buttons desktop-only">
+              <Link href="/auth/login" className="btn btn-secondary premium-btn-outline">Sign in</Link>
+              <Link href="/auth/register" className="btn btn-primary premium-btn">Get started</Link>
             </div>
           ) : null}
+
+          {/* Mobile Menu Toggle */}
+          {!isAuthPage && (
+            <button className="mobile-menu-btn" onClick={toggleMobileMenu}>
+              {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Mobile Fullscreen Menu */}
+      <div className={`mobile-menu-overlay ${mobileMenuOpen ? 'open' : ''}`}>
+        <div className="mobile-menu-content">
+          {isAuthenticated ? (
+            <>
+              <div className="mobile-user-profile">
+                <div className="nav-avatar large">{initials}</div>
+                <div>
+                  <div className="mobile-user-name">{user?.name}</div>
+                  <div className="mobile-user-email">{user?.email}</div>
+                </div>
+              </div>
+              <div className="mobile-nav-links">
+                {pathname !== '/' && NAV_LINKS.map(({ href, label, icon: Icon }) => (
+                  <Link key={href} href={href} className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
+                    <Icon size={20} /> {label}
+                  </Link>
+                ))}
+                {pathname === '/' && (
+                  <Link href="/dashboard" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
+                    <Home size={20} /> Dashboard
+                  </Link>
+                )}
+                {pathname !== '/' && (
+                  <>
+                    <Link href="/dashboard/profile" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
+                      <User size={20} /> Profile
+                    </Link>
+                    <Link href="/dashboard/settings" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
+                      <Settings size={20} /> Settings
+                    </Link>
+                  </>
+                )}
+              </div>
+              <button className="mobile-nav-link danger" onClick={handleSignOut} style={{ marginTop: 'auto' }}>
+                <LogOut size={20} /> Sign out
+              </button>
+            </>
+          ) : (
+            <div className="mobile-auth-actions">
+              <Link href="/auth/register" className="btn btn-primary premium-btn w-full text-center py-3" style={{ justifyContent: 'center' }} onClick={() => setMobileMenuOpen(false)}>
+                Create your Emergency ID
+              </Link>
+              <Link href="/auth/login" className="btn btn-secondary premium-btn-outline w-full text-center py-3 mt-3" style={{ justifyContent: 'center' }} onClick={() => setMobileMenuOpen(false)}>
+                Sign in to account
+              </Link>
+            </div>
+          )}
         </div>
       </div>
 
       <style>{`
-        @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.5; }
+        .premium-navbar {
+          position: sticky;
+          top: 0;
+          z-index: 1000;
+          background: rgba(251, 251, 253, 0.85);
+          backdrop-filter: saturate(180%) blur(20px);
+          -webkit-backdrop-filter: saturate(180%) blur(20px);
+          border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+          height: 68px;
+          display: flex;
+          align-items: center;
+          transition: background 0.3s ease;
         }
-        @media (max-width: 640px) {
-          .nav-label { display: none; }
+
+        .premium-navbar.mobile-open {
+          background: #ffffff;
+        }
+
+        .navbar-container {
+          width: 100%;
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 0 1.5rem;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+
+        .nav-brand {
+          display: flex;
+          align-items: center;
+          gap: 0.6rem;
+          text-decoration: none;
+          z-index: 1001;
+        }
+
+        .brand-logo-container {
+          width: 32px;
+          height: 32px;
+          border-radius: 8px;
+          background: linear-gradient(135deg, #0071e3 0%, #43b9ff 100%);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 4px 12px rgba(0, 113, 227, 0.3);
+        }
+
+        .brand-text {
+          font-weight: 800;
+          font-size: 1.25rem;
+          color: #1d1d1f;
+          letter-spacing: -0.03em;
+        }
+
+        .desktop-nav {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          flex: 1;
+          margin-left: 2rem;
+        }
+
+        .nav-link {
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+          padding: 0.5rem 0.875rem;
+          border-radius: 99px;
+          font-size: 0.9rem;
+          font-weight: 600;
+          color: #424245;
+          text-decoration: none;
+          transition: all 0.2s ease;
+        }
+
+        .nav-link:hover {
+          color: #1d1d1f;
+          background: rgba(0, 0, 0, 0.04);
+        }
+
+        .nav-link.active {
+          color: #0071e3;
+          background: rgba(0, 113, 227, 0.1);
+        }
+
+        .nav-right {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          z-index: 1001;
+        }
+
+        .nav-auth-buttons {
+          display: flex;
+          gap: 0.75rem;
+        }
+
+        .premium-btn {
+          min-height: 40px;
+          padding: 0 1.25rem;
+          border-radius: 99px;
+          font-size: 0.95rem;
+          font-weight: 600;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: #0071e3;
+          color: white;
+          border: none;
+          transition: all 0.2s ease;
+        }
+
+        .premium-btn:hover {
+          background: #0077ed;
+          transform: scale(1.02);
+        }
+
+        .premium-btn-outline {
+          min-height: 40px;
+          padding: 0 1.25rem;
+          border-radius: 99px;
+          font-size: 0.95rem;
+          font-weight: 600;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: rgba(0,0,0,0.04);
+          color: #1d1d1f;
+          border: none;
+          transition: all 0.2s ease;
+        }
+
+        .premium-btn-outline:hover {
+          background: rgba(0,0,0,0.08);
+        }
+
+        .nav-avatar {
+          width: 38px;
+          height: 38px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #0071e3 0%, #43b9ff 100%);
+          color: white;
+          font-size: 0.9rem;
+          font-weight: 700;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border: none;
+          cursor: pointer;
+          box-shadow: 0 2px 8px rgba(0, 113, 227, 0.2);
+        }
+
+        .nav-avatar.large {
+          width: 50px;
+          height: 50px;
+          font-size: 1.2rem;
+        }
+
+        .nav-user-menu {
+          position: relative;
+        }
+
+        .nav-dropdown {
+          position: absolute;
+          top: calc(100% + 0.5rem);
+          right: 0;
+          min-width: 240px;
+          background: #ffffff;
+          border: 1px solid rgba(0,0,0,0.08);
+          border-radius: 16px;
+          padding: 0.5rem;
+          box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+          animation: dropIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes dropIn {
+          from { opacity: 0; transform: translateY(-10px) scale(0.95); }
+          to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .nav-user-info {
+          padding: 0.75rem 1rem;
+        }
+        .nav-user-name { font-weight: 700; color: #1d1d1f; font-size: 0.95rem; }
+        .nav-user-email { color: #86868b; font-size: 0.8rem; margin-top: 0.2rem; }
+
+        .nav-dropdown-item {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          padding: 0.75rem 1rem;
+          border-radius: 10px;
+          font-size: 0.9rem;
+          font-weight: 600;
+          color: #424245;
+          text-decoration: none;
+          border: none;
+          background: none;
+          width: 100%;
+          text-align: left;
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+
+        .nav-dropdown-item:hover {
+          background: #f5f5f7;
+          color: #1d1d1f;
+        }
+        .nav-dropdown-item.danger { color: #e11d48; }
+        .nav-dropdown-item.danger:hover { background: #fff1f2; }
+
+        .nav-separator { height: 1px; background: rgba(0,0,0,0.05); margin: 0.5rem 0; }
+
+        .nav-loading-pulse {
+          width: 38px; height: 38px; border-radius: 50%;
+          background: rgba(0,0,0,0.05);
+          animation: pulse 1.5s infinite;
+        }
+
+        .mobile-menu-btn {
+          display: none;
+          background: none;
+          border: none;
+          color: #1d1d1f;
+          cursor: pointer;
+          padding: 0.25rem;
+        }
+
+        .mobile-menu-overlay {
+          position: fixed;
+          top: 0; left: 0; right: 0; bottom: 0;
+          background: #ffffff;
+          z-index: 999;
+          padding-top: 80px;
+          opacity: 0;
+          pointer-events: none;
+          transform: translateY(-10px);
+          transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .mobile-menu-overlay.open {
+          opacity: 1;
+          pointer-events: auto;
+          transform: translateY(0);
+        }
+
+        .mobile-menu-content {
+          padding: 2rem 1.5rem;
+          display: flex;
+          flex-direction: column;
+          height: 100%;
+          max-width: 600px;
+          margin: 0 auto;
+        }
+
+        .mobile-user-profile {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          padding-bottom: 2rem;
+          border-bottom: 1px solid rgba(0,0,0,0.05);
+          margin-bottom: 2rem;
+        }
+        .mobile-user-name { font-size: 1.25rem; font-weight: 700; color: #1d1d1f; }
+        .mobile-user-email { font-size: 0.95rem; color: #86868b; }
+
+        .mobile-nav-links {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+
+        .mobile-nav-link {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          padding: 1rem;
+          font-size: 1.1rem;
+          font-weight: 600;
+          color: #1d1d1f;
+          text-decoration: none;
+          border-radius: 16px;
+          background: rgba(0,0,0,0.02);
+          border: none;
+          text-align: left;
+        }
+        .mobile-nav-link.danger { color: #e11d48; background: #fff1f2; margin-top: auto; }
+
+        .w-full { width: 100%; }
+        .text-center { text-align: center; }
+        .py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+        .mt-3 { margin-top: 0.75rem; }
+
+        @media (max-width: 768px) {
+          .desktop-only { display: none !important; }
+          .mobile-menu-btn { display: flex; align-items: center; justify-content: center; }
         }
       `}</style>
     </header>
