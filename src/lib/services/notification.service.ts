@@ -2,8 +2,8 @@ import { prisma } from '@/lib/prisma';
 import twilio from 'twilio';
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-const twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+const getResend = () => process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
+const getTwilioClient = () => (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN) ? twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN) : null;
 
 
 export interface DispatchNotificationPayload {
@@ -70,7 +70,8 @@ export class NotificationService {
           .join(' ');
 
         // Send SMS via Twilio
-        if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN && process.env.TWILIO_PHONE_NUMBER) {
+        const twilioClient = getTwilioClient();
+        if (twilioClient && process.env.TWILIO_PHONE_NUMBER) {
           await twilioClient.messages.create({
             body: messageBody,
             from: process.env.TWILIO_PHONE_NUMBER,
