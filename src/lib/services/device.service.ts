@@ -88,8 +88,10 @@ export class DeviceService {
           include: {
             profile: {
               include: {
-                items: true,
-                contacts: { orderBy: { priority: 'asc' } },
+                allergies: { where: { visibility: 'PUBLIC_EMERGENCY' } },
+                conditions: { where: { visibility: 'PUBLIC_EMERGENCY' } },
+                medications: { where: { visibility: 'PUBLIC_EMERGENCY' } },
+                contacts: { where: { visibility: 'PUBLIC_EMERGENCY' }, orderBy: { priority: 'asc' } },
               },
             },
           },

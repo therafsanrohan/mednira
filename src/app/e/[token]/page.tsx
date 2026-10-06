@@ -1,380 +1,197 @@
-'use client';
+import { DeviceService } from '@/lib/services/device.service';
+import { buildEmergencyProfileDTO } from '@/lib/dto/emergency.dto';
+import { ShieldAlert, Phone, AlertTriangle, Activity, Syringe, Lock, ShieldCheck, HeartPulse } from 'lucide-react';
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
 
-import { use, useEffect, useState } from 'react';
-import { EmergencyProfileDTO } from '@/lib/dto/emergency.dto';
-import { AlertTriangle, Phone, ShieldAlert, HeartPulse, Pill, CheckCircle2, Navigation } from 'lucide-react';
+export default async function PublicEmergencyProfile({ params }: { params: Promise<{ token: string }> }) {
+  const { token } = await params;
+  
+  if (!token) return notFound();
 
-export default function EmergencyScanPage({ params }: { params: Promise<{ token: string }> }) {
-  const { token } = use(params);
-  const [profile, setProfile] = useState<EmergencyProfileDTO | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const result = await DeviceService.resolveEmergencyToken(token);
 
-  // Incident trigger state
-  const [triggering, setTriggering] = useState(false);
-  const [incidentSuccess, setIncidentSuccess] = useState<string | null>(null);
-  const [responderNote, setResponderNote] = useState('');
-  const [locationStatus, setLocationStatus] = useState<string | null>(null);
-
-  useEffect(() => {
-    async function fetchEmergencyProfile() {
-      try {
-        const res = await fetch(`/api/v1/emergency/${token}`);
-        if (!res.ok) {
-          const data = await res.json().catch(() => ({}));
-          throw new Error(data.error || 'Unable to access emergency profile');
-        }
-        const data: EmergencyProfileDTO = await res.json();
-        setProfile(data);
-      } catch (err: any) {
-        setError(err.message || 'Error loading profile');
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchEmergencyProfile();
-  }, [token]);
-
-  const handleTriggerEmergency = async () => {
-    setTriggering(true);
-    setError(null);
-    setLocationStatus('Acquiring responder GPS location...');
-    
-    try {
-      let locationLat: number | undefined;
-      let locationLng: number | undefined;
-
-      if ('geolocation' in navigator) {
-        try {
-          const pos = await new Promise<GeolocationPosition>((res, rej) =>
-            navigator.geolocation.getCurrentPosition(res, rej, { timeout: 4000, enableHighAccuracy: true })
-          );
-          locationLat = pos.coords.latitude;
-          locationLng = pos.coords.longitude;
-          setLocationStatus(`GPS Locked: ${locationLat.toFixed(4)}, ${locationLng.toFixed(4)}`);
-        } catch (_) {
-          setLocationStatus('GPS unavailable. Alert proceeding with standard scan timestamp.');
-        }
-      }
-
-      const res = await fetch(`/api/v1/emergency/${token}/incident`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          locationLat,
-          locationLng,
-          responderNote: responderNote || 'Responder emergency scan dispatch',
-        }),
-      });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to dispatch alert');
-
-      setIncidentSuccess(data.message || 'Emergency contacts notified!');
-    } catch (err: any) {
-      setError(err.message || 'Error initiating emergency alert');
-    } finally {
-      setTriggering(false);
-    }
-  };
-
-  if (loading) {
+  if (result.status === 'FROZEN' || result.status === 'REVOKED' || result.status === 'INACTIVE' || !result.user) {
     return (
-      <div className="container-narrow" style={{ textAlign: 'center', paddingTop: '5rem', paddingBottom: '5rem' }}>
-        <div style={{ display: 'inline-block', width: '40px', height: '40px', border: '4px solid #cbd5e1', borderTopColor: '#e11d48', borderRadius: '50%', animation: 'spin 1s linear infinite', marginBottom: '1rem' }} />
-        <div style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>Retrieving Emergency Medical Identity...</div>
-        <style jsx>{`
-          @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        `}</style>
+      <div className="flex flex-col items-center justify-center min-h-[80vh] px-4 text-center">
+        <ShieldAlert className="w-16 h-16 text-rose-500 mb-4" />
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Invalid Emergency ID</h1>
+        <p className="text-slate-600 dark:text-slate-400 mt-2 max-w-md">
+          {result.status === 'FROZEN' ? 'This device emergency profile is currently frozen by the member.' : 
+           result.status === 'REVOKED' ? 'This MedNira ID has been revoked.' :
+           'This medical ID is no longer active. The information cannot be displayed.'}
+        </p>
       </div>
     );
   }
 
-  if (error || !profile) {
-    return (
-      <div className="container-narrow" style={{ paddingTop: '3rem' }}>
-        <div className="card" style={{ borderColor: 'var(--emergency-red)', textAlign: 'center' }}>
-          <ShieldAlert size={56} color="var(--emergency-red)" style={{ margin: '0 auto 1rem auto' }} />
-          <h2 style={{ color: '#0f172a', marginBottom: '0.5rem', fontSize: '1.5rem', fontWeight: 800 }}>Emergency Profile Inaccessible</h2>
-          <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem', fontSize: '0.95rem' }}>
-            {error || 'The requested emergency token is inactive, frozen, or revoked.'}
-          </p>
-          <a href="/" className="btn btn-secondary">
-            Return to Safety Portal
-          </a>
-        </div>
-      </div>
-    );
+  const p = buildEmergencyProfileDTO(token, result.user);
+
+  // Compute Age
+  let age = 'Unknown Age';
+  if (p.dateOfBirth) {
+    const dob = new Date(p.dateOfBirth);
+    const diff = Date.now() - dob.getTime();
+    const ageDate = new Date(diff); 
+    age = `${Math.abs(ageDate.getUTCFullYear() - 1970)} Years`;
   }
+
+  const hasCriticalData = p.allergies.some(a => a.severity === 'LIFE_THREATENING') || 
+                          p.conditions.length > 0 || 
+                          p.medications.length > 0;
 
   return (
-    <div className="container-narrow">
-      {/* Emergency Header Warning */}
-      <div
-        style={{
-          backgroundColor: '#ffe4e6',
-          border: '1px solid #f43f5e',
-          padding: '0.875rem 1.25rem',
-          borderRadius: '0.75rem',
-          marginBottom: '1.25rem',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.875rem',
-          boxShadow: '0 4px 12px rgba(225, 29, 72, 0.1)',
-        }}
-      >
-        <ShieldAlert color="var(--emergency-red)" size={28} style={{ flexShrink: 0 }} />
-        <div>
-          <div style={{ fontSize: '0.9rem', color: '#9f1239', fontWeight: 800 }}>FIRST RESPONDER EMERGENCY VIEW</div>
-          <div style={{ fontSize: '0.75rem', color: '#be123c' }}>Verified Public Emergency Record • Privacy Enforced</div>
+    <div className="max-w-[420px] mx-auto min-h-screen bg-white dark:bg-slate-950 pb-12 shadow-2xl relative">
+      
+      {/* HEADER */}
+      <header className="sticky top-0 z-10 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 px-4 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <HeartPulse className="w-6 h-6 text-rose-500" />
+          <span className="font-bold tracking-tight text-slate-900 dark:text-white">MEDNIRA</span>
         </div>
-      </div>
+        <div className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 rounded-full text-xs font-semibold">
+          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
+          Active
+        </div>
+      </header>
 
-      {/* Primary Identity & Critical Medical Metrics */}
-      <div className="card">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem', marginBottom: '1.25rem' }}>
-          <div>
-            <h1 style={{ fontSize: '2rem', fontWeight: 900, color: '#0f172a', letterSpacing: '-0.02em', lineHeight: 1.2 }}>
-              {profile.memberName}
-            </h1>
-            {profile.dateOfBirth && (
-              <div style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: '0.25rem', fontWeight: 500 }}>
-                DOB: <strong>{profile.dateOfBirth}</strong>
-              </div>
-            )}
+      <main className="px-4 py-6 space-y-8">
+        
+        {/* IDENTITY */}
+        <section className="text-center">
+          <div className="w-24 h-24 bg-slate-200 dark:bg-slate-800 rounded-full mx-auto mb-4 border-4 border-white dark:border-slate-950 shadow-sm flex items-center justify-center">
+            <span className="text-3xl font-bold text-slate-400">{p.memberName.charAt(0)}</span>
           </div>
-
-          {/* Blood Type Badge */}
-          {profile.bloodType && (
-            <div
-              style={{
-                background: 'linear-gradient(135deg, #e11d48 0%, #be123c 100%)',
-                color: 'white',
-                padding: '0.625rem 1.125rem',
-                borderRadius: '0.75rem',
-                textAlign: 'center',
-                boxShadow: '0 4px 14px rgba(225, 29, 72, 0.3)',
-                flexShrink: 0,
-              }}
-            >
-              <div style={{ fontSize: '0.65rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em' }}>BLOOD TYPE</div>
-              <div style={{ fontSize: '1.65rem', fontWeight: 900, lineHeight: 1.1 }}>{profile.bloodType}</div>
-            </div>
-          )}
-        </div>
-
-        {/* Resuscitation / Organ Donor Flags */}
-        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1.25rem' }}>
-          {profile.dnrStatus && (
-            <span className="badge badge-critical" style={{ fontSize: '0.8rem', padding: '0.4rem 0.85rem' }}>
-              DNR / DO NOT RESUSCITATE
+          <h1 className="text-2xl font-black text-slate-900 dark:text-white">{p.memberName}</h1>
+          <div className="flex items-center justify-center gap-2 mt-2 text-slate-600 dark:text-slate-400 text-sm">
+            <span>{age}</span>
+            <span>•</span>
+            <span className="font-semibold text-rose-600 dark:text-rose-400 flex items-center gap-1">
+              Blood: {p.bloodType ? `${p.bloodType}${p.rhFactor || ''}` : 'Unknown'}
             </span>
-          )}
-          {profile.organDonor && (
-            <span className="badge badge-success" style={{ fontSize: '0.8rem', padding: '0.4rem 0.85rem' }}>
-              ORGAN DONOR
-            </span>
-          )}
-        </div>
-
-        {/* Emergency Notes */}
-        {profile.emergencyNotes && (
-          <div
-            style={{
-              backgroundColor: '#fef3c7',
-              border: '1px solid #f59e0b',
-              borderRadius: '0.625rem',
-              padding: '1rem',
-              borderLeft: '5px solid #d97706',
-            }}
-          >
-            <div style={{ fontSize: '0.75rem', color: '#92400e', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.35rem' }}>
-              CRITICAL RESPONDER INSTRUCTION
-            </div>
-            <div style={{ fontSize: '1rem', color: '#78350f', fontWeight: 700 }}>{profile.emergencyNotes}</div>
           </div>
+          {p.bloodType && (
+            <p className="text-xs text-slate-500 mt-1 flex items-center justify-center gap-1">
+              Self Reported
+            </p>
+          )}
+        </section>
+
+        {/* CRITICAL ALERT ZONE */}
+        {hasCriticalData && (
+          <section className="bg-rose-50 dark:bg-rose-950/30 border-l-4 border-rose-500 p-4 rounded-r-xl">
+            <h2 className="text-rose-800 dark:text-rose-400 font-bold flex items-center gap-2 mb-3">
+              <AlertTriangle className="w-5 h-5" /> CRITICAL ALERTS
+            </h2>
+            <div className="space-y-3">
+              {p.allergies.filter(a => a.severity === 'LIFE_THREATENING').map((a, idx) => (
+                <div key={idx}>
+                  <p className="font-semibold text-rose-900 dark:text-rose-200">{a.substance} Allergy</p>
+                  {a.reaction && <p className="text-sm text-rose-700 dark:text-rose-300">Reaction: {a.reaction}</p>}
+                </div>
+              ))}
+              {p.conditions.map((c, idx) => (
+                <div key={`c-${idx}`}>
+                  <p className="font-semibold text-rose-900 dark:text-rose-200">{c.conditionName}</p>
+                </div>
+              ))}
+            </div>
+          </section>
         )}
-      </div>
 
-      {/* Severe Allergies */}
-      {profile.allergies.length > 0 && (
-        <div className="card card-emergency">
-          <h3 style={{ color: '#9f1239', display: 'flex', alignItems: 'center', gap: '0.625rem', marginBottom: '1rem', fontSize: '1.15rem' }}>
-            <AlertTriangle color="var(--emergency-red)" size={22} /> Severe Allergies
-          </h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
-            {profile.allergies.map((allergy, idx) => (
-              <div
-                key={idx}
-                style={{
-                  backgroundColor: '#ffffff',
-                  padding: '0.875rem 1rem',
-                  borderRadius: '0.5rem',
-                  border: '1px solid #fca5a5',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                }}
-              >
-                <div>
-                  <strong style={{ color: '#0f172a', fontSize: '1rem' }}>{allergy.name}</strong>
-                  {allergy.description && <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '0.15rem' }}>{allergy.description}</div>}
-                </div>
-                {allergy.severity && <span className="badge badge-critical">{allergy.severity}</span>}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Critical Conditions */}
-      {profile.conditions.length > 0 && (
-        <div className="card">
-          <h3 style={{ color: '#0f172a', display: 'flex', alignItems: 'center', gap: '0.625rem', marginBottom: '1rem', fontSize: '1.15rem' }}>
-            <HeartPulse color="var(--amber-warning)" size={22} /> Medical Conditions
-          </h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
-            {profile.conditions.map((cond, idx) => (
-              <div
-                key={idx}
-                style={{
-                  backgroundColor: '#f8fafc',
-                  padding: '0.875rem 1rem',
-                  borderRadius: '0.5rem',
-                  border: '1px solid #cbd5e1',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                }}
-              >
-                <div>
-                  <strong style={{ color: '#0f172a', fontSize: '1rem' }}>{cond.name}</strong>
-                  {cond.description && <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '0.15rem' }}>{cond.description}</div>}
-                </div>
-                {cond.severity && <span className="badge badge-warning">{cond.severity}</span>}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Current Medications */}
-      {profile.medications.length > 0 && (
-        <div className="card">
-          <h3 style={{ color: '#0f172a', display: 'flex', alignItems: 'center', gap: '0.625rem', marginBottom: '1rem', fontSize: '1.15rem' }}>
-            <Pill color="var(--brand-blue)" size={22} /> Critical Medications
-          </h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
-            {profile.medications.map((med, idx) => (
-              <div
-                key={idx}
-                style={{
-                  backgroundColor: '#f8fafc',
-                  padding: '0.875rem 1rem',
-                  borderRadius: '0.5rem',
-                  border: '1px solid #cbd5e1',
-                }}
-              >
-                <strong style={{ color: '#0f172a', fontSize: '1rem' }}>{med.name}</strong>
-                {med.description && <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '0.15rem' }}>{med.description}</div>}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Emergency Contacts with Direct 1-Tap Call */}
-      <div className="card">
-        <h3 style={{ color: '#0f172a', display: 'flex', alignItems: 'center', gap: '0.625rem', marginBottom: '1rem', fontSize: '1.15rem' }}>
-          <Phone color="var(--success-green)" size={22} /> Emergency Contacts
-        </h3>
-        {profile.emergencyContacts.length === 0 ? (
-          <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>No emergency contacts listed.</div>
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem' }}>
-            {profile.emergencyContacts.map((contact, idx) => (
-              <div
-                key={idx}
-                style={{
-                  backgroundColor: '#f8fafc',
-                  border: '1px solid #cbd5e1',
-                  padding: '1rem',
-                  borderRadius: '0.75rem',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  gap: '1rem',
-                }}
-              >
-                <div>
-                  <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '1.05rem' }}>{contact.name}</div>
-                  <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '0.15rem' }}>
-                    {contact.relationship} • Priority #{contact.priority}
+        {/* EMERGENCY CONTACT */}
+        <section>
+          <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3">Emergency Contact</h3>
+          {p.emergencyContacts.length > 0 ? (
+            <div className="space-y-3">
+              {p.emergencyContacts.map((c, idx) => (
+                <div key={idx} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 shadow-sm flex flex-col gap-3">
+                  <div>
+                    <p className="font-bold text-slate-900 dark:text-white text-lg">{c.name}</p>
+                    <p className="text-sm text-slate-500">{c.relationship} • {idx === 0 ? 'Primary Contact' : 'Secondary Contact'}</p>
                   </div>
+                  <a href={`tel:${c.phone}`} className="flex items-center justify-center gap-2 w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition-colors">
+                    <Phone className="w-5 h-5" /> Call {c.phone}
+                  </a>
                 </div>
-                <a
-                  href={`tel:${contact.phone}`}
-                  className="btn btn-success"
-                  style={{ padding: '0.625rem 1rem', minHeight: '44px', flexShrink: 0 }}
-                >
-                  <Phone size={18} /> Call {contact.phone}
-                </a>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-slate-500 italic">No emergency contact provided.</p>
+          )}
+        </section>
+
+        {/* ALLERGIES */}
+        <section>
+          <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3">Allergies</h3>
+          {p.allergies.length > 0 ? (
+            <ul className="space-y-2">
+              {p.allergies.map((a, idx) => (
+                <li key={idx} className="bg-slate-50 dark:bg-slate-900 p-3 rounded-lg flex items-center justify-between">
+                  <span className="font-medium text-slate-900 dark:text-slate-200">{a.substance}</span>
+                  <span className={`text-xs font-semibold px-2 py-1 rounded-full ${a.severity === 'LIFE_THREATENING' ? 'bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-400' : 'bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-400'}`}>
+                    {a.severity.replace('_', ' ')}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-slate-500 bg-slate-50 dark:bg-slate-900 p-3 rounded-lg text-sm">No known allergies reported.</p>
+          )}
+        </section>
+
+        {/* MEDICATIONS */}
+        <section>
+          <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3">Current Medications</h3>
+          {p.medications.length > 0 ? (
+            <div className="space-y-2">
+              {p.medications.map((m, idx) => (
+                <div key={idx} className="bg-slate-50 dark:bg-slate-900 p-3 rounded-lg border-l-2 border-emerald-500">
+                  <p className="font-medium text-slate-900 dark:text-slate-200">{m.genericName} {m.brandName && `(${m.brandName})`}</p>
+                  <p className="text-sm text-slate-500">{m.dosage || 'Dosage not specified'} • {m.frequency || 'Frequency not specified'}</p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-slate-500 italic text-sm">No active emergency medications.</p>
+          )}
+        </section>
+
+        {/* EMERGENCY NOTES */}
+        {p.emergencyNotes && (
+          <section>
+            <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3">Patient Emergency Note</h3>
+            <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/50 p-4 rounded-xl text-amber-900 dark:text-amber-200 text-sm font-medium">
+              "{p.emergencyNotes}"
+            </div>
+          </section>
         )}
-      </div>
 
-      {/* Trigger Incident Alert Section */}
-      <div className="card" style={{ borderColor: '#f43f5e', backgroundColor: '#fff1f2' }}>
-        <h3 style={{ color: '#9f1239', fontSize: '1.25rem', fontWeight: 800, marginBottom: '0.5rem' }}>
-          Dispatch Emergency Alert
-        </h3>
-        <p style={{ fontSize: '0.9rem', color: '#881337', marginBottom: '1.25rem' }}>
-          Instantly dispatch emergency SMS & Email notifications to {profile.memberName}&apos;s emergency contacts with GPS location.
-        </p>
-
-        {locationStatus && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem', color: '#0284c7', marginBottom: '1rem', fontWeight: 600 }}>
-            <Navigation size={14} /> {locationStatus}
-          </div>
-        )}
-
-        {incidentSuccess ? (
-          <div
-            style={{
-              backgroundColor: '#dcfce7',
-              border: '1px solid #22c55e',
-              padding: '1rem',
-              borderRadius: '0.625rem',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.75rem',
-              color: '#166534',
-              fontWeight: 700,
-            }}
-          >
-            <CheckCircle2 size={24} /> {incidentSuccess}
-          </div>
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem' }}>
-            <input
-              type="text"
-              placeholder="Optional note for contacts (e.g. Ambulance requested, ER location...)"
-              value={responderNote}
-              onChange={e => setResponderNote(e.target.value)}
-            />
-            <button
-              onClick={handleTriggerEmergency}
-              disabled={triggering}
-              className="btn btn-danger btn-full"
-              style={{ minHeight: '52px', fontSize: '1.05rem', letterSpacing: '0.02em' }}
-            >
-              <ShieldAlert size={22} /> {triggering ? 'DISPATCHING EMERGENCY ALERTS...' : 'TRIGGER EMERGENCY ALERT'}
+        {/* AUTHORIZED ACCESS */}
+        <section className="pt-6 border-t border-slate-200 dark:border-slate-800">
+          <div className="bg-slate-100 dark:bg-slate-900 rounded-xl p-5 text-center">
+            <Lock className="w-8 h-8 text-slate-400 mx-auto mb-3" />
+            <h4 className="font-semibold text-slate-900 dark:text-white mb-2">Need More Information?</h4>
+            <p className="text-sm text-slate-500 mb-4">Additional medical records may be available through authorized access.</p>
+            <button className="w-full py-2.5 bg-slate-800 hover:bg-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 text-white rounded-lg font-medium transition-colors text-sm">
+              Request Authorized Access
             </button>
           </div>
-        )}
-      </div>
+        </section>
+
+      </main>
+
+      {/* FOOTER */}
+      <footer className="px-6 py-8 text-center text-xs text-slate-500 dark:text-slate-500">
+        <ShieldCheck className="w-6 h-6 mx-auto mb-2 text-slate-400" />
+        <p className="mb-2"><strong>MedNira Emergency Medical Information</strong></p>
+        <p className="mb-4">This profile contains information provided by the individual. Not a substitute for professional medical judgment.</p>
+        <div className="flex items-center justify-center gap-4">
+          <Link href="/privacy" className="underline">Privacy</Link>
+          <Link href="/terms" className="underline">Terms</Link>
+          <button className="underline">Report ID</button>
+        </div>
+      </footer>
     </div>
   );
 }

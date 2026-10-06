@@ -3,12 +3,24 @@ import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
 
-const itemSchema = z.object({
-  category: z.enum(['ALLERGY', 'CONDITION', 'MEDICATION', 'PROCEDURE', 'OTHER']),
-  name: z.string().min(1).max(200),
-  description: z.string().max(500).optional(),
-  severity: z.enum(['CRITICAL', 'MODERATE', 'LOW']).optional(),
-  visibility: z.enum(['EMERGENCY', 'TRUSTED', 'PRIVATE']).default('EMERGENCY'),
+const allergySchema = z.object({
+  substance: z.string().min(1).max(200),
+  category: z.string(),
+  reaction: z.string().optional(),
+  severity: z.enum(['MILD', 'MODERATE', 'SEVERE', 'LIFE_THREATENING']),
+  criticality: z.string().optional(),
+  status: z.string().default('Active'),
+  visibility: z.enum(['PUBLIC_EMERGENCY', 'EMERGENCY_RESPONDER', 'DOCTOR_ACCESS', 'PRIVATE']).default('PUBLIC_EMERGENCY'),
+});
+
+const conditionSchema = z.object({
+  conditionName: z.string().min(1),
+  status: z.string().default('Active'),
+});
+
+const medicationSchema = z.object({
+  genericName: z.string().min(1),
+  status: z.string().default('Active'),
 });
 
 const contactSchema = z.object({
@@ -21,11 +33,14 @@ const contactSchema = z.object({
 
 const profileSchema = z.object({
   bloodType: z.string().max(10).optional(),
+  rhFactor: z.string().max(10).optional(),
   dateOfBirth: z.string().optional(),
   organDonor: z.boolean().optional(),
   dnrStatus: z.boolean().optional(),
   emergencyNotes: z.string().max(1000).optional(),
-  items: z.array(itemSchema).optional(),
+  allergies: z.array(allergySchema).optional(),
+  conditions: z.array(conditionSchema).optional(),
+  medications: z.array(medicationSchema).optional(),
   contacts: z.array(contactSchema).optional(),
 });
 
@@ -47,7 +62,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { bloodType, dateOfBirth, organDonor, dnrStatus, emergencyNotes, items, contacts } =
+    const { bloodType, rhFactor, dateOfBirth, organDonor, dnrStatus, emergencyNotes, allergies, conditions, medications, contacts } =
       parseResult.data;
 
     const userId = session.user.id;
@@ -58,6 +73,7 @@ export async function POST(request: NextRequest) {
       create: {
         userId,
         bloodType,
+        rhFactor,
         dateOfBirth,
         organDonor: organDonor ?? false,
         dnrStatus: dnrStatus ?? false,
@@ -65,6 +81,7 @@ export async function POST(request: NextRequest) {
       },
       update: {
         bloodType,
+        rhFactor,
         dateOfBirth,
         organDonor,
         dnrStatus,
@@ -72,18 +89,37 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // Replace items if provided
-    if (items !== undefined) {
-      await prisma.medicalItem.deleteMany({ where: { profileId: profile.id } });
-      if (items.length > 0) {
-        await prisma.medicalItem.createMany({
-          data: items.map((item) => ({
+    if (allergies !== undefined) {
+      await prisma.allergy.deleteMany({ where: { profileId: profile.id } });
+      if (allergies.length > 0) {
+        await prisma.allergy.createMany({
+          data: allergies.map((item) => ({
             profileId: profile.id,
-            category: item.category,
-            name: item.name,
-            description: item.description ?? null,
-            severity: item.severity ?? null,
-            visibility: item.visibility,
+            ...item
+          })),
+        });
+      }
+    }
+
+    if (conditions !== undefined) {
+      await prisma.condition.deleteMany({ where: { profileId: profile.id } });
+      if (conditions.length > 0) {
+        await prisma.condition.createMany({
+          data: conditions.map((item) => ({
+            profileId: profile.id,
+            ...item
+          })),
+        });
+      }
+    }
+
+    if (medications !== undefined) {
+      await prisma.medication.deleteMany({ where: { profileId: profile.id } });
+      if (medications.length > 0) {
+        await prisma.medication.createMany({
+          data: medications.map((item) => ({
+            profileId: profile.id,
+            ...item
           })),
         });
       }
@@ -96,18 +132,14 @@ export async function POST(request: NextRequest) {
         await prisma.emergencyContact.createMany({
           data: contacts.map((c) => ({
             profileId: profile.id,
-            name: c.name,
-            relationship: c.relationship,
-            phone: c.phone,
-            priority: c.priority,
-            notifyOnIncident: c.notifyOnIncident,
+            ...c
           })),
         });
       }
     }
 
     // Recalculate readiness score
-    const readinessScore = calculateReadiness({ bloodType, dateOfBirth, emergencyNotes, items, contacts });
+    const readinessScore = calculateReadiness({ bloodType, dateOfBirth, emergencyNotes, allergies, conditions, medications, contacts });
     await prisma.medicalProfile.update({
       where: { id: profile.id },
       data: { readinessScore },
@@ -136,7 +168,9 @@ export async function GET(_request: NextRequest) {
       include: {
         profile: {
           include: {
-            items: { orderBy: { createdAt: 'asc' } },
+            allergies: { orderBy: { createdAt: 'asc' } },
+            conditions: { orderBy: { createdAt: 'asc' } },
+            medications: { orderBy: { createdAt: 'asc' } },
             contacts: { orderBy: { priority: 'asc' } },
           },
         },
@@ -163,8 +197,10 @@ function calculateReadiness(data: {
   bloodType?: string;
   dateOfBirth?: string;
   emergencyNotes?: string;
-  items?: Array<{ category: string }>;
-  contacts?: Array<{ name: string }>;
+  allergies?: Array<any>;
+  conditions?: Array<any>;
+  medications?: Array<any>;
+  contacts?: Array<any>;
 }): number {
   let score = 0;
   const weights = {
@@ -180,9 +216,9 @@ function calculateReadiness(data: {
   if (data.bloodType) score += weights.bloodType;
   if (data.dateOfBirth) score += weights.dateOfBirth;
   if (data.emergencyNotes) score += weights.emergencyNotes;
-  if (data.items?.some((i) => i.category === 'ALLERGY')) score += weights.hasAllergy;
-  if (data.items?.some((i) => i.category === 'CONDITION')) score += weights.hasCondition;
-  if (data.items?.some((i) => i.category === 'MEDICATION')) score += weights.hasMedication;
+  if (data.allergies && data.allergies.length > 0) score += weights.hasAllergy;
+  if (data.conditions && data.conditions.length > 0) score += weights.hasCondition;
+  if (data.medications && data.medications.length > 0) score += weights.hasMedication;
   if (data.contacts && data.contacts.length > 0) score += weights.hasContact;
 
   return Math.min(score, 100);
