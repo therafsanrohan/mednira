@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import { Shield, AlertTriangle, QrCode, FileText, CheckCircle2, User, Activity, ArrowRight, HeartPulse, Pill, Users } from 'lucide-react';
+import { Shield, AlertTriangle, QrCode, FileText, CheckCircle2, User, Activity, ArrowRight, HeartPulse, Pill, Users, Settings } from 'lucide-react';
 import Link from 'next/link';
 
 export default function DashboardHome() {
@@ -112,43 +112,43 @@ export default function DashboardHome() {
       <section className="space-y-4">
         <h2 className="text-lg font-bold text-slate-900">Quick Actions</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-          <Link href="/dashboard/medical-profile" className="flex flex-col gap-3 p-5 bg-white border border-slate-200 rounded-2xl hover:border-slate-300 hover:shadow-sm transition-all group">
-            <div className="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 group-hover:bg-indigo-100 transition-colors">
-              <HeartPulse className="w-5 h-5" />
+          <Link href="/dashboard/medical-id" className="flex flex-col gap-3 p-5 bg-white border border-slate-200 rounded-2xl hover:border-indigo-300 hover:shadow-md hover:-translate-y-1 transition-all duration-300 group">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-50 to-indigo-100 flex items-center justify-center text-indigo-600 group-hover:scale-110 transition-transform duration-300 shadow-sm border border-indigo-100">
+              <HeartPulse className="w-6 h-6" />
             </div>
             <div>
-              <p className="font-bold text-slate-900">Medical Info</p>
-              <p className="text-xs text-slate-500 mt-0.5">Update conditions & allergies</p>
+              <p className="font-bold text-slate-900">Medical ID</p>
+              <p className="text-xs text-slate-500 mt-1 line-clamp-1">View complete identity</p>
             </div>
           </Link>
           
-          <Link href="/dashboard/emergency-id" className="flex flex-col gap-3 p-5 bg-white border border-slate-200 rounded-2xl hover:border-slate-300 hover:shadow-sm transition-all group">
-            <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 group-hover:bg-emerald-100 transition-colors">
-              <QrCode className="w-5 h-5" />
+          <Link href="/dashboard/emergency-id" className="flex flex-col gap-3 p-5 bg-white border border-slate-200 rounded-2xl hover:border-emerald-300 hover:shadow-md hover:-translate-y-1 transition-all duration-300 group">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-50 to-emerald-100 flex items-center justify-center text-emerald-600 group-hover:scale-110 transition-transform duration-300 shadow-sm border border-emerald-100">
+              <QrCode className="w-6 h-6" />
             </div>
             <div>
-              <p className="font-bold text-slate-900">Show QR</p>
-              <p className="text-xs text-slate-500 mt-0.5">Open Emergency ID</p>
+              <p className="font-bold text-slate-900">Emergency ID</p>
+              <p className="text-xs text-slate-500 mt-1 line-clamp-1">Show QR to responders</p>
             </div>
           </Link>
 
-          <Link href="/dashboard/medications" className="flex flex-col gap-3 p-5 bg-white border border-slate-200 rounded-2xl hover:border-slate-300 hover:shadow-sm transition-all group">
-            <div className="w-10 h-10 rounded-full bg-sky-50 flex items-center justify-center text-sky-600 group-hover:bg-sky-100 transition-colors">
-              <Pill className="w-5 h-5" />
+          <Link href="/dashboard/account?tab=family" className="flex flex-col gap-3 p-5 bg-white border border-slate-200 rounded-2xl hover:border-sky-300 hover:shadow-md hover:-translate-y-1 transition-all duration-300 group">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-sky-50 to-sky-100 flex items-center justify-center text-sky-600 group-hover:scale-110 transition-transform duration-300 shadow-sm border border-sky-100">
+              <Users className="w-6 h-6" />
             </div>
             <div>
-              <p className="font-bold text-slate-900">Medications</p>
-              <p className="text-xs text-slate-500 mt-0.5">Manage prescriptions</p>
+              <p className="font-bold text-slate-900">Family</p>
+              <p className="text-xs text-slate-500 mt-1 line-clamp-1">Manage dependents</p>
             </div>
           </Link>
 
-          <Link href="/dashboard/documents" className="flex flex-col gap-3 p-5 bg-white border border-slate-200 rounded-2xl hover:border-slate-300 hover:shadow-sm transition-all group">
-            <div className="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center text-amber-600 group-hover:bg-amber-100 transition-colors">
-              <FileText className="w-5 h-5" />
+          <Link href="/dashboard/account" className="flex flex-col gap-3 p-5 bg-white border border-slate-200 rounded-2xl hover:border-amber-300 hover:shadow-md hover:-translate-y-1 transition-all duration-300 group">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-50 to-amber-100 flex items-center justify-center text-amber-600 group-hover:scale-110 transition-transform duration-300 shadow-sm border border-amber-100">
+              <Settings className="w-6 h-6" />
             </div>
             <div>
-              <p className="font-bold text-slate-900">Documents</p>
-              <p className="text-xs text-slate-500 mt-0.5">Upload medical records</p>
+              <p className="font-bold text-slate-900">Settings</p>
+              <p className="text-xs text-slate-500 mt-1 line-clamp-1">Preferences & security</p>
             </div>
           </Link>
         </div>
