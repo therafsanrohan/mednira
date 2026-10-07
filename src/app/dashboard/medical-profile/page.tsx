@@ -8,6 +8,8 @@ import ConditionsSection from './components/ConditionsSection';
 import MedicationsSection from './components/MedicationsSection';
 import ContactsSection from './components/ContactsSection';
 import PersonalInfoSection from './components/PersonalInfoSection';
+import VitalsSection from './components/VitalsSection';
+import LabReportsSection from './components/LabReportsSection';
 import { Toaster } from 'react-hot-toast';
 
 export default function MedicalProfilePage() {
@@ -68,6 +70,12 @@ export default function MedicalProfilePage() {
 
         {/* Medications */}
         <MedicationsSection initialData={p.medications || []} onUpdate={fetchProfile} />
+
+        {/* Vitals */}
+        <VitalsSection initialData={p.vitals || []} onUpdate={fetchProfile} />
+
+        {/* Lab Reports */}
+        <LabReportsSection initialData={p.labReports || []} onUpdate={fetchProfile} />
 
       </div>
     </div>

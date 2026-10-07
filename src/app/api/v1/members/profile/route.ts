@@ -178,6 +178,8 @@ export async function GET(_request: NextRequest) {
             conditions: { orderBy: { createdAt: 'asc' } },
             medications: { orderBy: { createdAt: 'asc' } },
             contacts: { orderBy: { priority: 'asc' } },
+            vitals: { orderBy: { measurementDate: 'desc' }, take: 20 },
+            labReports: { orderBy: { testDate: 'desc' }, take: 20 },
           },
         },
         deviceTokens: {
