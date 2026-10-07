@@ -1,8 +1,30 @@
 'use client';
 
-import { Settings, Lock, Share2, Bell, Download, ShieldCheck } from 'lucide-react';
+import { Settings, Lock, Download } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 export default function SettingsPage() {
+  const handleExport = async () => {
+    try {
+      const res = await fetch('/api/v1/members/profile');
+      const data = await res.json();
+      
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'mednira_export.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      toast.success('Data exported successfully');
+    } catch (error) {
+      toast.error('Failed to export data');
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -11,7 +33,7 @@ export default function SettingsPage() {
             <Settings className="w-8 h-8 text-slate-500" />
             Account Settings
           </h1>
-          <p className="text-slate-500 mt-1">Manage your privacy, security, and sharing permissions.</p>
+          <p className="text-slate-500 mt-1">Manage your privacy and download your data.</p>
         </div>
       </div>
 
@@ -23,70 +45,10 @@ export default function SettingsPage() {
             <Lock className="w-6 h-6 text-emerald-400" />
             <h2 className="text-xl font-semibold text-slate-900">Privacy Center</h2>
           </div>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-slate-800 font-medium">Public Emergency Profile</p>
-                <p className="text-slate-500 text-sm">Allow critical info to be scanned via QR.</p>
-              </div>
-              <div className="w-12 h-6 bg-emerald-500 rounded-full flex items-center p-1 cursor-pointer">
-                <div className="w-4 h-4 bg-white rounded-full translate-x-6"></div>
-              </div>
-            </div>
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-slate-800 font-medium">Doctor Access</p>
-                <p className="text-slate-500 text-sm">Allow verified doctors to view records.</p>
-              </div>
-              <div className="w-12 h-6 bg-emerald-500 rounded-full flex items-center p-1 cursor-pointer">
-                <div className="w-4 h-4 bg-white rounded-full translate-x-6"></div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Medical Sharing */}
-        <section className="bg-white border border-slate-200 rounded-2xl p-6">
-          <div className="flex items-center gap-3 mb-6">
-            <Share2 className="w-6 h-6 text-blue-400" />
-            <h2 className="text-xl font-semibold text-slate-900">Medical Sharing</h2>
-          </div>
-          <div className="text-center py-6 bg-slate-50 rounded-xl border border-slate-200/50">
-            <ShieldCheck className="w-10 h-10 text-slate-500 mx-auto mb-3" />
-            <p className="text-slate-700 font-medium">No Active Shares</p>
-            <p className="text-slate-500 text-sm mt-1">You are not sharing records with any provider.</p>
-            <button className="mt-4 px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg text-sm font-medium transition-colors">
-              Share Records
-            </button>
-          </div>
-        </section>
-
-        {/* Notifications */}
-        <section className="bg-white border border-slate-200 rounded-2xl p-6">
-          <div className="flex items-center gap-3 mb-6">
-            <Bell className="w-6 h-6 text-amber-400" />
-            <h2 className="text-xl font-semibold text-slate-900">Notifications</h2>
-          </div>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-slate-800 font-medium">Emergency Alerts (SMS)</p>
-                <p className="text-slate-500 text-sm">Notify contacts during an incident.</p>
-              </div>
-              <div className="w-12 h-6 bg-emerald-500 rounded-full flex items-center p-1 cursor-pointer">
-                <div className="w-4 h-4 bg-white rounded-full translate-x-6"></div>
-              </div>
-            </div>
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-slate-800 font-medium">Access Alerts (Email)</p>
-                <p className="text-slate-500 text-sm">Get notified when someone scans your QR.</p>
-              </div>
-              <div className="w-12 h-6 bg-slate-700 rounded-full flex items-center p-1 cursor-pointer">
-                <div className="w-4 h-4 bg-white rounded-full"></div>
-              </div>
-            </div>
-          </div>
+          <p className="text-slate-500 text-sm mb-4">
+            Your Medical ID is governed by the visibility settings on your individual records. 
+            Only records marked as "Public Emergency ID" or "Emergency Responder" are accessible via your QR code.
+          </p>
         </section>
 
         {/* Data Export */}
@@ -96,9 +58,12 @@ export default function SettingsPage() {
             <h2 className="text-xl font-semibold text-slate-900">Data Export</h2>
           </div>
           <p className="text-slate-500 text-sm mb-4">
-            Download a complete copy of your medical records and profile data in a structured format (JSON/PDF).
+            Download a complete copy of your medical records and profile data in a structured format (JSON).
           </p>
-          <button className="flex items-center justify-center gap-2 w-full py-2.5 bg-white hover:bg-slate-50 text-slate-700 rounded-xl font-medium transition-colors border border-slate-200">
+          <button 
+            onClick={handleExport}
+            className="flex items-center justify-center gap-2 w-full py-2.5 bg-white hover:bg-slate-50 text-slate-700 rounded-xl font-medium transition-colors border border-slate-200"
+          >
             <Download className="w-4 h-4" /> Export My Data
           </button>
         </section>
