@@ -106,7 +106,7 @@ export default function EmergencyIDPage() {
 
           <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-lg border border-slate-200">
             <span className="text-sm font-semibold text-slate-700">
-              {data.readinessScore}% Ready
+              {data?.readinessScore || 0}% Ready
             </span>
             {!isReady && <AlertTriangle className="w-4 h-4 text-amber-500" />}
           </div>
