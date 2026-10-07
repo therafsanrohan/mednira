@@ -98,9 +98,9 @@ export default function EmergencyIDPage() {
 
         <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
           <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-lg border border-slate-200">
-            <span className={`w-2.5 h-2.5 rounded-full ${data.isPublic ? 'bg-emerald-500' : 'bg-slate-400'}`}></span>
+            <span className={`w-2.5 h-2.5 rounded-full ${data?.isPublic ? 'bg-emerald-500' : 'bg-slate-400'}`}></span>
             <span className="text-sm font-semibold text-slate-700">
-              {data.isPublic ? 'Active' : 'Inactive'}
+              {data?.isPublic ? 'Active' : 'Inactive'}
             </span>
           </div>
 
@@ -119,7 +119,7 @@ export default function EmergencyIDPage() {
           >
             <QrCode className="w-5 h-5" /> Show Emergency ID
           </button>
-          {data.isPublic && (
+          {data?.isPublic && (
             <a 
               href={publicUrl}
               target="_blank"
@@ -182,7 +182,7 @@ export default function EmergencyIDPage() {
         </h2>
         
         <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-          {data.medicalProfile ? (
+          {data?.medicalProfile ? (
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
@@ -227,7 +227,7 @@ export default function EmergencyIDPage() {
         </h2>
         
         <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-          {data.medicalProfile?.emergencyContacts && data.medicalProfile.emergencyContacts.length > 0 ? (
+          {data?.medicalProfile?.emergencyContacts && data.medicalProfile.emergencyContacts.length > 0 ? (
             <div className="space-y-4">
               {data.medicalProfile.emergencyContacts.map((contact: any, i: number) => (
                 <div key={i} className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-slate-100 last:border-0 last:pb-0">
@@ -277,16 +277,16 @@ export default function EmergencyIDPage() {
               <button
                 onClick={toggleVisibility}
                 disabled={isToggling}
-                className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors ${data.isPublic ? 'bg-emerald-500' : 'bg-slate-300'}`}
+                className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors ${data?.isPublic ? 'bg-emerald-500' : 'bg-slate-300'}`}
               >
-                <span className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${data.isPublic ? 'translate-x-6' : 'translate-x-1'}`} />
+                <span className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${data?.isPublic ? 'translate-x-6' : 'translate-x-1'}`} />
               </button>
               <span className="text-sm font-medium text-slate-700">
-                {data.isPublic ? 'Public access is ON' : 'Public access is OFF'}
+                {data?.isPublic ? 'Public access is ON' : 'Public access is OFF'}
               </span>
             </div>
             
-            {data.isPublic && (
+            {data?.isPublic && (
               <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg flex gap-3 text-amber-800 text-sm">
                 <AlertTriangle className="w-5 h-5 shrink-0" />
                 <p>This information will be visible to anyone who accesses your Emergency ID.</p>
@@ -328,7 +328,7 @@ export default function EmergencyIDPage() {
             <History className="w-6 h-6 text-slate-400" /> Recent Access
           </h2>
           <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm h-full">
-            {data.recentAccess && data.recentAccess.length > 0 ? (
+            {data?.recentAccess && data.recentAccess.length > 0 ? (
               <ul className="space-y-4">
                 {data.recentAccess.map((log: any) => (
                   <li key={log.id} className="flex justify-between items-start text-sm pb-4 border-b border-slate-50 last:border-0 last:pb-0">
