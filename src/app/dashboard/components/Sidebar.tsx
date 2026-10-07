@@ -66,7 +66,7 @@ const navigationGroups = [
   {
     name: 'SUPPORT',
     items: [
-      { label: 'Help & Support', href: '/terms', icon: HelpCircle },
+      { label: 'Help & Support', href: '/dashboard/support', icon: HelpCircle },
     ]
   }
 ];
