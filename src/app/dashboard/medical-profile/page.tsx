@@ -2,14 +2,19 @@
 
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import { HeartPulse, Plus, Edit2, Trash2, AlertTriangle, Syringe, Activity, Phone } from 'lucide-react';
+import { HeartPulse } from 'lucide-react';
+import AllergiesSection from './components/AllergiesSection';
+import ConditionsSection from './components/ConditionsSection';
+import MedicationsSection from './components/MedicationsSection';
+import ContactsSection from './components/ContactsSection';
+import { Toaster } from 'react-hot-toast';
 
 export default function MedicalProfilePage() {
   const { data: session } = useSession();
   const [loading, setLoading] = useState(true);
   const [profileData, setProfileData] = useState<any>(null);
 
-  useEffect(() => {
+  const fetchProfile = () => {
     if (session) {
       fetch('/api/v1/members/profile')
         .then(res => res.json())
@@ -18,6 +23,10 @@ export default function MedicalProfilePage() {
           setLoading(false);
         });
     }
+  };
+
+  useEffect(() => {
+    fetchProfile();
   }, [session]);
 
   if (loading) {
@@ -41,6 +50,7 @@ export default function MedicalProfilePage() {
           <p className="text-slate-400 mt-1">Manage your complete medical identity.</p>
         </div>
       </div>
+      <Toaster position="top-right" toastOptions={{ style: { background: '#1e293b', color: '#fff' } }} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Personal Information */}
@@ -74,111 +84,16 @@ export default function MedicalProfilePage() {
         </section>
 
         {/* Emergency Contacts */}
-        <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-slate-100 flex items-center gap-2">
-              <Phone className="w-5 h-5 text-blue-400" /> Contacts
-            </h2>
-            <button className="text-emerald-400 hover:text-emerald-300 text-sm font-medium flex items-center gap-1">
-              <Plus className="w-4 h-4" /> Add
-            </button>
-          </div>
-          <ul className="space-y-4">
-            {p.contacts?.length > 0 ? (
-              p.contacts.map((c: any) => (
-                <li key={c.id} className="flex items-start justify-between border-b border-slate-800 pb-3 last:border-0">
-                  <div>
-                    <p className="text-slate-200 font-medium">{c.name}</p>
-                    <p className="text-slate-400 text-sm">{c.relationship} • {c.phone}</p>
-                  </div>
-                  <div className="flex gap-2">
-                    <button className="text-slate-500 hover:text-slate-300"><Edit2 className="w-4 h-4" /></button>
-                    <button className="text-slate-500 hover:text-rose-400"><Trash2 className="w-4 h-4" /></button>
-                  </div>
-                </li>
-              ))
-            ) : (
-              <p className="text-slate-500 italic text-sm">No contacts added.</p>
-            )}
-          </ul>
-        </section>
+        <ContactsSection initialData={p.contacts || []} onUpdate={fetchProfile} />
 
         {/* Allergies */}
-        <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-slate-100 flex items-center gap-2">
-              <AlertTriangle className="w-5 h-5 text-rose-400" /> Allergies
-            </h2>
-            <button className="text-emerald-400 hover:text-emerald-300 text-sm font-medium flex items-center gap-1">
-              <Plus className="w-4 h-4" /> Add
-            </button>
-          </div>
-          <ul className="space-y-4">
-            {p.allergies?.length > 0 ? (
-              p.allergies.map((a: any) => (
-                <li key={a.id} className="flex items-start justify-between border-b border-slate-800 pb-3 last:border-0">
-                  <div>
-                    <p className="text-slate-200 font-medium">{a.substance}</p>
-                    <p className="text-slate-400 text-sm">Severity: <span className={a.severity === 'LIFE_THREATENING' ? 'text-rose-400' : ''}>{a.severity}</span></p>
-                  </div>
-                </li>
-              ))
-            ) : (
-              <p className="text-slate-500 italic text-sm">No allergies recorded.</p>
-            )}
-          </ul>
-        </section>
+        <AllergiesSection initialData={p.allergies || []} onUpdate={fetchProfile} />
 
         {/* Conditions */}
-        <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-slate-100 flex items-center gap-2">
-              <Activity className="w-5 h-5 text-amber-400" /> Conditions
-            </h2>
-            <button className="text-emerald-400 hover:text-emerald-300 text-sm font-medium flex items-center gap-1">
-              <Plus className="w-4 h-4" /> Add
-            </button>
-          </div>
-          <ul className="space-y-4">
-            {p.conditions?.length > 0 ? (
-              p.conditions.map((c: any) => (
-                <li key={c.id} className="flex items-start justify-between border-b border-slate-800 pb-3 last:border-0">
-                  <div>
-                    <p className="text-slate-200 font-medium">{c.conditionName}</p>
-                    <p className="text-slate-400 text-sm">Status: {c.status}</p>
-                  </div>
-                </li>
-              ))
-            ) : (
-              <p className="text-slate-500 italic text-sm">No conditions recorded.</p>
-            )}
-          </ul>
-        </section>
+        <ConditionsSection initialData={p.conditions || []} onUpdate={fetchProfile} />
 
         {/* Medications */}
-        <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6 lg:col-span-2">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-slate-100 flex items-center gap-2">
-              <Syringe className="w-5 h-5 text-emerald-400" /> Medications
-            </h2>
-            <button className="text-emerald-400 hover:text-emerald-300 text-sm font-medium flex items-center gap-1">
-              <Plus className="w-4 h-4" /> Add
-            </button>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {p.medications?.length > 0 ? (
-              p.medications.map((m: any) => (
-                <div key={m.id} className="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
-                  <p className="text-slate-200 font-semibold">{m.genericName} {m.brandName ? `(${m.brandName})` : ''}</p>
-                  <p className="text-slate-400 text-sm">{m.dosage || 'Dosage not set'} • {m.frequency || 'Frequency not set'}</p>
-                  <p className="text-slate-500 text-xs mt-2">Status: {m.status}</p>
-                </div>
-              ))
-            ) : (
-              <p className="text-slate-500 italic text-sm">No active medications.</p>
-            )}
-          </div>
-        </section>
+        <MedicationsSection initialData={p.medications || []} onUpdate={fetchProfile} />
 
       </div>
     </div>

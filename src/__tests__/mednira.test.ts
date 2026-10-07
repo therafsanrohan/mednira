@@ -31,7 +31,7 @@ describe('MedNira Core Security & Privacy Verification', () => {
     assert.strictEqual(dto.memberName, 'Jane Doe');
     assert.strictEqual(dto.bloodType, 'A-');
     assert.strictEqual(dto.allergies.length, 1);
-    assert.strictEqual(dto.allergies[0].name, 'Peanuts');
+    assert.strictEqual(dto.allergies[0].substance, 'Peanuts');
 
     // VERIFY PRIVACY & SECURITY RULES:
     // Trusted & Private items MUST be excluded
