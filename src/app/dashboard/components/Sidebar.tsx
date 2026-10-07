@@ -34,14 +34,15 @@ import {
 
 const navigationGroups = [
   {
+    name: 'MAIN',
+    items: [
+      { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+    ]
+  },
+  {
     name: 'HEALTH',
     items: [
-      { label: 'Medical Overview', href: '/dashboard', icon: LayoutDashboard },
-      { label: 'Medical ID', href: '/dashboard/medical-id', icon: User },
-      { label: 'Medical Information', href: '/dashboard/medical-profile', icon: HeartPulse },
-      { label: 'Health Records', href: '/dashboard/records', icon: ActivitySquare },
-      { label: 'Medications', href: '/dashboard/medications', icon: Pill },
-      { label: 'Documents', href: '/dashboard/documents', icon: FileText },
+      { label: 'Medical ID', href: '/dashboard/medical-id', icon: HeartPulse },
     ]
   },
   {
@@ -53,14 +54,19 @@ const navigationGroups = [
   {
     name: 'FAMILY',
     items: [
-      { label: 'Family & Dependents', href: '/dashboard/account?tab=family', icon: User },
+      { label: 'Family & Dependents', href: '/dashboard/account?tab=family', icon: Users },
     ]
   },
   {
     name: 'ACCOUNT',
     items: [
-      { label: 'Account Center', href: '/dashboard/account', icon: Settings },
-      { label: 'Subscription & Billing', href: '/dashboard/subscription', icon: CreditCard },
+      { label: 'Account & Settings', href: '/dashboard/account', icon: Settings },
+    ]
+  },
+  {
+    name: 'SUPPORT',
+    items: [
+      { label: 'Help & Support', href: '/terms', icon: HelpCircle },
     ]
   }
 ];
@@ -78,7 +84,20 @@ export default function Sidebar({ user }: { user: any }) {
   }, [pathname]);
 
   const isActiveRoute = (href: string) => {
-    if (href === '/dashboard') return pathname === '/dashboard';
+    if (href === '/dashboard') {
+      return pathname === '/dashboard';
+    }
+    if (href === '/dashboard/medical-id') {
+      return pathname.startsWith('/dashboard/medical-id') || 
+             pathname.startsWith('/dashboard/medical-profile') ||
+             pathname.startsWith('/dashboard/records') ||
+             pathname.startsWith('/dashboard/medications') ||
+             pathname.startsWith('/dashboard/documents');
+    }
+    if (href === '/dashboard/account') {
+      return pathname.startsWith('/dashboard/account') ||
+             pathname.startsWith('/dashboard/subscription');
+    }
     return pathname.startsWith(href);
   };
 

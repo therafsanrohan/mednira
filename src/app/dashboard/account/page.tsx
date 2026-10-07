@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
@@ -155,6 +156,7 @@ export default function AccountCenterPage() {
   const tabs = [
     { id: 'profile', label: 'Personal Info', icon: User },
     { id: 'family', label: 'Family & Dependents', icon: Users },
+    { id: 'subscription', label: 'Subscription & Billing', icon: CreditCard, href: '/dashboard/subscription' },
     { id: 'security', label: 'Security & Privacy', icon: Lock },
     { id: 'notifications', label: 'Notifications', icon: Bell },
   ];
@@ -170,20 +172,40 @@ export default function AccountCenterPage() {
         
         {/* Sidebar Nav */}
         <div className="w-full md:w-64 shrink-0 space-y-1">
-          {tabs.map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
-                activeTab === tab.id 
-                  ? 'bg-slate-900 text-white' 
-                  : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-              }`}
-            >
-              <tab.icon className={`w-5 h-5 ${activeTab === tab.id ? 'text-slate-300' : 'text-slate-400'}`} />
-              {tab.label}
-            </button>
-          ))}
+          {tabs.map(tab => {
+            const isActive = activeTab === tab.id;
+            
+            const buttonContent = (
+              <>
+                <tab.icon className={`w-5 h-5 ${isActive ? 'text-slate-300' : 'text-slate-400'}`} />
+                {tab.label}
+              </>
+            );
+
+            const className = `w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
+              isActive 
+                ? 'bg-slate-900 text-white' 
+                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+            }`;
+
+            if (tab.href) {
+              return (
+                <Link key={tab.id} href={tab.href} className={className}>
+                  {buttonContent}
+                </Link>
+              );
+            }
+
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={className}
+              >
+                {buttonContent}
+              </button>
+            );
+          })}
         </div>
 
         {/* Content Area */}
