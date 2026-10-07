@@ -139,7 +139,7 @@ export default function AllergiesSection({ initialData, onUpdate }: { initialDat
                 {errors.substance && <p className="text-rose-400 text-xs mt-1">{errors.substance.message}</p>}
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Category</label>
                   <select {...register('category')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none">
@@ -169,7 +169,7 @@ export default function AllergiesSection({ initialData, onUpdate }: { initialDat
                 <input {...register('reaction')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. Hives, Anaphylaxis" />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Onset Date</label>
                   <input type="date" {...register('onsetDate')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none [color-scheme:dark]" />

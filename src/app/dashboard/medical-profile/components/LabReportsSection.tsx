@@ -148,7 +148,7 @@ export default function LabReportsSection({ initialData, onUpdate }: { initialDa
                 {errors.testName && <p className="text-rose-400 text-xs mt-1">{errors.testName.message}</p>}
               </div>
 
-              <div className="flex gap-4">
+              <div className="flex flex-col sm:flex-row gap-4">
                 <div className="flex-1">
                   <label className="block text-sm font-medium text-slate-700 mb-1">Result Value</label>
                   <input {...register('result')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. 5.8" />
@@ -165,7 +165,7 @@ export default function LabReportsSection({ initialData, onUpdate }: { initialDa
                 <input {...register('referenceRange')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. 4.0 - 5.6" />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Date of Test</label>
                   <input type="date" {...register('testDate')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none [color-scheme:dark]" />

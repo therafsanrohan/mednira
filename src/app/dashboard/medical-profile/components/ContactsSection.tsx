@@ -135,7 +135,7 @@ export default function ContactsSection({ initialData, onUpdate }: { initialData
                 {errors.name && <p className="text-rose-400 text-xs mt-1">{errors.name.message}</p>}
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Relationship</label>
                   <input {...register('relationship')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. Spouse, Parent" />

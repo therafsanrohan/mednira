@@ -148,7 +148,7 @@ export default function PersonalInfoSection({ profile, user, onUpdate }: { profi
             
             <form onSubmit={handleSubmit(onSubmit)} className="p-4 space-y-4 max-h-[75vh] overflow-y-auto">
               
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Blood Type</label>
                   <select {...register('bloodType')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none">
@@ -174,7 +174,7 @@ export default function PersonalInfoSection({ profile, user, onUpdate }: { profi
                 <input type="date" {...register('dateOfBirth')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none [color-scheme:dark]" />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Height</label>
                   <input {...register('height')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. 5'8&quot; or 173cm" />
@@ -190,7 +190,7 @@ export default function PersonalInfoSection({ profile, user, onUpdate }: { profi
                 <textarea {...register('emergencyNotes')} rows={3} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none resize-none" placeholder="Critical instructions for first responders..." />
               </div>
 
-              <div className="grid grid-cols-2 gap-4 pt-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input type="checkbox" {...register('organDonor')} className="w-4 h-4 rounded border-slate-200 bg-slate-50 text-emerald-500 focus:ring-emerald-500 focus:ring-offset-slate-900" />
                   <span className="text-sm font-medium text-slate-700">Registered Organ Donor</span>

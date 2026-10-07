@@ -169,7 +169,7 @@ export default function VitalsSection({ initialData, onUpdate }: { initialData: 
                 {errors.vitalType && <p className="text-rose-400 text-xs mt-1">{errors.vitalType.message}</p>}
               </div>
 
-              <div className="flex gap-3">
+              <div className="flex flex-col sm:flex-row gap-3">
                 <div className="flex-1">
                   <label className="block text-sm font-medium text-slate-700 mb-1">Value</label>
                   <input {...register('value')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder={selectedType === 'Blood Pressure' ? '120/80' : '98'} />

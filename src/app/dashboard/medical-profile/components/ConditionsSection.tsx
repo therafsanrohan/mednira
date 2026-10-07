@@ -139,7 +139,7 @@ export default function ConditionsSection({ initialData, onUpdate }: { initialDa
                 {errors.conditionName && <p className="text-rose-400 text-xs mt-1">{errors.conditionName.message}</p>}
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Status</label>
                   <select {...register('status')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none">
@@ -160,7 +160,7 @@ export default function ConditionsSection({ initialData, onUpdate }: { initialDa
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Diagnosis Date</label>
                   <input type="date" {...register('diagnosisDate')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none [color-scheme:dark]" />
