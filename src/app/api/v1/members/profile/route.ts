@@ -38,6 +38,8 @@ const profileSchema = z.object({
   organDonor: z.boolean().optional(),
   dnrStatus: z.boolean().optional(),
   emergencyNotes: z.string().max(1000).optional(),
+  height: z.string().max(50).optional(),
+  weight: z.string().max(50).optional(),
   allergies: z.array(allergySchema).optional(),
   conditions: z.array(conditionSchema).optional(),
   medications: z.array(medicationSchema).optional(),
@@ -62,7 +64,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { bloodType, rhFactor, dateOfBirth, organDonor, dnrStatus, emergencyNotes, allergies, conditions, medications, contacts } =
+    const { bloodType, rhFactor, dateOfBirth, organDonor, dnrStatus, emergencyNotes, height, weight, allergies, conditions, medications, contacts } =
       parseResult.data;
 
     const userId = session.user.id;
@@ -78,6 +80,8 @@ export async function POST(request: NextRequest) {
         organDonor: organDonor ?? false,
         dnrStatus: dnrStatus ?? false,
         emergencyNotes,
+        height,
+        weight,
       },
       update: {
         bloodType,
@@ -86,6 +90,8 @@ export async function POST(request: NextRequest) {
         organDonor,
         dnrStatus,
         emergencyNotes,
+        height,
+        weight,
       },
     });
 

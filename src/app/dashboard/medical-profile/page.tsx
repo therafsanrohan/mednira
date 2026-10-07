@@ -7,6 +7,7 @@ import AllergiesSection from './components/AllergiesSection';
 import ConditionsSection from './components/ConditionsSection';
 import MedicationsSection from './components/MedicationsSection';
 import ContactsSection from './components/ContactsSection';
+import PersonalInfoSection from './components/PersonalInfoSection';
 import { Toaster } from 'react-hot-toast';
 
 export default function MedicalProfilePage() {
@@ -54,34 +55,7 @@ export default function MedicalProfilePage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Personal Information */}
-        <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-slate-100">Personal Information</h2>
-            <button className="text-emerald-400 hover:text-emerald-300 text-sm font-medium">Edit</button>
-          </div>
-          <div className="grid grid-cols-2 gap-4 text-sm">
-            <div>
-              <p className="text-slate-500">Blood Group</p>
-              <p className="text-slate-200 font-medium">{p.bloodType ? `${p.bloodType}${p.rhFactor || ''}` : 'Not set'}</p>
-            </div>
-            <div>
-              <p className="text-slate-500">Date of Birth</p>
-              <p className="text-slate-200 font-medium">{p.dateOfBirth ? new Date(p.dateOfBirth).toLocaleDateString() : 'Not set'}</p>
-            </div>
-            <div>
-              <p className="text-slate-500">Height</p>
-              <p className="text-slate-200 font-medium">{p.height || 'Not set'}</p>
-            </div>
-            <div>
-              <p className="text-slate-500">Weight</p>
-              <p className="text-slate-200 font-medium">{p.weight || 'Not set'}</p>
-            </div>
-            <div className="col-span-2">
-              <p className="text-slate-500">Emergency Notes</p>
-              <p className="text-slate-200">{p.emergencyNotes || 'None'}</p>
-            </div>
-          </div>
-        </section>
+        <PersonalInfoSection profile={p} user={session?.user} onUpdate={fetchProfile} />
 
         {/* Emergency Contacts */}
         <ContactsSection initialData={p.contacts || []} onUpdate={fetchProfile} />
