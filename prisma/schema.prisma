@@ -51,43 +51,43 @@ model VerificationToken {
 // ─────────────────────────────────────────────
 
 model User {
-  id             String          @id @default(uuid())
-  email          String          @unique
-  emailVerified  DateTime?
-  name           String?
-  fullName       String          @default("")
-  image          String?
-  passwordHash   String?         // null for OAuth users
-  role           UserRole        @default(USER)
-  status         UserStatus      @default(ACTIVE)
-  userProfile    Profile?
-  profile        MedicalProfile?
-  deviceTokens   DeviceToken[]
-  accounts       Account[]
-  sessions       Session[]
-  incidents      Incident[]      @relation("UserIncidents")
-  auditLogs      AuditLog[]
-  accessLogs     AccessLog[]
-  accountSettings AccountSettings?
-  ownedFamilyGroup FamilyGroup?  @relation("FamilyOwner")
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
+  id               String           @id @default(uuid())
+  email            String           @unique
+  emailVerified    DateTime?
+  name             String?
+  fullName         String           @default("")
+  image            String?
+  passwordHash     String? // null for OAuth users
+  role             UserRole         @default(USER)
+  status           UserStatus       @default(ACTIVE)
+  userProfile      Profile?
+  profile          MedicalProfile?
+  deviceTokens     DeviceToken[]
+  accounts         Account[]
+  sessions         Session[]
+  incidents        Incident[]       @relation("UserIncidents")
+  auditLogs        AuditLog[]
+  accessLogs       AccessLog[]
+  accountSettings  AccountSettings?
+  ownedFamilyGroup FamilyGroup?     @relation("FamilyOwner")
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
 }
 
 model Profile {
-  id             String    @id @default(uuid())
-  userId         String    @unique
-  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  phoneNumber    String?
-  address        String?
-  city           String?
-  country        String?
-  gender         String?
-  dateOfBirth    String?
-  avatarUrl      String?
-  bio            String?
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  id          String   @id @default(uuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  phoneNumber String?
+  address     String?
+  city        String?
+  country     String?
+  gender      String?
+  dateOfBirth String?
+  avatarUrl   String?
+  bio         String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 enum UserRole {
@@ -112,19 +112,19 @@ enum UserStatus {
 // ─────────────────────────────────────────────
 
 model MedicalProfile {
-  id             String             @id @default(uuid())
-  userId         String             @unique
-  user           User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id             String  @id @default(uuid())
+  userId         String  @unique
+  user           User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   bloodType      String?
   rhFactor       String?
   dateOfBirth    String?
-  organDonor     Boolean            @default(false)
-  dnrStatus      Boolean            @default(false)
+  organDonor     Boolean @default(false)
+  dnrStatus      Boolean @default(false)
   emergencyNotes String?
   height         String?
   weight         String?
   insuranceInfo  String?
-  
+
   allergies        Allergy[]
   conditions       Condition[]
   medications      Medication[]
@@ -139,9 +139,9 @@ model MedicalProfile {
   appointments     Appointment[]
   medicalShares    MedicalShare[]
 
-  readinessScore Int                @default(0) // 0-100 calculated score
-  createdAt      DateTime           @default(now())
-  updatedAt      DateTime           @updatedAt
+  readinessScore Int      @default(0) // 0-100 calculated score
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
 
 enum VerificationStatus {
@@ -164,21 +164,21 @@ enum Visibility {
 // ─────────────────────────────────────────────
 
 model Allergy {
-  id               String         @id @default(uuid())
-  profileId        String
-  profile          MedicalProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  substance        String
-  category         String         // Medication, Food, Environmental, Latex, Insect, Other
-  reaction         String?
-  severity         AllergySeverity
-  criticality      String?
-  status           String         @default("Active") // Active, Resolved, Unknown, Unconfirmed
+  id                 String             @id @default(uuid())
+  profileId          String
+  profile            MedicalProfile     @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  substance          String
+  category           String // Medication, Food, Environmental, Latex, Insect, Other
+  reaction           String?
+  severity           AllergySeverity
+  criticality        String?
+  status             String             @default("Active") // Active, Resolved, Unknown, Unconfirmed
   verificationStatus VerificationStatus @default(UNVERIFIED)
-  onsetDate        DateTime?
-  notes            String?
-  visibility       Visibility     @default(PUBLIC_EMERGENCY)
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
+  onsetDate          DateTime?
+  notes              String?
+  visibility         Visibility         @default(PUBLIC_EMERGENCY)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
 }
 
 enum AllergySeverity {
@@ -193,22 +193,22 @@ enum AllergySeverity {
 // ─────────────────────────────────────────────
 
 model Condition {
-  id               String         @id @default(uuid())
-  profileId        String
-  profile          MedicalProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  conditionName    String
-  clinicalDesc     String?
-  diagnosisDate    DateTime?
-  status           String         @default("Active") // Active, Controlled, Resolved, In Remission, Unknown, Unconfirmed
-  severity         String?
-  diagnosedBy      String?
+  id                 String             @id @default(uuid())
+  profileId          String
+  profile            MedicalProfile     @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  conditionName      String
+  clinicalDesc       String?
+  diagnosisDate      DateTime?
+  status             String             @default("Active") // Active, Controlled, Resolved, In Remission, Unknown, Unconfirmed
+  severity           String?
+  diagnosedBy        String?
   healthcareProvider String?
-  hospitalClinic   String?
-  notes            String?
+  hospitalClinic     String?
+  notes              String?
   verificationStatus VerificationStatus @default(UNVERIFIED)
-  visibility       Visibility     @default(PUBLIC_EMERGENCY)
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
+  visibility         Visibility         @default(PUBLIC_EMERGENCY)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
 }
 
 // ─────────────────────────────────────────────
@@ -216,26 +216,26 @@ model Condition {
 // ─────────────────────────────────────────────
 
 model Medication {
-  id               String         @id @default(uuid())
-  profileId        String
-  profile          MedicalProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  genericName      String
-  brandName        String?
-  strength         String?
-  dosage           String?
-  route            String?
-  frequency        String?
-  timing           String?
-  startDate        DateTime?
-  endDate          DateTime?
-  prescribingDoctor String?
-  indication       String?
-  instructions     String?
-  status           String         @default("Active") // Active, Completed, Discontinued, On Hold, Unknown
+  id                 String             @id @default(uuid())
+  profileId          String
+  profile            MedicalProfile     @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  genericName        String
+  brandName          String?
+  strength           String?
+  dosage             String?
+  route              String?
+  frequency          String?
+  timing             String?
+  startDate          DateTime?
+  endDate            DateTime?
+  prescribingDoctor  String?
+  indication         String?
+  instructions       String?
+  status             String             @default("Active") // Active, Completed, Discontinued, On Hold, Unknown
   verificationStatus VerificationStatus @default(UNVERIFIED)
-  visibility       Visibility     @default(PUBLIC_EMERGENCY)
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
+  visibility         Visibility         @default(PUBLIC_EMERGENCY)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
 }
 
 // ─────────────────────────────────────────────
@@ -243,20 +243,20 @@ model Medication {
 // ─────────────────────────────────────────────
 
 model EmergencyContact {
-  id               String         @id @default(uuid())
-  profileId        String
-  profile          MedicalProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  name             String
-  relationship     String
-  phone            String
-  secondaryPhone   String?
-  email            String?
-  priority         Int            @default(1)
+  id                     String         @id @default(uuid())
+  profileId              String
+  profile                MedicalProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  name                   String
+  relationship           String
+  phone                  String
+  secondaryPhone         String?
+  email                  String?
+  priority               Int            @default(1)
   preferredContactMethod String?
-  notifyOnIncident Boolean        @default(true)
-  visibility       Visibility     @default(PUBLIC_EMERGENCY)
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
+  notifyOnIncident       Boolean        @default(true)
+  visibility             Visibility     @default(PUBLIC_EMERGENCY)
+  createdAt              DateTime       @default(now())
+  updatedAt              DateTime       @updatedAt
 }
 
 // ─────────────────────────────────────────────
@@ -264,38 +264,38 @@ model EmergencyContact {
 // ─────────────────────────────────────────────
 
 model MedicalDocument {
-  id               String         @id @default(uuid())
-  profileId        String
-  profile          MedicalProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  documentType     String         // Lab Report, Prescription, Imaging, Discharge Summary, etc.
-  title            String
-  date             DateTime?
+  id                 String             @id @default(uuid())
+  profileId          String
+  profile            MedicalProfile     @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  documentType       String // Lab Report, Prescription, Imaging, Discharge Summary, etc.
+  title              String
+  date               DateTime?
   healthcareProvider String?
-  hospitalClinic   String?
-  fileUrl          String
+  hospitalClinic     String?
+  fileUrl            String
   verificationStatus VerificationStatus @default(UNVERIFIED)
-  visibility       Visibility     @default(PRIVATE)
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
+  visibility         Visibility         @default(PRIVATE)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
 }
 
 model LabReport {
-  id               String         @id @default(uuid())
-  profileId        String
-  profile          MedicalProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  testName         String
-  testCategory     String?
-  result           String
-  unit             String?
-  referenceRange   String?
-  abnormalFlag     Boolean        @default(false)
-  testDate         DateTime?
-  laboratory       String?
-  reportFileUrl    String?
+  id                 String             @id @default(uuid())
+  profileId          String
+  profile            MedicalProfile     @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  testName           String
+  testCategory       String?
+  result             String
+  unit               String?
+  referenceRange     String?
+  abnormalFlag       Boolean            @default(false)
+  testDate           DateTime?
+  laboratory         String?
+  reportFileUrl      String?
   verificationStatus VerificationStatus @default(UNVERIFIED)
-  visibility       Visibility     @default(DOCTOR_ACCESS)
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
+  visibility         Visibility         @default(DOCTOR_ACCESS)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
 }
 
 // ─────────────────────────────────────────────
@@ -303,35 +303,35 @@ model LabReport {
 // ─────────────────────────────────────────────
 
 model Vital {
-  id               String         @id @default(uuid())
-  profileId        String
-  profile          MedicalProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  vitalType        String         // Blood Pressure, Heart Rate, SpO2, Temperature, Respiratory Rate, Blood Glucose, Weight, Height, BMI
-  value            String
-  unit             String?
-  measurementDate  DateTime
-  source           String         // Manual Entry, Connected Device, Healthcare Provider, Imported Data
-  visibility       Visibility     @default(PRIVATE)
-  createdAt        DateTime       @default(now())
+  id              String         @id @default(uuid())
+  profileId       String
+  profile         MedicalProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  vitalType       String // Blood Pressure, Heart Rate, SpO2, Temperature, Respiratory Rate, Blood Glucose, Weight, Height, BMI
+  value           String
+  unit            String?
+  measurementDate DateTime
+  source          String // Manual Entry, Connected Device, Healthcare Provider, Imported Data
+  visibility      Visibility     @default(PRIVATE)
+  createdAt       DateTime       @default(now())
 }
 
 model Vaccination {
-  id               String         @id @default(uuid())
-  profileId        String
-  profile          MedicalProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  vaccine          String
-  doseNumber       Int?
-  date             DateTime?
-  manufacturer     String?
-  batchNumber      String?
-  administeredBy   String?
-  facility         String?
-  nextDose         DateTime?
-  certificateUrl   String?
+  id                 String             @id @default(uuid())
+  profileId          String
+  profile            MedicalProfile     @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  vaccine            String
+  doseNumber         Int?
+  date               DateTime?
+  manufacturer       String?
+  batchNumber        String?
+  administeredBy     String?
+  facility           String?
+  nextDose           DateTime?
+  certificateUrl     String?
   verificationStatus VerificationStatus @default(UNVERIFIED)
-  visibility       Visibility     @default(DOCTOR_ACCESS)
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
+  visibility         Visibility         @default(DOCTOR_ACCESS)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
 }
 
 // ─────────────────────────────────────────────
@@ -339,9 +339,9 @@ model Vaccination {
 // ─────────────────────────────────────────────
 
 model Procedure {
-  id                 String         @id @default(uuid())
+  id                 String             @id @default(uuid())
   profileId          String
-  profile            MedicalProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profile            MedicalProfile     @relation(fields: [profileId], references: [id], onDelete: Cascade)
   procedureName      String
   date               DateTime?
   hospital           String?
@@ -351,27 +351,27 @@ model Procedure {
   complications      String?
   notes              String?
   verificationStatus VerificationStatus @default(UNVERIFIED)
-  visibility         Visibility     @default(DOCTOR_ACCESS)
-  createdAt          DateTime       @default(now())
-  updatedAt          DateTime       @updatedAt
+  visibility         Visibility         @default(DOCTOR_ACCESS)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
 }
 
 model Hospitalization {
-  id                 String         @id @default(uuid())
-  profileId          String
-  profile            MedicalProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  hospital           String
-  admissionDate      DateTime
-  dischargeDate      DateTime?
-  reason             String?
-  diagnosis          String?
-  procedures         String?
-  attendingDoctor    String?
+  id                  String             @id @default(uuid())
+  profileId           String
+  profile             MedicalProfile     @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  hospital            String
+  admissionDate       DateTime
+  dischargeDate       DateTime?
+  reason              String?
+  diagnosis           String?
+  procedures          String?
+  attendingDoctor     String?
   dischargeSummaryUrl String?
-  verificationStatus VerificationStatus @default(UNVERIFIED)
-  visibility         Visibility     @default(DOCTOR_ACCESS)
-  createdAt          DateTime       @default(now())
-  updatedAt          DateTime       @updatedAt
+  verificationStatus  VerificationStatus @default(UNVERIFIED)
+  visibility          Visibility         @default(DOCTOR_ACCESS)
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
 }
 
 // ─────────────────────────────────────────────
@@ -394,17 +394,17 @@ model Doctor {
 }
 
 model Appointment {
-  id               String         @id @default(uuid())
-  profileId        String
-  profile          MedicalProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  doctor           String?
-  hospital         String?
-  date             DateTime
-  reason           String?
-  notes            String?
-  status           String         @default("Upcoming")
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
+  id        String         @id @default(uuid())
+  profileId String
+  profile   MedicalProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  doctor    String?
+  hospital  String?
+  date      DateTime
+  reason    String?
+  notes     String?
+  status    String         @default("Upcoming")
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
 }
 
 // ─────────────────────────────────────────────
@@ -415,10 +415,10 @@ model MedicalShare {
   id               String         @id @default(uuid())
   profileId        String
   profile          MedicalProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  sharedWithUserId String?        // If sharing with another registered user/doctor
+  sharedWithUserId String? // If sharing with another registered user/doctor
   sharedWithName   String?
-  accessLevel      String         // Full, Limited
-  permissions      Json           // e.g., ["allergies", "conditions"]
+  accessLevel      String // Full, Limited
+  permissions      Json // e.g., ["allergies", "conditions"]
   purpose          String?
   expiresAt        DateTime?
   isRevoked        Boolean        @default(false)
@@ -463,12 +463,12 @@ enum DeviceStatus {
 // ─────────────────────────────────────────────
 
 model Incident {
-  id               String          @id @default(uuid())
+  id               String            @id @default(uuid())
   deviceTokenId    String?
-  deviceToken      DeviceToken?    @relation(fields: [deviceTokenId], references: [id])
+  deviceToken      DeviceToken?      @relation(fields: [deviceTokenId], references: [id])
   userId           String
-  user             User            @relation("UserIncidents", fields: [userId], references: [id])
-  status           IncidentStatus  @default(CREATED)
+  user             User              @relation("UserIncidents", fields: [userId], references: [id])
+  status           IncidentStatus    @default(CREATED)
   locationLat      Float?
   locationLng      Float?
   locationAddress  String?
@@ -476,8 +476,8 @@ model Incident {
   responderContact String?
   notifications    NotificationLog[]
   events           IncidentEvent[]
-  createdAt        DateTime        @default(now())
-  updatedAt        DateTime        @updatedAt
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
   resolvedAt       DateTime?
 }
 
@@ -496,25 +496,25 @@ model IncidentEvent {
   id          String   @id @default(uuid())
   incidentId  String
   incident    Incident @relation(fields: [incidentId], references: [id], onDelete: Cascade)
-  eventType   String   // CREATED, STATUS_CHANGED, NOTE_ADDED, CONTACT_NOTIFIED, etc.
+  eventType   String // CREATED, STATUS_CHANGED, NOTE_ADDED, CONTACT_NOTIFIED, etc.
   description String?
-  actorId     String?  // userId of who triggered this event
+  actorId     String? // userId of who triggered this event
   metadata    Json?
   createdAt   DateTime @default(now())
 }
 
 model NotificationLog {
-  id           String             @id @default(uuid())
+  id           String              @id @default(uuid())
   incidentId   String
-  incident     Incident           @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+  incident     Incident            @relation(fields: [incidentId], references: [id], onDelete: Cascade)
   contactId    String?
   channel      NotificationChannel
-  status       NotificationStatus @default(QUEUED)
-  attemptCount Int                @default(0)
+  status       NotificationStatus  @default(QUEUED)
+  attemptCount Int                 @default(0)
   errorMsg     String?
   sentAt       DateTime?
-  createdAt    DateTime           @default(now())
-  updatedAt    DateTime           @updatedAt
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
 }
 
 enum NotificationChannel {
@@ -535,18 +535,18 @@ enum NotificationStatus {
 // ─────────────────────────────────────────────
 
 model CardOrder {
-  id              String      @id @default(uuid())
+  id              String          @id @default(uuid())
   userId          String
-  cardType        String      @default("STANDARD") // STANDARD, PREMIUM, SILICONE
+  cardType        String          @default("STANDARD") // STANDARD, PREMIUM, SILICONE
   status          CardOrderStatus @default(PENDING)
   deliveryName    String
   deliveryAddress String
   deliveryCity    String
-  deliveryCountry String      @default("BD")
+  deliveryCountry String          @default("BD")
   trackingNumber  String?
   card            Card?
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
 }
 
 enum CardOrderStatus {
@@ -559,16 +559,16 @@ enum CardOrderStatus {
 }
 
 model Card {
-  id            String      @id @default(uuid())
-  orderId       String      @unique
-  order         CardOrder   @relation(fields: [orderId], references: [id])
+  id            String     @id @default(uuid())
+  orderId       String     @unique
+  order         CardOrder  @relation(fields: [orderId], references: [id])
   userId        String
-  serialNumber  String      @unique
-  status        CardStatus  @default(INACTIVE)
+  serialNumber  String     @unique
+  status        CardStatus @default(INACTIVE)
   activatedAt   DateTime?
   deactivatedAt DateTime?
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
 }
 
 enum CardStatus {
@@ -590,7 +590,7 @@ model Plan {
   price         Float          @default(0)
   currency      String         @default("BDT")
   billingPeriod String         @default("MONTHLY") // MONTHLY, YEARLY
-  features      Json           // Array of feature strings
+  features      Json // Array of feature strings
   isActive      Boolean        @default(true)
   subscriptions Subscription[]
   createdAt     DateTime       @default(now())
@@ -598,18 +598,18 @@ model Plan {
 }
 
 model Subscription {
-  id                String             @id @default(uuid())
-  userId            String
-  planId            String
-  plan              Plan               @relation(fields: [planId], references: [id])
-  status            SubscriptionStatus @default(ACTIVE)
+  id                 String             @id @default(uuid())
+  userId             String
+  planId             String
+  plan               Plan               @relation(fields: [planId], references: [id])
+  status             SubscriptionStatus @default(ACTIVE)
   currentPeriodStart DateTime
   currentPeriodEnd   DateTime
-  cancelAtPeriodEnd  Boolean           @default(false)
-  externalRef       String?            // Stripe/payment provider reference
-  payments          Payment[]
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
+  cancelAtPeriodEnd  Boolean            @default(false)
+  externalRef        String? // Stripe/payment provider reference
+  payments           Payment[]
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
 }
 
 enum SubscriptionStatus {
@@ -627,7 +627,7 @@ model Payment {
   amount         Float
   currency       String        @default("BDT")
   status         PaymentStatus @default(PENDING)
-  externalRef    String?       // Payment provider transaction ID
+  externalRef    String? // Payment provider transaction ID
   invoiceUrl     String?
   paidAt         DateTime?
   createdAt      DateTime      @default(now())
@@ -645,17 +645,17 @@ enum PaymentStatus {
 // ─────────────────────────────────────────────
 
 model Organisation {
-  id           String               @id @default(uuid())
-  name         String
-  type         OrgType
-  email        String?
-  phone        String?
-  address      String?
-  country      String               @default("BD")
-  status       OrgStatus            @default(PENDING_VERIFICATION)
-  members      OrganisationMember[]
-  createdAt    DateTime             @default(now())
-  updatedAt    DateTime             @updatedAt
+  id        String               @id @default(uuid())
+  name      String
+  type      OrgType
+  email     String?
+  phone     String?
+  address   String?
+  country   String               @default("BD")
+  status    OrgStatus            @default(PENDING_VERIFICATION)
+  members   OrganisationMember[]
+  createdAt DateTime             @default(now())
+  updatedAt DateTime             @updatedAt
 }
 
 enum OrgType {
@@ -688,16 +688,16 @@ model OrganisationMember {
 // ─────────────────────────────────────────────
 
 model Verification {
-  id           String             @id @default(uuid())
-  userId       String             @unique
-  type         VerificationType
-  status       VerificationStatus_Enum @default(PENDING)
-  credentials  Json?              // License numbers, registrations, etc.
-  reviewedBy   String?            // Admin userId
-  reviewNote   String?
-  submittedAt  DateTime           @default(now())
-  reviewedAt   DateTime?
-  updatedAt    DateTime           @updatedAt
+  id          String                  @id @default(uuid())
+  userId      String                  @unique
+  type        VerificationType
+  status      VerificationStatus_Enum @default(PENDING)
+  credentials Json? // License numbers, registrations, etc.
+  reviewedBy  String? // Admin userId
+  reviewNote  String?
+  submittedAt DateTime                @default(now())
+  reviewedAt  DateTime?
+  updatedAt   DateTime                @updatedAt
 }
 
 enum VerificationType {
@@ -721,8 +721,8 @@ model AuditLog {
   id         String   @id @default(uuid())
   userId     String?
   user       User?    @relation(fields: [userId], references: [id])
-  action     String   // e.g. USER_CREATED, INCIDENT_STARTED, CARD_ACTIVATED
-  resource   String?  // Resource type e.g. Incident, DeviceToken
+  action     String // e.g. USER_CREATED, INCIDENT_STARTED, CARD_ACTIVATED
+  resource   String? // Resource type e.g. Incident, DeviceToken
   resourceId String?
   metadata   Json?
   ip         String?
@@ -731,15 +731,15 @@ model AuditLog {
 }
 
 model AccessLog {
-  id            String      @id @default(uuid())
+  id            String       @id @default(uuid())
   deviceTokenId String?
   deviceToken   DeviceToken? @relation(fields: [deviceTokenId], references: [id])
   userId        String?
-  user          User?       @relation(fields: [userId], references: [id])
+  user          User?        @relation(fields: [userId], references: [id])
   ip            String?
   userAgent     String?
-  accessType    String      @default("QR_SCAN") // QR_SCAN, NFC_TAP, LINK_ACCESS
-  createdAt     DateTime    @default(now())
+  accessType    String       @default("QR_SCAN") // QR_SCAN, NFC_TAP, LINK_ACCESS
+  createdAt     DateTime     @default(now())
 }
 
 // ─────────────────────────────────────────────
@@ -756,15 +756,15 @@ model FamilyGroup {
 }
 
 model FamilyMember {
-  id             String       @id @default(uuid())
-  groupId        String
-  group          FamilyGroup  @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  userId         String?      @unique // If the family member has their own MedNira account
-  name           String
-  relationship   String
-  accessLevel    String       @default("LIMITED") // LIMITED, FULL
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
+  id           String      @id @default(uuid())
+  groupId      String
+  group        FamilyGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  userId       String?     @unique // If the family member has their own MedNira account
+  name         String
+  relationship String
+  accessLevel  String      @default("LIMITED") // LIMITED, FULL
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
 }
 
 model AccountSettings {

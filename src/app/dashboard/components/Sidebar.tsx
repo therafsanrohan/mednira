@@ -39,12 +39,15 @@ const navigationGroups = [
       { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
       { label: 'Medical Profile', href: '/dashboard/medical-profile', icon: HeartPulse },
       { label: 'Emergency Profile', href: '/dashboard/emergency-id', icon: Shield },
+      { label: 'Medical ID', href: '/dashboard/medical-id', icon: QrCode },
     ]
   },
   {
     name: 'HEALTH',
     items: [
       { label: 'Health Records', href: '/dashboard/records', icon: ActivitySquare },
+      { label: 'Medications', href: '/dashboard/medications', icon: Pill },
+      { label: 'Documents', href: '/dashboard/documents', icon: FileText },
     ]
   },
   {
