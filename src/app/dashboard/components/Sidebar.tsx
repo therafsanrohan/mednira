@@ -34,27 +34,32 @@ import {
 
 const navigationGroups = [
   {
-    name: 'MAIN',
-    items: [
-      { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-      { label: 'Medical Profile', href: '/dashboard/medical-profile', icon: HeartPulse },
-      { label: 'Emergency Profile', href: '/dashboard/emergency-id', icon: Shield },
-      { label: 'Medical ID', href: '/dashboard/medical-id', icon: QrCode },
-    ]
-  },
-  {
     name: 'HEALTH',
     items: [
+      { label: 'Medical Overview', href: '/dashboard', icon: LayoutDashboard },
+      { label: 'Medical ID', href: '/dashboard/medical-id', icon: User },
+      { label: 'Medical Profile', href: '/dashboard/medical-profile', icon: HeartPulse },
       { label: 'Health Records', href: '/dashboard/records', icon: ActivitySquare },
       { label: 'Medications', href: '/dashboard/medications', icon: Pill },
       { label: 'Documents', href: '/dashboard/documents', icon: FileText },
     ]
   },
   {
+    name: 'EMERGENCY',
+    items: [
+      { label: 'Emergency ID', href: '/dashboard/emergency-id', icon: Shield },
+    ]
+  },
+  {
+    name: 'FAMILY',
+    items: [
+      { label: 'Family & Dependents', href: '/dashboard/account?tab=family', icon: User },
+    ]
+  },
+  {
     name: 'ACCOUNT',
     items: [
-      { label: 'Account Center', href: '/dashboard/account', icon: User },
-      { label: 'Settings', href: '/dashboard/settings', icon: Settings },
+      { label: 'Account Center', href: '/dashboard/account', icon: Settings },
     ]
   }
 ];
