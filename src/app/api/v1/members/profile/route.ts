@@ -172,6 +172,7 @@ export async function GET(_request: NextRequest) {
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
       include: {
+        userProfile: true,
         profile: {
           include: {
             allergies: { orderBy: { createdAt: 'asc' } },

@@ -17,6 +17,7 @@ import {
 
 const navItems = [
   { label: 'Overview', href: '/dashboard', icon: LayoutDashboard },
+  { label: 'Account Center', href: '/dashboard/account', icon: User },
   { label: 'Medical Profile', href: '/dashboard/medical-profile', icon: HeartPulse },
   { label: 'Health Records', href: '/dashboard/records', icon: ActivitySquare },
   { label: 'Emergency ID', href: '/dashboard/emergency-id', icon: QrCode },

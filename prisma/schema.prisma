@@ -68,6 +68,8 @@ model User {
   incidents      Incident[]      @relation("UserIncidents")
   auditLogs      AuditLog[]
   accessLogs     AccessLog[]
+  accountSettings AccountSettings?
+  ownedFamilyGroup FamilyGroup?  @relation("FamilyOwner")
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
 }
@@ -738,4 +740,42 @@ model AccessLog {
   userAgent     String?
   accessType    String      @default("QR_SCAN") // QR_SCAN, NFC_TAP, LINK_ACCESS
   createdAt     DateTime    @default(now())
+}
+
+// ─────────────────────────────────────────────
+// ACCOUNT CENTER MODELS
+// ─────────────────────────────────────────────
+
+model FamilyGroup {
+  id        String         @id @default(uuid())
+  ownerId   String         @unique
+  owner     User           @relation("FamilyOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  members   FamilyMember[]
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+}
+
+model FamilyMember {
+  id             String       @id @default(uuid())
+  groupId        String
+  group          FamilyGroup  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  userId         String?      @unique // If the family member has their own MedNira account
+  name           String
+  relationship   String
+  accessLevel    String       @default("LIMITED") // LIMITED, FULL
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
+model AccountSettings {
+  id                   String   @id @default(uuid())
+  userId               String   @unique
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  emailNotifications   Boolean  @default(true)
+  smsNotifications     Boolean  @default(false)
+  marketingEmails      Boolean  @default(false)
+  twoFactorEnabled     Boolean  @default(false)
+  publicProfileEnabled Boolean  @default(false)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
 }
