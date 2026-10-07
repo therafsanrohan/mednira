@@ -122,6 +122,8 @@ export class IncidentService {
             },
           },
         },
+        userProfile: true,
+        accountSettings: true,
       },
     });
 
@@ -131,10 +133,25 @@ export class IncidentService {
         contactId: contact.id,
         contactName: contact.name,
         phone: contact.phone,
+        email: contact.email,
         memberName: user.fullName || 'Unknown',
         locationAddress: params.locationAddress,
         responderNote: params.responderNote,
       }));
+
+      // Add the user themselves if they have SMS notifications enabled
+      if (user.accountSettings?.smsNotifications && user.userProfile?.phoneNumber) {
+        payloads.push({
+          incidentId: incident.id,
+          contactId: user.id, // using user ID as contact ID for owner
+          contactName: user.fullName || 'You',
+          phone: user.userProfile?.phoneNumber || '',
+          email: user.email,
+          memberName: 'Your own profile',
+          locationAddress: params.locationAddress,
+          responderNote: params.responderNote,
+        });
+      }
 
       await NotificationService.enqueueEmergencyAlerts(payloads);
     }

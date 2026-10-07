@@ -12,6 +12,7 @@ export interface DispatchNotificationPayload {
   contactName: string;
   phone: string;
   memberName: string;
+  email?: string | null;
   locationAddress?: string | null;
   responderNote?: string | null;
 }
@@ -81,10 +82,17 @@ export class NotificationService {
           console.log(`[SMS STUB] To: ${payload.phone} | Body: ${messageBody}`);
         }
 
-        // We can also send an email if the contact has an email (not currently tracked in schema, but good placeholder)
-        if (process.env.RESEND_API_KEY && process.env.MEDNIRA_EMAIL_FROM) {
-          // Placeholder for when contacts have emails
-          // await resend.emails.send({ ... })
+        // We can also send an email if the contact has an email
+        if (payload.email && process.env.RESEND_API_KEY && process.env.MEDNIRA_EMAIL_FROM) {
+          const resend = getResend();
+          if (resend) {
+            await resend.emails.send({
+              from: process.env.MEDNIRA_EMAIL_FROM,
+              to: payload.email,
+              subject: `EMERGENCY ALERT: ${payload.memberName}`,
+              text: messageBody
+            });
+          }
         }
 
         await prisma.notificationLog.update({
