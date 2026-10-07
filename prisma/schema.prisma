@@ -57,9 +57,12 @@ model User {
   name             String?
   fullName         String           @default("")
   image            String?
-  passwordHash     String? // null for OAuth users
-  role             UserRole         @default(USER)
-  status           UserStatus       @default(ACTIVE)
+  passwordHash           String? // null for OAuth users
+  twoFactorEnabled       Boolean          @default(false)
+  twoFactorSecret        String?
+  twoFactorRecoveryCodes String[]
+  role                   UserRole         @default(USER)
+  status                 UserStatus       @default(ACTIVE)
   userProfile      Profile?
   profile          MedicalProfile?
   deviceTokens     DeviceToken[]

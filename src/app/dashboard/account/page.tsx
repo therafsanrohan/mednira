@@ -9,6 +9,7 @@ import * as z from 'zod';
 import { User, Phone, MapPin, Mail, Loader2, ShieldCheck, CreditCard, Users, Bell, Lock, Download, Trash2, Plus, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { Input, Select, Textarea, Button, Label, FieldError } from '@/components/ui/FormSystem';
+import { MfaSetup } from './components/MfaSetup';
 
 const accountSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -297,16 +298,7 @@ export default function AccountCenterPage() {
               <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-6">
                 <h2 className="text-lg font-semibold text-slate-900 mb-4">Security Settings</h2>
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between pb-4 border-b border-slate-100">
-                    <div>
-                      <p className="font-medium text-slate-900">Two-Factor Authentication</p>
-                      <p className="text-sm text-slate-500">Protect your account with an extra layer of security.</p>
-                    </div>
-                    <label className="relative inline-flex items-center cursor-pointer">
-                      <Input type="checkbox" className="sr-only peer" checked={settingsData.twoFactorEnabled || false} onChange={(e) => toggleSetting('twoFactorEnabled', e.target.checked)} />
-                      <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
-                    </label>
-                  </div>
+                  <MfaSetup />
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="font-medium text-slate-900">Public Emergency Profile</p>
