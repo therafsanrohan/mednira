@@ -180,6 +180,10 @@ export async function GET(_request: NextRequest) {
             contacts: { orderBy: { priority: 'asc' } },
             vitals: { orderBy: { measurementDate: 'desc' }, take: 20 },
             labReports: { orderBy: { testDate: 'desc' }, take: 20 },
+            vaccinations: { orderBy: { date: 'desc' } },
+            procedures: { orderBy: { date: 'desc' } },
+            hospitalizations: { orderBy: { admissionDate: 'desc' } },
+            documents: { orderBy: { createdAt: 'desc' } },
           },
         },
         deviceTokens: {

@@ -1,32 +1,64 @@
 'use client';
 
-import { useState } from 'react';
-import { ActivitySquare, FileText, FlaskConical, Syringe, Activity, Plus } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
+import { ActivitySquare, FileText, Syringe, Activity, BedDouble, Stethoscope } from 'lucide-react';
+import VaccinationsSection from './components/VaccinationsSection';
+import ProceduresSection from './components/ProceduresSection';
+import HospitalizationsSection from './components/HospitalizationsSection';
+import { Toaster } from 'react-hot-toast';
 
 export default function HealthRecordsPage() {
-  const [activeTab, setActiveTab] = useState<'LABS' | 'VITALS' | 'VACCINATIONS' | 'DOCUMENTS'>('LABS');
+  const { data: session } = useSession();
+  const [activeTab, setActiveTab] = useState<'VACCINATIONS' | 'PROCEDURES' | 'HOSPITALIZATIONS' | 'DOCUMENTS'>('VACCINATIONS');
+  const [loading, setLoading] = useState(true);
+  const [profileData, setProfileData] = useState<any>(null);
 
   const tabs = [
-    { id: 'LABS', label: 'Lab Reports', icon: FlaskConical },
-    { id: 'VITALS', label: 'Vitals', icon: Activity },
     { id: 'VACCINATIONS', label: 'Vaccinations', icon: Syringe },
+    { id: 'PROCEDURES', label: 'Procedures', icon: Stethoscope },
+    { id: 'HOSPITALIZATIONS', label: 'Hospitalizations', icon: BedDouble },
     { id: 'DOCUMENTS', label: 'Documents', icon: FileText },
   ];
+
+  const fetchProfile = () => {
+    if (session) {
+      fetch('/api/v1/members/profile')
+        .then(res => res.json())
+        .then(data => {
+          setProfileData(data.user?.profile);
+          setLoading(false);
+        });
+    }
+  };
+
+  useEffect(() => {
+    fetchProfile();
+  }, [session]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500"></div>
+      </div>
+    );
+  }
+
+  const p = profileData || {};
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-white flex items-center gap-3">
-            <ActivitySquare className="w-8 h-8 text-indigo-400" />
+          <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-3 tracking-tight">
+            <ActivitySquare className="w-8 h-8 text-indigo-600" />
             Health Records
           </h1>
           <p className="text-slate-500 mt-1">Manage and track your detailed medical history.</p>
         </div>
-        <button className="flex items-center justify-center gap-2 px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl font-medium transition-colors">
-          <Plus className="w-5 h-5" /> Add Record
-        </button>
       </div>
+      
+      <Toaster position="top-right" toastOptions={{ style: { background: '#fff', color: '#0f172a', border: '1px solid #e2e8f0' } }} />
 
       <div className="flex space-x-2 overflow-x-auto pb-2 scrollbar-hide">
         {tabs.map((tab) => (
@@ -36,7 +68,7 @@ export default function HealthRecordsPage() {
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors whitespace-nowrap ${
               activeTab === tab.id
                 ? 'bg-indigo-500 text-white shadow-md'
-                : 'bg-slate-50 text-slate-500 hover:text-slate-800 hover:bg-slate-50'
+                : 'bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50'
             }`}
           >
             <tab.icon className="w-4 h-4" /> {tab.label}
@@ -44,40 +76,26 @@ export default function HealthRecordsPage() {
         ))}
       </div>
 
-      <div className="bg-white border border-slate-200 rounded-2xl p-6 min-h-[400px]">
-        
-        {activeTab === 'LABS' && (
-          <div className="text-center py-16">
-            <FlaskConical className="w-16 h-16 text-slate-700 mx-auto mb-4" />
-            <h3 className="text-xl font-medium text-slate-800">No Lab Reports</h3>
-            <p className="text-slate-500 mt-2 max-w-sm mx-auto">Upload your blood tests, pathology reports, and other lab results to track historical trends.</p>
-          </div>
-        )}
-
-        {activeTab === 'VITALS' && (
-          <div className="text-center py-16">
-            <Activity className="w-16 h-16 text-slate-700 mx-auto mb-4" />
-            <h3 className="text-xl font-medium text-slate-800">No Vitals Recorded</h3>
-            <p className="text-slate-500 mt-2 max-w-sm mx-auto">Track your blood pressure, heart rate, weight, and other vital signs over time.</p>
-          </div>
-        )}
-
+      <div className="min-h-[400px]">
         {activeTab === 'VACCINATIONS' && (
-          <div className="text-center py-16">
-            <Syringe className="w-16 h-16 text-slate-700 mx-auto mb-4" />
-            <h3 className="text-xl font-medium text-slate-800">No Vaccinations</h3>
-            <p className="text-slate-500 mt-2 max-w-sm mx-auto">Keep a secure digital record of your immunizations and vaccination certificates.</p>
-          </div>
+          <VaccinationsSection initialData={p.vaccinations || []} onUpdate={fetchProfile} />
+        )}
+
+        {activeTab === 'PROCEDURES' && (
+          <ProceduresSection initialData={p.procedures || []} onUpdate={fetchProfile} />
+        )}
+
+        {activeTab === 'HOSPITALIZATIONS' && (
+          <HospitalizationsSection initialData={p.hospitalizations || []} onUpdate={fetchProfile} />
         )}
 
         {activeTab === 'DOCUMENTS' && (
-          <div className="text-center py-16">
-            <FileText className="w-16 h-16 text-slate-700 mx-auto mb-4" />
-            <h3 className="text-xl font-medium text-slate-800">Medical Vault Empty</h3>
-            <p className="text-slate-500 mt-2 max-w-sm mx-auto">Securely store discharge summaries, prescriptions, and medical certificates.</p>
+          <div className="bg-white border border-slate-200 rounded-2xl p-6 text-center py-16">
+            <FileText className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+            <h3 className="text-xl font-medium text-slate-800">Medical Vault Upcoming</h3>
+            <p className="text-slate-500 mt-2 max-w-sm mx-auto">Secure medical document storage with signed URLs and private access is coming in Phase 6.</p>
           </div>
         )}
-
       </div>
     </div>
   );
