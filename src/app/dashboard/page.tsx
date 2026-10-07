@@ -13,25 +13,11 @@ export default function DashboardHome() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [profileRes, emergencyRes] = await Promise.all([
-          fetch('/api/v1/members/profile'),
-          fetch('/api/v1/members/emergency-id')
-        ]);
-        
-        let profile = null;
-        let emergency = null;
-        
-        if (profileRes.ok) {
-          const pData = await profileRes.json();
-          profile = pData.user;
+        const res = await fetch('/api/v1/dashboard/overview');
+        if (res.ok) {
+          const json = await res.json();
+          setData(json.data);
         }
-        
-        if (emergencyRes.ok) {
-          const eData = await emergencyRes.json();
-          emergency = eData.data;
-        }
-        
-        setData({ profile, emergency });
       } catch (err) {
         console.error('Failed to load dashboard data', err);
       } finally {
@@ -46,19 +32,33 @@ export default function DashboardHome() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[50vh]">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-300"></div>
+      <div className="space-y-8 max-w-5xl mx-auto pb-12 animate-pulse">
+        <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-slate-200">
+          <div>
+            <div className="h-8 bg-slate-200 rounded-lg w-48 mb-2"></div>
+            <div className="h-4 bg-slate-200 rounded-lg w-64"></div>
+          </div>
+          <div className="h-10 bg-slate-200 rounded-xl w-32"></div>
+        </header>
+        <section className="h-24 bg-slate-100 rounded-2xl w-full"></section>
+        <section className="space-y-4">
+          <div className="h-6 bg-slate-200 rounded-lg w-32"></div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+            {[1, 2, 3, 4].map(i => <div key={i} className="h-32 bg-slate-100 rounded-2xl"></div>)}
+          </div>
+        </section>
+        <section className="h-64 bg-slate-100 rounded-2xl w-full"></section>
       </div>
     );
   }
 
-  const p = data?.profile?.profile;
+  const p = data?.user?.profile;
   const emergency = data?.emergency;
   
   // Calculate missing vital info for "Needs Attention"
   const missingItems = [];
-  if (!p?.bloodGroup) missingItems.push('blood group');
-  if (!p?.emergencyContacts?.length) missingItems.push('emergency contact');
+  if (!p?.bloodType) missingItems.push('blood group');
+  if (!p?.contacts?.length) missingItems.push('emergency contact');
   if (!emergency?.isPublic) missingItems.push('Emergency ID activation');
 
   return (
@@ -172,14 +172,14 @@ export default function DashboardHome() {
                 <h3 className="font-bold text-slate-900">Critical Alerts</h3>
               </div>
               <ul className="space-y-3">
-                {p?.bloodGroup && (
+                {p?.bloodType && (
                   <li className="flex justify-between items-center text-sm">
                     <span className="text-slate-500">Blood Group</span>
-                    <span className="font-bold text-slate-900">{p.bloodGroup}</span>
+                    <span className="font-bold text-slate-900">{p.bloodType}</span>
                   </li>
                 )}
-                {p?.allergies?.filter((a: any) => a.severity === 'LIFE_THREATENING' || a.severity === 'SEVERE').length > 0 ? (
-                  p.allergies.filter((a: any) => a.severity === 'LIFE_THREATENING' || a.severity === 'SEVERE').map((allergy: any) => (
+                {p?.allergies?.length > 0 ? (
+                  p.allergies.map((allergy: any) => (
                     <li key={allergy.id} className="flex flex-col text-sm">
                       <span className="font-bold text-rose-700">{allergy.substance}</span>
                       <span className="text-slate-500 text-xs">Severe Allergy</span>
@@ -197,11 +197,11 @@ export default function DashboardHome() {
                 <h3 className="font-bold text-slate-900">Current Medications</h3>
               </div>
               <ul className="space-y-3">
-                {p?.medications?.filter((m: any) => m.status === 'ACTIVE').length > 0 ? (
-                  p.medications.filter((m: any) => m.status === 'ACTIVE').slice(0, 3).map((med: any) => (
+                {p?.medications?.length > 0 ? (
+                  p.medications.map((med: any) => (
                     <li key={med.id} className="flex flex-col text-sm">
-                      <span className="font-medium text-slate-900">{med.name}</span>
-                      <span className="text-slate-500 text-xs">{med.dosage}</span>
+                      <span className="font-medium text-slate-900">{med.genericName}</span>
+                      <span className="text-slate-500 text-xs">{med.dosage || 'Active'}</span>
                     </li>
                   ))
                 ) : (
@@ -216,23 +216,18 @@ export default function DashboardHome() {
                 <h3 className="font-bold text-slate-900">Primary Contact</h3>
               </div>
               <div className="space-y-3">
-                {p?.emergencyContacts?.filter((c: any) => c.isPrimary).length > 0 ? (
-                  p.emergencyContacts.filter((c: any) => c.isPrimary).map((contact: any, i: number) => (
-                    <div key={i} className="flex flex-col text-sm">
+                {p?.contacts?.length > 0 ? (
+                  p.contacts.map((contact: any) => (
+                    <div key={contact.id} className="flex flex-col text-sm">
                       <span className="font-bold text-slate-900">{contact.name}</span>
                       <span className="text-slate-500">{contact.relationship}</span>
                       <span className="text-slate-600 mt-1">{contact.phone}</span>
                     </div>
                   ))
-                ) : p?.emergencyContacts?.length > 0 ? (
-                  <div className="flex flex-col text-sm">
-                    <span className="font-bold text-slate-900">{p.emergencyContacts[0].name}</span>
-                    <span className="text-slate-500">{p.emergencyContacts[0].relationship}</span>
-                  </div>
                 ) : (
                   <div className="text-sm text-slate-500">
-                    No emergency contacts set.
-                    <Link href="/dashboard/medical-profile" className="block mt-2 text-indigo-600 font-medium hover:underline">Add Contact</Link>
+                    No primary contact set.
+                    <Link href="/dashboard/medical-id" className="block mt-2 text-indigo-600 font-medium hover:underline">Add Contact</Link>
                   </div>
                 )}
               </div>
