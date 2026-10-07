@@ -1,16 +1,17 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Shield, QrCode, Smartphone, Download, CheckCircle2, History, Link as LinkIcon, RefreshCw, Eye, Share2, AlertCircle, FileText, Activity } from 'lucide-react';
+import { Shield, QrCode, Smartphone, Download, Share2, Printer, Activity, AlertTriangle, Eye, EyeOff, Lock, Users, Phone, CheckCircle2, History, X, RefreshCw } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import toast from 'react-hot-toast';
+import Link from 'next/link';
 
 export default function EmergencyIDPage() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [isRegenerating, setIsRegenerating] = useState(false);
-  const [isToggling, setIsToggling] = useState(false);
   const [qrModalOpen, setQrModalOpen] = useState(false);
+  const [isToggling, setIsToggling] = useState(false);
+  const [isRegenerating, setIsRegenerating] = useState(false);
 
   const fetchEmergencyData = async () => {
     try {
@@ -29,28 +30,6 @@ export default function EmergencyIDPage() {
   useEffect(() => {
     fetchEmergencyData();
   }, []);
-
-  const regenerateQR = async () => {
-    if (!confirm('This will invalidate your old QR code. Emergency responders will no longer be able to scan old cards or printed materials. Are you sure?')) return;
-    setIsRegenerating(true);
-    try {
-      const res = await fetch('/api/v1/members/emergency-id', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'regenerate_qr' })
-      });
-      if (res.ok) {
-        toast.success('New secure QR code generated.');
-        fetchEmergencyData();
-      } else {
-        toast.error('Failed to regenerate QR');
-      }
-    } catch (err) {
-      toast.error('Failed to regenerate QR');
-    } finally {
-      setIsRegenerating(false);
-    }
-  };
 
   const toggleVisibility = async () => {
     setIsToggling(true);
@@ -71,216 +50,358 @@ export default function EmergencyIDPage() {
     }
   };
 
-  const publicUrl = data?.qrToken ? `${window.location.origin}/emergency/${data.qrToken}` : '';
+  const regenerateQR = async () => {
+    if (!confirm('This will invalidate your old QR code. Are you sure?')) return;
+    setIsRegenerating(true);
+    try {
+      const res = await fetch('/api/v1/members/emergency-id', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'regenerate_qr' })
+      });
+      if (res.ok) {
+        toast.success('New secure QR code generated.');
+        fetchEmergencyData();
+      } else {
+        toast.error('Failed to regenerate QR');
+      }
+    } catch (err) {
+      toast.error('Failed to regenerate QR');
+    } finally {
+      setIsRegenerating(false);
+    }
+  };
+
+  const publicUrl = data?.qrToken ? `${typeof window !== 'undefined' ? window.location.origin : ''}/emergency/${data.qrToken}` : '';
+  const isReady = data?.readinessScore >= 80;
 
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
-        <div className="animate-pulse flex flex-col items-center">
-          <Shield className="w-12 h-12 text-slate-300 mb-4" />
-          <p className="text-slate-500 font-medium">Loading secure identity...</p>
-        </div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500"></div>
       </div>
     );
   }
 
-  const isReady = data?.readinessScore >= 80;
-
   return (
-    <div className="space-y-8 max-w-5xl mx-auto pb-12">
-      
-      {/* Hero Section */}
-      <div className="text-center md:text-left flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-slate-200">
+    <div className="max-w-4xl mx-auto pb-24 space-y-10">
+      {/* 1. TOP SECTION */}
+      <header className="space-y-4">
         <div>
-          <h1 className="text-3xl md:text-4xl font-bold text-slate-900 tracking-tight flex items-center justify-center md:justify-start gap-3">
-            <Shield className="w-8 h-8 text-emerald-500" /> Emergency ID
+          <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-3">
+            <Shield className="w-8 h-8 text-emerald-600" /> Emergency ID
           </h1>
-          <p className="text-slate-500 mt-2 max-w-2xl text-lg">Your critical medical identity, ready when it matters most.</p>
+          <p className="text-slate-500 mt-2 text-lg">
+            Your emergency-ready medical identity, connected to your Medical ID.
+          </p>
         </div>
-        <div className="flex items-center justify-center gap-3">
-          {data?.isPublic ? (
-            <span className="flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-700 text-sm font-semibold rounded-full border border-emerald-100 uppercase tracking-wide">
-              <CheckCircle2 className="w-4 h-4" /> Active & Public
-            </span>
-          ) : (
-            <span className="flex items-center gap-1.5 px-3 py-1 bg-amber-50 text-amber-700 text-sm font-semibold rounded-full border border-amber-100 uppercase tracking-wide">
-              <AlertCircle className="w-4 h-4" /> Private (Inactive)
-            </span>
-          )}
-          {isReady ? (
-            <span className="flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-blue-700 text-sm font-semibold rounded-full border border-blue-100 uppercase tracking-wide">
-              <CheckCircle2 className="w-4 h-4" /> ID Verified
-            </span>
-          ) : (
-            <span className="flex items-center gap-1.5 px-3 py-1 bg-rose-50 text-rose-700 text-sm font-semibold rounded-full border border-rose-100 uppercase tracking-wide">
-              <AlertCircle className="w-4 h-4" /> Setup Required
-            </span>
-          )}
-        </div>
-      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
-        {/* LEFT COL: QR & NFC Interactive Hero */}
-        <div className="lg:col-span-1 space-y-6">
-          <div className="bg-gradient-to-b from-slate-900 to-slate-800 rounded-3xl p-6 shadow-xl relative overflow-hidden group">
-            {/* Animated Background Effects */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-emerald-500/20 transition-all duration-1000"></div>
-            
-            <div className="text-center relative z-10 mb-6">
-              <p className="text-slate-400 text-xs font-semibold uppercase tracking-widest mb-1">Secure Access Token</p>
-              <div className="flex justify-center">
-                <div className="bg-white p-4 rounded-2xl shadow-lg transform transition-transform hover:scale-105 cursor-pointer" onClick={() => setQrModalOpen(true)}>
-                  {data?.qrToken ? (
-                    <QRCodeSVG value={publicUrl} size={160} level="H" className="mx-auto" />
-                  ) : (
-                    <div className="w-[160px] h-[160px] bg-slate-100 flex items-center justify-center">No Token</div>
-                  )}
-                </div>
-              </div>
-              <p className="text-white text-sm font-medium mt-4">Scan to access emergency info</p>
-            </div>
+        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-lg border border-slate-200">
+            <span className={`w-2.5 h-2.5 rounded-full ${data.isPublic ? 'bg-emerald-500' : 'bg-slate-400'}`}></span>
+            <span className="text-sm font-semibold text-slate-700">
+              {data.isPublic ? 'Active' : 'Inactive'}
+            </span>
+          </div>
 
-            <div className="grid grid-cols-2 gap-3 relative z-10">
-              <button onClick={() => setQrModalOpen(true)} className="flex flex-col items-center justify-center gap-2 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-colors text-sm font-medium">
-                <QrCode className="w-5 h-5" /> Show QR
-              </button>
-              <button onClick={() => {
-                navigator.clipboard.writeText(publicUrl);
-                toast.success('Link copied to clipboard');
-              }} className="flex flex-col items-center justify-center gap-2 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-colors text-sm font-medium">
-                <Share2 className="w-5 h-5" /> Share Link
-              </button>
-            </div>
-            
-            <div className="mt-6 pt-6 border-t border-white/10 relative z-10 flex flex-col items-center justify-center">
-              <div className="relative flex items-center justify-center mb-2">
-                <Smartphone className="w-8 h-8 text-emerald-400 relative z-10" />
-                <div className="absolute inset-0 bg-emerald-400/20 rounded-full animate-ping"></div>
-              </div>
-              <p className="text-white text-sm font-medium">NFC Ready</p>
-              <p className="text-slate-400 text-xs mt-1 text-center">Tap a compatible device to link</p>
-            </div>
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-lg border border-slate-200">
+            <span className="text-sm font-semibold text-slate-700">
+              {data.readinessScore}% Ready
+            </span>
+            {!isReady && <AlertTriangle className="w-4 h-4 text-amber-500" />}
           </div>
         </div>
 
-        {/* RIGHT COL: Status & Controls */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="flex flex-wrap items-center gap-3 pt-2">
+          <button 
+            onClick={() => setQrModalOpen(true)}
+            className="px-6 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-medium rounded-lg transition-colors flex items-center gap-2"
+          >
+            <QrCode className="w-5 h-5" /> Show Emergency ID
+          </button>
+          {data.isPublic && (
+            <a 
+              href={publicUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-6 py-2.5 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-medium rounded-lg transition-colors flex items-center gap-2"
+            >
+              <Eye className="w-5 h-5" /> Preview Public View
+            </a>
+          )}
+        </div>
+      </header>
+
+      {/* 2. QR / NFC PRIMARY AREA */}
+      <section className="bg-white border border-slate-200 rounded-2xl p-6 md:p-8 flex flex-col md:flex-row gap-8 items-center shadow-sm">
+        <div className="flex-1 space-y-6 w-full">
+          <div>
+            <h2 className="text-lg font-bold text-slate-900 mb-1">QR Code Access</h2>
+            <p className="text-sm text-slate-500">First responders can scan this to view your approved emergency information.</p>
+          </div>
           
-          {/* Readiness Score */}
-          <div className="bg-white border border-slate-200 rounded-3xl p-6 md:p-8 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div className="flex-1">
-              <h2 className="text-lg font-bold text-slate-900 mb-2">Emergency Readiness</h2>
-              <div className="w-full bg-slate-100 rounded-full h-3 mb-2 overflow-hidden">
-                <div className={`h-3 rounded-full transition-all duration-1000 ${data?.readinessScore >= 80 ? 'bg-emerald-500' : 'bg-amber-500'}`} style={{ width: `${Math.min(data?.readinessScore || 0, 100)}%` }}></div>
-              </div>
-              <p className="text-sm text-slate-500">Your profile is {data?.readinessScore}% complete.</p>
-            </div>
-            <div className="shrink-0">
-              <button 
-                onClick={() => window.location.href = '/dashboard/medical-profile'}
-                className="w-full md:w-auto px-6 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-medium rounded-xl transition-colors"
-              >
-                Complete Profile
-              </button>
-            </div>
-          </div>
-
-          {/* Visibility Controls */}
-          <div className="bg-white border border-slate-200 rounded-3xl p-6 md:p-8 shadow-sm">
-            <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-              <Eye className="w-5 h-5 text-indigo-500" /> Public Visibility
-            </h2>
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 p-4 border border-slate-100 bg-slate-50 rounded-2xl">
-              <div>
-                <p className="font-semibold text-slate-900 text-base">Public Emergency Access</p>
-                <p className="text-sm text-slate-500 mt-1 max-w-md">When active, anyone who scans your QR code or taps your NFC tag can view your critical medical information.</p>
-              </div>
-              <label className="relative inline-flex items-center cursor-pointer shrink-0">
-                <input type="checkbox" className="sr-only peer" checked={data?.isPublic} onChange={toggleVisibility} disabled={isToggling} />
-                <div className="w-14 h-7 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-emerald-500"></div>
-              </label>
-            </div>
-            
-            <div className="mt-6 border-t border-slate-100 pt-6">
-              <p className="text-sm font-semibold text-slate-900 mb-3 uppercase tracking-wider">What responders can access:</p>
-              <div className="flex flex-wrap gap-2">
-                {['Identity', 'Blood Group', 'Critical Allergies', 'Emergency Contacts', 'Current Medications', 'Medical Conditions'].map((item) => (
-                  <span key={item} className="px-3 py-1.5 bg-slate-100 text-slate-700 text-sm font-medium rounded-lg">{item}</span>
-                ))}
-              </div>
-              <p className="text-xs text-slate-500 mt-3">Full medical history, private documents, and sensitive records remain completely hidden.</p>
-            </div>
-          </div>
-
-          {/* Advanced Actions & History */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            
-            <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
-              <h3 className="font-bold text-slate-900 mb-4 flex items-center gap-2">
-                <History className="w-5 h-5 text-slate-400" /> Recent Access Log
-              </h3>
-              {data?.accessLogs && data.accessLogs.length > 0 ? (
-                <div className="space-y-4">
-                  {data.accessLogs.slice(0, 3).map((log: any) => (
-                    <div key={log.id} className="flex justify-between items-start text-sm">
-                      <div>
-                        <p className="font-medium text-slate-900">{log.accessType.replace('_', ' ')}</p>
-                        <p className="text-slate-500 text-xs">{log.ip || 'Unknown IP'}</p>
-                      </div>
-                      <span className="text-slate-400 text-xs">{new Date(log.createdAt).toLocaleDateString()}</span>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-6 text-slate-500 text-sm">
-                  No access logs recorded yet.
-                </div>
-              )}
-            </div>
-
-            <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm flex flex-col justify-between">
-              <div>
-                <h3 className="font-bold text-slate-900 mb-2">Token Management</h3>
-                <p className="text-sm text-slate-500 mb-4">If you lose your physical card, regenerate your token to invalidate the old one instantly.</p>
-              </div>
-              <div className="space-y-3">
-                <a href={publicUrl} target="_blank" className="w-full flex items-center justify-center gap-2 py-2.5 border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium rounded-xl transition-colors text-sm">
-                  <Eye className="w-4 h-4" /> Preview Public ID
-                </a>
-                <button 
-                  onClick={regenerateQR} 
-                  disabled={isRegenerating}
-                  className="w-full flex items-center justify-center gap-2 py-2.5 border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 font-medium rounded-xl transition-colors text-sm"
-                >
-                  <RefreshCw className={`w-4 h-4 ${isRegenerating ? 'animate-spin' : ''}`} /> Regenerate QR Token
-                </button>
-              </div>
-            </div>
-
-          </div>
-
-        </div>
-      </div>
-
-      {/* Fullscreen QR Modal */}
-      {qrModalOpen && (
-        <div className="fixed inset-0 bg-slate-900/95 backdrop-blur-md z-[100] flex flex-col items-center justify-center p-4">
-          <div className="absolute top-6 right-6">
-            <button onClick={() => setQrModalOpen(false)} className="p-3 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors">
-              X
+          <div className="flex flex-wrap gap-2">
+            <button onClick={() => setQrModalOpen(true)} className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">
+              <QrCode className="w-4 h-4" /> Fullscreen
+            </button>
+            <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">
+              <Download className="w-4 h-4" /> Download
+            </button>
+            <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">
+              <Printer className="w-4 h-4" /> Print
+            </button>
+            <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">
+              <Share2 className="w-4 h-4" /> Share
             </button>
           </div>
-          <div className="text-center mb-8">
-            <Shield className="w-12 h-12 text-emerald-400 mx-auto mb-4" />
-            <h2 className="text-3xl font-bold text-white tracking-tight">Emergency Medical ID</h2>
-            <p className="text-slate-400 mt-2">Scan to view critical emergency information</p>
+
+          <div className="pt-4 border-t border-slate-100">
+            <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2 mb-1">
+              <Smartphone className="w-5 h-5 text-slate-400" /> NFC Status
+            </h2>
+            <p className="text-sm text-emerald-600 font-medium bg-emerald-50 inline-block px-2 py-1 rounded">Ready to use</p>
+            <p className="text-sm text-slate-500 mt-2">Your Emergency ID can be accessed through a compatible NFC device.</p>
           </div>
-          <div className="bg-white p-6 rounded-3xl shadow-2xl">
-            <QRCodeSVG value={publicUrl} size={280} level="H" />
+        </div>
+
+        <div className="bg-white p-4 border border-slate-200 rounded-xl shadow-sm shrink-0">
+          {data?.qrToken ? (
+            <QRCodeSVG value={publicUrl} size={180} level="H" includeMargin={false} />
+          ) : (
+            <div className="w-[180px] h-[180px] bg-slate-100 flex items-center justify-center rounded-lg text-slate-400">
+              No QR
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* 3. CRITICAL EMERGENCY INFO */}
+      <section className="space-y-4">
+        <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+          <Activity className="w-6 h-6 text-slate-400" /> Critical Emergency Information
+        </h2>
+        
+        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+          {data.medicalProfile ? (
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <p className="text-sm font-medium text-slate-500 mb-1">Blood Group</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-lg font-bold text-slate-900">{data.medicalProfile.bloodGroup || 'Not set'}</p>
+                    {data.medicalProfile.bloodGroup && (
+                      <span className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium border border-slate-200">Self-reported</span>
+                    )}
+                  </div>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-slate-500 mb-1">Critical Allergies</p>
+                  <p className="text-slate-900">None reported</p>
+                </div>
+                <div className="md:col-span-2 border-t border-slate-100 pt-4">
+                  <p className="text-sm font-medium text-slate-500 mb-1">Emergency Instructions</p>
+                  <p className="text-slate-700">No specific instructions provided.</p>
+                </div>
+              </div>
+              <div className="pt-4 border-t border-slate-100 flex justify-end">
+                <Link href="/dashboard/medical-profile" className="text-indigo-600 hover:text-indigo-700 text-sm font-medium flex items-center gap-1">
+                  Manage Information
+                </Link>
+              </div>
+            </div>
+          ) : (
+            <div className="text-center py-6">
+              <p className="text-slate-500 mb-4">No critical medical information found.</p>
+              <Link href="/dashboard/medical-profile" className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-lg transition-colors inline-block text-sm">
+                Add Medical Information
+              </Link>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* 4. EMERGENCY CONTACTS */}
+      <section className="space-y-4">
+        <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+          <Users className="w-6 h-6 text-slate-400" /> Emergency Contacts
+        </h2>
+        
+        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+          {data.medicalProfile?.emergencyContacts && data.medicalProfile.emergencyContacts.length > 0 ? (
+            <div className="space-y-4">
+              {data.medicalProfile.emergencyContacts.map((contact: any, i: number) => (
+                <div key={i} className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-slate-100 last:border-0 last:pb-0">
+                  <div>
+                    <span className="text-xs font-bold text-indigo-600 tracking-wider uppercase mb-1 block">
+                      {contact.isPrimary ? 'PRIMARY' : 'SECONDARY'}
+                    </span>
+                    <p className="font-bold text-slate-900 text-lg">{contact.name}</p>
+                    <p className="text-slate-500">{contact.relationship} • {contact.phone}</p>
+                  </div>
+                  <div className="flex items-center gap-2 w-full sm:w-auto">
+                    <button className="flex-1 sm:flex-none flex justify-center items-center gap-2 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-medium rounded-lg text-sm transition-colors">
+                      <Phone className="w-4 h-4" /> Call
+                    </button>
+                    <button className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-lg text-sm transition-colors">
+                      Edit
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-6">
+              <p className="text-slate-500 mb-4">Add someone MedNira can contact if you need help.</p>
+              <button className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-lg transition-colors inline-block text-sm">
+                Add Emergency Contact
+              </button>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* 5. EMERGENCY VISIBILITY */}
+      <section className="space-y-4">
+        <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+          <Eye className="w-6 h-6 text-slate-400" /> Emergency Visibility
+        </h2>
+        
+        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-6">
+          <div>
+            <h3 className="font-bold text-slate-900 mb-2">Public Access</h3>
+            <p className="text-sm text-slate-500 mb-4">
+              When enabled, anyone who scans your QR code or reads your NFC can view your approved emergency information.
+            </p>
+            
+            <div className="flex items-center gap-4">
+              <button
+                onClick={toggleVisibility}
+                disabled={isToggling}
+                className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors ${data.isPublic ? 'bg-emerald-500' : 'bg-slate-300'}`}
+              >
+                <span className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${data.isPublic ? 'translate-x-6' : 'translate-x-1'}`} />
+              </button>
+              <span className="text-sm font-medium text-slate-700">
+                {data.isPublic ? 'Public access is ON' : 'Public access is OFF'}
+              </span>
+            </div>
+            
+            {data.isPublic && (
+              <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg flex gap-3 text-amber-800 text-sm">
+                <AlertTriangle className="w-5 h-5 shrink-0" />
+                <p>This information will be visible to anyone who accesses your Emergency ID.</p>
+              </div>
+            )}
           </div>
-          <div className="mt-8 flex items-center gap-2 text-emerald-400 font-medium">
-            <CheckCircle2 className="w-5 h-5" /> Secure QR Active
+
+          <div className="pt-6 border-t border-slate-100">
+            <h3 className="font-bold text-slate-900 mb-4">What people can see</h3>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between text-sm">
+                <span className="font-medium text-slate-700">Blood Group & Allergies</span>
+                <span className="text-emerald-600 font-medium bg-emerald-50 px-2 py-0.5 rounded">ON</span>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span className="font-medium text-slate-700">Critical Conditions</span>
+                <span className="text-emerald-600 font-medium bg-emerald-50 px-2 py-0.5 rounded">ON</span>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span className="font-medium text-slate-700">Emergency Contacts</span>
+                <span className="text-emerald-600 font-medium bg-emerald-50 px-2 py-0.5 rounded">ON</span>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <div className="flex flex-col">
+                  <span className="font-medium text-slate-700">Private Medical Documents</span>
+                  <span className="text-xs text-slate-500">Private documents are never shown.</span>
+                </div>
+                <span className="text-slate-500 font-medium bg-slate-100 px-2 py-0.5 rounded flex items-center gap-1"><Lock className="w-3 h-3"/> OFF</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 6. RECENT ACCESS & SETTINGS */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <section className="space-y-4">
+          <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+            <History className="w-6 h-6 text-slate-400" /> Recent Access
+          </h2>
+          <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm h-full">
+            {data.recentAccess && data.recentAccess.length > 0 ? (
+              <ul className="space-y-4">
+                {data.recentAccess.map((log: any) => (
+                  <li key={log.id} className="flex justify-between items-start text-sm pb-4 border-b border-slate-50 last:border-0 last:pb-0">
+                    <div>
+                      <p className="font-medium text-slate-900">Emergency View Accessed</p>
+                      <p className="text-slate-500">{new Date(log.timestamp).toLocaleString()}</p>
+                    </div>
+                    {log.ipAddress && <span className="text-xs text-slate-400 bg-slate-100 px-2 py-1 rounded">IP Recorded</span>}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-slate-500 text-sm">No recent access history recorded.</p>
+            )}
+          </div>
+        </section>
+
+        <section className="space-y-4">
+          <h2 className="text-xl font-bold text-slate-900">Advanced Actions</h2>
+          <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm h-full flex flex-col justify-center gap-4">
+            <button 
+              onClick={regenerateQR}
+              disabled={isRegenerating}
+              className="w-full px-4 py-3 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-medium rounded-xl transition-colors text-sm text-left flex items-center gap-3"
+            >
+              <RefreshCw className={`w-5 h-5 text-slate-400 ${isRegenerating ? 'animate-spin' : ''}`} />
+              <div>
+                <p className="font-bold">Regenerate QR Token</p>
+                <p className="text-xs text-slate-500">Invalidate old QR code and create a new one.</p>
+              </div>
+            </button>
+          </div>
+        </section>
+      </div>
+
+      {/* FULLSCREEN QR MODAL */}
+      {qrModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-white md:bg-slate-900/90 md:p-6" role="dialog" aria-modal="true">
+          <div className="bg-white w-full h-full md:w-auto md:h-auto md:min-w-[400px] md:rounded-3xl flex flex-col md:shadow-2xl">
+            <div className="flex items-center justify-between p-4 border-b border-slate-100">
+              <h3 className="font-bold text-lg flex items-center gap-2"><Shield className="w-5 h-5 text-emerald-500"/> Emergency ID</h3>
+              <button 
+                onClick={() => setQrModalOpen(false)}
+                className="p-2 hover:bg-slate-100 rounded-full transition-colors"
+                aria-label="Close"
+              >
+                <X className="w-6 h-6 text-slate-600" />
+              </button>
+            </div>
+            
+            <div className="flex-1 flex flex-col items-center justify-center p-8">
+              <div className="bg-white p-6 border-2 border-slate-100 rounded-3xl shadow-sm mb-8">
+                {data?.qrToken ? (
+                  <QRCodeSVG value={publicUrl} size={280} level="H" includeMargin={false} />
+                ) : (
+                  <div className="w-[280px] h-[280px] bg-slate-50 flex flex-col items-center justify-center text-slate-400 rounded-2xl">
+                    <AlertTriangle className="w-8 h-8 mb-2" />
+                    <p>No active token</p>
+                  </div>
+                )}
+              </div>
+              <p className="font-bold text-xl text-slate-900 mb-2">Scan for Emergency Info</p>
+              <p className="text-slate-500 text-center max-w-xs">Ask first responders to scan this QR code with their camera.</p>
+            </div>
+            
+            <div className="p-4 border-t border-slate-100">
+              <button 
+                onClick={() => setQrModalOpen(false)}
+                className="w-full px-4 py-4 bg-slate-900 text-white font-bold rounded-xl text-lg hover:bg-slate-800 transition-colors"
+              >
+                Done
+              </button>
+            </div>
           </div>
         </div>
       )}
