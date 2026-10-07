@@ -9,8 +9,9 @@ export default function EmergencyIDPage() {
   const { data: session } = useSession();
   const [devices, setDevices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isGenerating, setIsGenerating] = useState(false);
 
-  useEffect(() => {
+  const fetchDevices = () => {
     if (session) {
       fetch('/api/v1/devices')
         .then(res => res.json())
@@ -20,7 +21,29 @@ export default function EmergencyIDPage() {
         })
         .catch(() => setLoading(false));
     }
+  };
+
+  useEffect(() => {
+    fetchDevices();
   }, [session]);
+
+  const generateQR = async () => {
+    setIsGenerating(true);
+    try {
+      const res = await fetch('/api/v1/devices', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ deviceType: 'QR', label: 'Primary Web QR' })
+      });
+      if (res.ok) {
+        fetchDevices();
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
 
   const primaryDevice = devices.find(d => d.deviceType === 'QR' && d.status === 'ACTIVE');
 
@@ -28,8 +51,8 @@ export default function EmergencyIDPage() {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-white flex items-center gap-3">
-            <ScanFace className="w-8 h-8 text-cyan-400" />
+          <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-3 tracking-tight">
+            <ScanFace className="w-8 h-8 text-cyan-600" />
             Emergency ID
           </h1>
           <p className="text-slate-500 mt-1">Manage your emergency access tokens and QR codes.</p>
@@ -48,13 +71,17 @@ export default function EmergencyIDPage() {
               </div>
             )}
           </div>
-          <h3 className="text-lg font-semibold text-white">Public Emergency QR</h3>
+          <h3 className="text-lg font-semibold text-slate-900">Public Emergency QR</h3>
           <p className="text-sm text-slate-500 mt-2 mb-6">
             Scannable by emergency responders to access your critical medical snapshot.
           </p>
           <div className="w-full flex flex-col gap-3">
-            <button className="w-full py-2.5 bg-cyan-500 hover:bg-cyan-600 text-white rounded-xl font-medium transition-colors">
-              {primaryDevice ? 'Regenerate QR Code' : 'Generate QR Code'}
+            <button 
+              onClick={generateQR}
+              disabled={isGenerating}
+              className="w-full py-2.5 bg-cyan-500 hover:bg-cyan-600 text-white rounded-xl font-medium transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+            >
+              {isGenerating ? 'Generating...' : primaryDevice ? 'Regenerate QR Code' : 'Generate QR Code'}
             </button>
             {primaryDevice && (
               <a 
