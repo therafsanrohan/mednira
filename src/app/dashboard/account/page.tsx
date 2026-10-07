@@ -201,7 +201,13 @@ export default function AccountCenterPage() {
                     <input {...register('name')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">Email (Verified)</label>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Email 
+                      {profileData?.emailVerified ? (
+                        <span className="ml-2 text-xs font-semibold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">Verified</span>
+                      ) : (
+                        <span className="ml-2 text-xs font-semibold text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded">Unverified</span>
+                      )}
+                    </label>
                     <input value={profileData?.email || ''} disabled className="w-full bg-slate-100 border border-slate-200 rounded-lg p-2.5 text-slate-500 cursor-not-allowed" />
                   </div>
                   <div>
@@ -293,8 +299,24 @@ export default function AccountCenterPage() {
 
               <div className="bg-white border border-rose-200 rounded-2xl shadow-sm p-6">
                 <h2 className="text-lg font-semibold text-rose-600 mb-2">Danger Zone</h2>
-                <p className="text-sm text-slate-600 mb-4">Permanently delete your account and all associated medical data.</p>
-                <button className="px-4 py-2 bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-100 rounded-lg text-sm font-medium transition-colors">
+                <p className="text-sm text-slate-600 mb-4">Permanently delete your account and all associated medical data. This action is irreversible.</p>
+                <button 
+                  onClick={async () => {
+                    if (confirm('Are you absolutely sure you want to delete your entire MedNira account and all associated medical records? This cannot be undone.')) {
+                      try {
+                        const res = await fetch('/api/v1/members/account?confirm=true', { method: 'DELETE' });
+                        if (res.ok) {
+                          window.location.href = '/'; // Sign out / Redirect
+                        } else {
+                          toast.error('Failed to delete account');
+                        }
+                      } catch (err) {
+                        toast.error('Failed to delete account');
+                      }
+                    }
+                  }}
+                  className="px-4 py-2 bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-100 rounded-lg text-sm font-medium transition-colors"
+                >
                   Delete Account
                 </button>
               </div>

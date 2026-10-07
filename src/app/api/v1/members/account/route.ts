@@ -10,7 +10,6 @@ const accountSchema = z.object({
   city: z.string().optional(),
   country: z.string().optional(),
   gender: z.string().optional(),
-  bio: z.string().max(500).optional(),
 });
 
 export async function POST(req: NextRequest) {
@@ -22,7 +21,6 @@ export async function POST(req: NextRequest) {
     const data = accountSchema.parse(body);
     const userId = session.user.id;
 
-    // Update User basic info
     if (data.name !== undefined) {
       await prisma.user.update({
         where: { id: userId },
@@ -30,14 +28,12 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // Upsert UserProfile
     const profileData = {
       phoneNumber: data.phoneNumber,
       address: data.address,
       city: data.city,
       country: data.country,
       gender: data.gender,
-      bio: data.bio
     };
 
     const userProfile = await prisma.profile.upsert({
@@ -48,7 +44,28 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true, userProfile });
   } catch (error) {
-    console.error(error);
     return NextResponse.json({ error: 'Failed to update account profile' }, { status: 400 });
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const session = await auth();
+    if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+    // Ensure they confirm deletion
+    const { searchParams } = new URL(req.url);
+    if (searchParams.get('confirm') !== 'true') {
+      return NextResponse.json({ error: 'Confirmation required' }, { status: 400 });
+    }
+
+    // Cascade delete handles Profile, MedicalProfile, etc based on schema onDelete: Cascade
+    await prisma.user.delete({
+      where: { id: session.user.id }
+    });
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    return NextResponse.json({ error: 'Failed to delete account' }, { status: 500 });
   }
 }
