@@ -6,6 +6,7 @@ import { ActivitySquare, FileText, Syringe, Activity, BedDouble, Stethoscope } f
 import VaccinationsSection from './components/VaccinationsSection';
 import ProceduresSection from './components/ProceduresSection';
 import HospitalizationsSection from './components/HospitalizationsSection';
+import DocumentsSection from './components/DocumentsSection';
 import { Toaster } from 'react-hot-toast';
 
 export default function HealthRecordsPage() {
@@ -90,11 +91,7 @@ export default function HealthRecordsPage() {
         )}
 
         {activeTab === 'DOCUMENTS' && (
-          <div className="bg-white border border-slate-200 rounded-2xl p-6 text-center py-16">
-            <FileText className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-            <h3 className="text-xl font-medium text-slate-800">Medical Vault Upcoming</h3>
-            <p className="text-slate-500 mt-2 max-w-sm mx-auto">Secure medical document storage with signed URLs and private access is coming in Phase 6.</p>
-          </div>
+          <DocumentsSection initialData={p.documents || []} onUpdate={fetchProfile} />
         )}
       </div>
     </div>
