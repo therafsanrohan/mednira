@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { ActivitySquare, Plus, Trash2, X, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { Input, Select, Textarea, Button, Label, FieldError } from '@/components/ui/FormSystem';
 
 const vitalSchema = z.object({
   id: z.string().optional(),
@@ -153,7 +154,7 @@ export default function VitalsSection({ initialData, onUpdate }: { initialData: 
             <form onSubmit={handleSubmit(onSubmit)} className="p-4 space-y-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Vital Type</label>
-                <select 
+                <Select 
                   {...register('vitalType')} 
                   onChange={handleTypeChange}
                   className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none"
@@ -165,29 +166,29 @@ export default function VitalsSection({ initialData, onUpdate }: { initialData: 
                   <option value="Blood Glucose">Blood Glucose</option>
                   <option value="Temperature">Temperature</option>
                   <option value="Weight">Weight</option>
-                </select>
+                </Select>
                 {errors.vitalType && <p className="text-rose-400 text-xs mt-1">{errors.vitalType.message}</p>}
               </div>
 
               <div className="flex flex-col sm:flex-row gap-3">
                 <div className="flex-1">
                   <label className="block text-sm font-medium text-slate-700 mb-1">Value</label>
-                  <input {...register('value')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder={selectedType === 'Blood Pressure' ? '120/80' : '98'} />
+                  <Input {...register('value')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder={selectedType === 'Blood Pressure' ? '120/80' : '98'} />
                   {errors.value && <p className="text-rose-400 text-xs mt-1">{errors.value.message}</p>}
                 </div>
                 <div className="w-24">
                   <label className="block text-sm font-medium text-slate-700 mb-1">Unit</label>
-                  <input {...register('unit')} className="w-full bg-slate-50 border border-slate-200/50 rounded-lg p-2.5 text-slate-500 outline-none" />
+                  <Input {...register('unit')} className="w-full bg-slate-50 border border-slate-200/50 rounded-lg p-2.5 text-slate-500 outline-none" />
                 </div>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Date</label>
-                <input type="date" {...register('measurementDate')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none [color-scheme:dark]" />
+                <Input type="date" {...register('measurementDate')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none [color-scheme:dark]" />
               </div>
 
-              <input type="hidden" {...register('source')} />
-              <input type="hidden" {...register('visibility')} />
+              <Input type="hidden" {...register('source')} />
+              <Input type="hidden" {...register('visibility')} />
 
               <div className="pt-4 border-t border-slate-200 flex justify-end gap-3">
                 <button type="button" onClick={closeModal} className="px-4 py-2 text-sm font-medium text-slate-700 hover:text-slate-900 transition-colors">Cancel</button>

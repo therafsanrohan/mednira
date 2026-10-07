@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Syringe, Plus, Edit2, Trash2, X, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { Input, Select, Textarea, Button, Label, FieldError } from '@/components/ui/FormSystem';
 
 const medicationSchema = z.object({
   id: z.string().optional(),
@@ -132,44 +133,44 @@ export default function MedicationsSection({ initialData, onUpdate }: { initialD
             <form onSubmit={handleSubmit(onSubmit)} className="p-4 space-y-4 max-h-[75vh] overflow-y-auto">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Generic Name</label>
-                <input {...register('genericName')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. Metformin" />
+                <Input {...register('genericName')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. Metformin" />
                 {errors.genericName && <p className="text-rose-400 text-xs mt-1">{errors.genericName.message}</p>}
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Brand Name (Optional)</label>
-                <input {...register('brandName')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. Glucophage" />
+                <Input {...register('brandName')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. Glucophage" />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Dosage</label>
-                  <input {...register('dosage')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. 500mg" />
+                  <Input {...register('dosage')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. 500mg" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Frequency</label>
-                  <input {...register('frequency')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. Twice daily" />
+                  <Input {...register('frequency')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. Twice daily" />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Status</label>
-                  <select {...register('status')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none">
+                  <Select {...register('status')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none">
                     <option value="Active">Active</option>
                     <option value="Completed">Completed</option>
                     <option value="Discontinued">Discontinued</option>
                     <option value="On Hold">On Hold</option>
-                  </select>
+                  </Select>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Visibility</label>
-                  <select {...register('visibility')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none">
+                  <Select {...register('visibility')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none">
                     <option value="PUBLIC_EMERGENCY">Public Emergency ID</option>
                     <option value="EMERGENCY_RESPONDER">Responders Only</option>
                     <option value="DOCTOR_ACCESS">Doctors Only</option>
                     <option value="PRIVATE">Private</option>
-                  </select>
+                  </Select>
                 </div>
               </div>
 

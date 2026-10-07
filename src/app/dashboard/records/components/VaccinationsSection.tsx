@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Syringe, Plus, Edit2, Trash2, X, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { Input, Select, Textarea, Button, Label, FieldError } from '@/components/ui/FormSystem';
 
 const schema = z.object({
   id: z.string().optional(),
@@ -135,39 +136,39 @@ export default function VaccinationsSection({ initialData, onUpdate }: { initial
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Vaccine Name</label>
-                  <input {...register('vaccine')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. COVID-19, Flu" />
+                  <Input {...register('vaccine')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. COVID-19, Flu" />
                   {errors.vaccine && <p className="text-rose-400 text-xs mt-1">{errors.vaccine.message}</p>}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Dose Number</label>
-                  <input type="number" {...register('doseNumber')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. 1" />
+                  <Input type="number" {...register('doseNumber')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. 1" />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Date Administered</label>
-                  <input type="date" {...register('date')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none [color-scheme:light]" />
+                  <Input type="date" {...register('date')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none [color-scheme:light]" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Next Dose Due</label>
-                  <input type="date" {...register('nextDose')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none [color-scheme:light]" />
+                  <Input type="date" {...register('nextDose')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none [color-scheme:light]" />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Facility / Clinic</label>
-                  <input {...register('facility')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. City Hospital" />
+                  <Input {...register('facility')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. City Hospital" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Visibility</label>
-                  <select {...register('visibility')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none">
+                  <Select {...register('visibility')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none">
                     <option value="PUBLIC_EMERGENCY">Public Emergency ID</option>
                     <option value="EMERGENCY_RESPONDER">Responders Only</option>
                     <option value="DOCTOR_ACCESS">Doctors Only</option>
                     <option value="PRIVATE">Private</option>
-                  </select>
+                  </Select>
                 </div>
               </div>
 

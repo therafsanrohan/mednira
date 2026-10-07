@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Pill, Plus, Search, Calendar, FileText, Activity, X } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
+import { Input, Select, Textarea, Button, Label, FieldError } from '@/components/ui/FormSystem';
 
 export default function MedicationsPage() {
   const [medications, setMedications] = useState<any[]>([]);
@@ -80,7 +81,7 @@ export default function MedicationsPage() {
         <div className="p-4 border-b border-slate-100 flex items-center gap-3">
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-            <input 
+            <Input 
               type="text" 
               placeholder="Search medications..." 
               className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 pl-9 pr-4 text-sm outline-none focus:ring-2 focus:ring-emerald-500/20"
@@ -147,21 +148,21 @@ export default function MedicationsPage() {
             <form onSubmit={handleSubmit(onSubmit)} className="p-4 space-y-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Medication Name</label>
-                <input {...register('genericName', { required: true })} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 outline-none" placeholder="e.g. Lisinopril" />
+                <Input {...register('genericName', { required: true })} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 outline-none" placeholder="e.g. Lisinopril" />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Dosage</label>
-                  <input {...register('dosage')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 outline-none" placeholder="e.g. 10mg" />
+                  <Input {...register('dosage')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 outline-none" placeholder="e.g. 10mg" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Frequency</label>
-                  <input {...register('frequency')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 outline-none" placeholder="e.g. Twice daily" />
+                  <Input {...register('frequency')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 outline-none" placeholder="e.g. Twice daily" />
                 </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Prescribing Doctor (Optional)</label>
-                <input {...register('prescribingDoctor')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 outline-none" />
+                <Input {...register('prescribingDoctor')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 outline-none" />
               </div>
               <div className="pt-4 flex justify-end gap-3">
                 <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-slate-600 font-medium">Cancel</button>

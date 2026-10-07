@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { BedDouble, Plus, Edit2, Trash2, X, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { Input, Select, Textarea, Button, Label, FieldError } from '@/components/ui/FormSystem';
 
 const schema = z.object({
   id: z.string().optional(),
@@ -134,41 +135,41 @@ export default function HospitalizationsSection({ initialData, onUpdate }: { ini
             <form onSubmit={handleSubmit(onSubmit)} className="p-4 space-y-4 max-h-[75vh] overflow-y-auto">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Hospital Name</label>
-                <input {...register('hospital')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. City General Hospital" />
+                <Input {...register('hospital')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. City General Hospital" />
                 {errors.hospital && <p className="text-rose-400 text-xs mt-1">{errors.hospital.message}</p>}
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Admission Date</label>
-                  <input type="date" {...register('admissionDate')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none [color-scheme:light]" />
+                  <Input type="date" {...register('admissionDate')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none [color-scheme:light]" />
                   {errors.admissionDate && <p className="text-rose-400 text-xs mt-1">{errors.admissionDate.message}</p>}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Discharge Date (optional)</label>
-                  <input type="date" {...register('dischargeDate')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none [color-scheme:light]" />
+                  <Input type="date" {...register('dischargeDate')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none [color-scheme:light]" />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Reason / Diagnosis</label>
-                  <input {...register('reason')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" />
+                  <Input {...register('reason')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Visibility</label>
-                  <select {...register('visibility')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none">
+                  <Select {...register('visibility')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none">
                     <option value="PUBLIC_EMERGENCY">Public Emergency ID</option>
                     <option value="EMERGENCY_RESPONDER">Responders Only</option>
                     <option value="DOCTOR_ACCESS">Doctors Only</option>
                     <option value="PRIVATE">Private</option>
-                  </select>
+                  </Select>
                 </div>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Attending Doctor</label>
-                <input {...register('attendingDoctor')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. Dr. Emily Chen" />
+                <Input {...register('attendingDoctor')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. Dr. Emily Chen" />
               </div>
 
               <div className="pt-4 border-t border-slate-200 flex justify-end gap-3">

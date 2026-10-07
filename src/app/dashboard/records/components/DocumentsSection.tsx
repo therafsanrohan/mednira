@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { FileText, Plus, Edit2, Trash2, X, Loader2, Download, Eye } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { Input, Select, Textarea, Button, Label, FieldError } from '@/components/ui/FormSystem';
 
 const schema = z.object({
   id: z.string().optional(),
@@ -139,30 +140,30 @@ export default function DocumentsSection({ initialData, onUpdate }: { initialDat
             <form onSubmit={handleSubmit(onSubmit)} className="p-4 space-y-4 max-h-[75vh] overflow-y-auto">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Document Title</label>
-                <input {...register('title')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. Blood Test Results" />
+                <Input {...register('title')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. Blood Test Results" />
                 {errors.title && <p className="text-rose-400 text-xs mt-1">{errors.title.message}</p>}
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Document Type</label>
-                  <select {...register('documentType')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none">
+                  <Select {...register('documentType')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none">
                     <option value="Lab Report">Lab Report</option>
                     <option value="Prescription">Prescription</option>
                     <option value="Imaging">Imaging / X-Ray</option>
                     <option value="Discharge Summary">Discharge Summary</option>
                     <option value="Other">Other</option>
-                  </select>
+                  </Select>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Date</label>
-                  <input type="date" {...register('date')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none [color-scheme:light]" />
+                  <Input type="date" {...register('date')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none [color-scheme:light]" />
                 </div>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">File URL (Temporary)</label>
-                <input {...register('fileUrl')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="https://..." />
+                <Input {...register('fileUrl')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="https://..." />
                 <p className="text-xs text-slate-500 mt-1">Direct upload via Supabase Storage is coming soon.</p>
                 {errors.fileUrl && <p className="text-rose-400 text-xs mt-1">{errors.fileUrl.message}</p>}
               </div>
@@ -170,14 +171,14 @@ export default function DocumentsSection({ initialData, onUpdate }: { initialDat
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Provider / Doctor</label>
-                  <input {...register('healthcareProvider')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" />
+                  <Input {...register('healthcareProvider')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Visibility</label>
-                  <select {...register('visibility')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none">
+                  <Select {...register('visibility')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none">
                     <option value="DOCTOR_ACCESS">Doctors Only</option>
                     <option value="PRIVATE">Private</option>
-                  </select>
+                  </Select>
                 </div>
               </div>
 

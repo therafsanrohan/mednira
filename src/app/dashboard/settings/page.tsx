@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import toast from 'react-hot-toast';
+import { Input, Select, Textarea, Button, Label, FieldError } from '@/components/ui/FormSystem';
 
 const shareSchema = z.object({
   sharedWithName: z.string().min(1, 'Name is required'),
@@ -185,27 +186,27 @@ export default function SettingsPage() {
             <form onSubmit={handleSubmit(onSubmitShare)} className="p-4 space-y-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Provider / Organization Name</label>
-                <input {...register('sharedWithName')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. Dr. Smith" />
+                <Input {...register('sharedWithName')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. Dr. Smith" />
                 {errors.sharedWithName && <p className="text-rose-400 text-xs mt-1">{errors.sharedWithName?.message?.toString()}</p>}
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Access Level</label>
-                  <select {...register('accessLevel')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none">
+                  <Select {...register('accessLevel')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none">
                     <option value="Limited">Limited (Read-Only)</option>
                     <option value="Full">Full (Update)</option>
-                  </select>
+                  </Select>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Expiration</label>
-                  <input type="date" {...register('expiresAt')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none [color-scheme:light]" />
+                  <Input type="date" {...register('expiresAt')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none [color-scheme:light]" />
                 </div>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Purpose (Optional)</label>
-                <input {...register('purpose')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. Second opinion" />
+                <Input {...register('purpose')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. Second opinion" />
               </div>
 
               <div className="pt-4 border-t border-slate-200 flex justify-end gap-3">

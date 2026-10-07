@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Phone, Plus, Edit2, Trash2, X, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { Input, Select, Textarea, Button, Label, FieldError } from '@/components/ui/FormSystem';
 
 const contactSchema = z.object({
   id: z.string().optional(),
@@ -131,36 +132,36 @@ export default function ContactsSection({ initialData, onUpdate }: { initialData
             <form onSubmit={handleSubmit(onSubmit)} className="p-4 space-y-4 max-h-[75vh] overflow-y-auto">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Full Name</label>
-                <input {...register('name')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. John Doe" />
+                <Input {...register('name')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. John Doe" />
                 {errors.name && <p className="text-rose-400 text-xs mt-1">{errors.name.message}</p>}
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Relationship</label>
-                  <input {...register('relationship')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. Spouse, Parent" />
+                  <Input {...register('relationship')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. Spouse, Parent" />
                   {errors.relationship && <p className="text-rose-400 text-xs mt-1">{errors.relationship.message}</p>}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Priority (1 = Primary)</label>
-                  <input type="number" min="1" {...register('priority')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" />
+                  <Input type="number" min="1" {...register('priority')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" />
                 </div>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Primary Phone</label>
-                <input type="tel" {...register('phone')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="+880..." />
+                <Input type="tel" {...register('phone')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="+880..." />
                 {errors.phone && <p className="text-rose-400 text-xs mt-1">{errors.phone.message}</p>}
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Secondary Phone (Optional)</label>
-                <input type="tel" {...register('secondaryPhone')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="+880..." />
+                <Input type="tel" {...register('secondaryPhone')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="+880..." />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Email (Optional)</label>
-                <input type="email" {...register('email')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="contact@example.com" />
+                <Input type="email" {...register('email')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="contact@example.com" />
                 {errors.email && <p className="text-rose-400 text-xs mt-1">{errors.email.message}</p>}
               </div>
 

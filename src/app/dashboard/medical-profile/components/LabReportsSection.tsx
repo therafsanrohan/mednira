@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { FileText, Plus, Trash2, X, Loader2, AlertCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { Input, Select, Textarea, Button, Label, FieldError } from '@/components/ui/FormSystem';
 
 const labSchema = z.object({
   id: z.string().optional(),
@@ -144,40 +145,40 @@ export default function LabReportsSection({ initialData, onUpdate }: { initialDa
               
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Test Name</label>
-                <input {...register('testName')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. Hemoglobin A1C, Lipid Panel" />
+                <Input {...register('testName')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. Hemoglobin A1C, Lipid Panel" />
                 {errors.testName && <p className="text-rose-400 text-xs mt-1">{errors.testName.message}</p>}
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4">
                 <div className="flex-1">
                   <label className="block text-sm font-medium text-slate-700 mb-1">Result Value</label>
-                  <input {...register('result')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. 5.8" />
+                  <Input {...register('result')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. 5.8" />
                   {errors.result && <p className="text-rose-400 text-xs mt-1">{errors.result.message}</p>}
                 </div>
                 <div className="w-24">
                   <label className="block text-sm font-medium text-slate-700 mb-1">Unit</label>
-                  <input {...register('unit')} className="w-full bg-slate-50 border border-slate-200/50 rounded-lg p-2.5 text-slate-500 outline-none" placeholder="%" />
+                  <Input {...register('unit')} className="w-full bg-slate-50 border border-slate-200/50 rounded-lg p-2.5 text-slate-500 outline-none" placeholder="%" />
                 </div>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Reference Range (Optional)</label>
-                <input {...register('referenceRange')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. 4.0 - 5.6" />
+                <Input {...register('referenceRange')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. 4.0 - 5.6" />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Date of Test</label>
-                  <input type="date" {...register('testDate')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none [color-scheme:dark]" />
+                  <Input type="date" {...register('testDate')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none [color-scheme:dark]" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Lab/Facility Name</label>
-                  <input {...register('laboratory')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. Labaid, Quest" />
+                  <Input {...register('laboratory')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. Labaid, Quest" />
                 </div>
               </div>
 
               <label className="flex items-center gap-2 p-3 bg-rose-500/10 border border-rose-500/20 rounded-lg cursor-pointer mt-2">
-                <input type="checkbox" {...register('abnormalFlag')} className="w-4 h-4 rounded border-slate-200 bg-slate-50 text-rose-500 focus:ring-rose-500 focus:ring-offset-slate-900" />
+                <Input type="checkbox" {...register('abnormalFlag')} className="w-4 h-4 rounded border-slate-200 bg-slate-50 text-rose-500 focus:ring-rose-500 focus:ring-offset-slate-900" />
                 <span className="text-sm font-medium text-rose-400">Flag as Abnormal / Out of Range</span>
               </label>
               

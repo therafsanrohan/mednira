@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { FileText, Plus, Search, FileUp, X, Download } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
+import { Input, Select, Textarea, Button, Label, FieldError } from '@/components/ui/FormSystem';
 
 export default function DocumentsPage() {
   const [documents, setDocuments] = useState<any[]>([]);
@@ -88,7 +89,7 @@ export default function DocumentsPage() {
         <div className="p-4 border-b border-slate-100 flex items-center gap-3">
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-            <input 
+            <Input 
               type="text" 
               placeholder="Search documents..." 
               className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 pl-9 pr-4 text-sm outline-none focus:ring-2 focus:ring-emerald-500/20"
@@ -153,17 +154,17 @@ export default function DocumentsPage() {
             <form onSubmit={handleSubmit(onSubmit)} className="p-4 space-y-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Document Title</label>
-                <input {...register('title', { required: true })} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 outline-none" placeholder="e.g. Blood Test Results 2026" />
+                <Input {...register('title', { required: true })} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 outline-none" placeholder="e.g. Blood Test Results 2026" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Document Type</label>
-                <select {...register('type')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 outline-none">
+                <Select {...register('type')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 outline-none">
                   <option value="Lab Report">Lab Report</option>
                   <option value="Prescription">Prescription</option>
                   <option value="Imaging">Imaging (X-Ray, MRI)</option>
                   <option value="Clinical Note">Clinical Note</option>
                   <option value="Other">Other</option>
-                </select>
+                </Select>
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">File (Placeholder)</label>

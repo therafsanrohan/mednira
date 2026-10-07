@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Activity, Plus, Edit2, Trash2, X, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { Input, Select, Textarea, Button, Label, FieldError } from '@/components/ui/FormSystem';
 
 const conditionSchema = z.object({
   id: z.string().optional(),
@@ -135,50 +136,50 @@ export default function ConditionsSection({ initialData, onUpdate }: { initialDa
             <form onSubmit={handleSubmit(onSubmit)} className="p-4 space-y-4 max-h-[75vh] overflow-y-auto">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Condition Name</label>
-                <input {...register('conditionName')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. Type 2 Diabetes, Asthma" />
+                <Input {...register('conditionName')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. Type 2 Diabetes, Asthma" />
                 {errors.conditionName && <p className="text-rose-400 text-xs mt-1">{errors.conditionName.message}</p>}
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Status</label>
-                  <select {...register('status')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none">
+                  <Select {...register('status')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none">
                     <option value="Active">Active</option>
                     <option value="Controlled">Controlled</option>
                     <option value="Resolved">Resolved</option>
                     <option value="In Remission">In Remission</option>
                     <option value="Unknown">Unknown</option>
-                  </select>
+                  </Select>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Severity</label>
-                  <select {...register('severity')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none">
+                  <Select {...register('severity')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none">
                     <option value="MILD">Mild</option>
                     <option value="MODERATE">Moderate</option>
                     <option value="SEVERE">Severe</option>
-                  </select>
+                  </Select>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Diagnosis Date</label>
-                  <input type="date" {...register('diagnosisDate')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none [color-scheme:dark]" />
+                  <Input type="date" {...register('diagnosisDate')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none [color-scheme:dark]" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Visibility</label>
-                  <select {...register('visibility')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none">
+                  <Select {...register('visibility')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none">
                     <option value="PUBLIC_EMERGENCY">Public Emergency ID</option>
                     <option value="EMERGENCY_RESPONDER">Responders Only</option>
                     <option value="DOCTOR_ACCESS">Doctors Only</option>
                     <option value="PRIVATE">Private</option>
-                  </select>
+                  </Select>
                 </div>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Diagnosed By (Doctor Name)</label>
-                <input {...register('diagnosedBy')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. Dr. Sarah Rahman" />
+                <Input {...register('diagnosedBy')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. Dr. Sarah Rahman" />
               </div>
 
               <div className="pt-4 border-t border-slate-200 flex justify-end gap-3">

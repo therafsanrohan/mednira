@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { AlertTriangle, Plus, Edit2, Trash2, X, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { Input, Select, Textarea, Button, Label, FieldError } from '@/components/ui/FormSystem';
 
 const allergySchema = z.object({
   id: z.string().optional(),
@@ -135,14 +136,14 @@ export default function AllergiesSection({ initialData, onUpdate }: { initialDat
             <form onSubmit={handleSubmit(onSubmit)} className="p-4 space-y-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Substance</label>
-                <input {...register('substance')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="e.g. Penicillin, Peanuts" />
+                <Input {...register('substance')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="e.g. Penicillin, Peanuts" />
                 {errors.substance && <p className="text-rose-400 text-xs mt-1">{errors.substance.message}</p>}
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Category</label>
-                  <select {...register('category')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none">
+                  <Select {...register('category')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none">
                     <option value="">Select...</option>
                     <option value="Medication">Medication</option>
                     <option value="Food">Food</option>
@@ -150,38 +151,38 @@ export default function AllergiesSection({ initialData, onUpdate }: { initialDat
                     <option value="Latex">Latex</option>
                     <option value="Insect">Insect</option>
                     <option value="Other">Other</option>
-                  </select>
+                  </Select>
                   {errors.category && <p className="text-rose-400 text-xs mt-1">{errors.category.message}</p>}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Severity</label>
-                  <select {...register('severity')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none">
+                  <Select {...register('severity')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none">
                     <option value="MILD">Mild</option>
                     <option value="MODERATE">Moderate</option>
                     <option value="SEVERE">Severe</option>
                     <option value="LIFE_THREATENING">Life Threatening</option>
-                  </select>
+                  </Select>
                 </div>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Reaction (Optional)</label>
-                <input {...register('reaction')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. Hives, Anaphylaxis" />
+                <Input {...register('reaction')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. Hives, Anaphylaxis" />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Onset Date</label>
-                  <input type="date" {...register('onsetDate')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none [color-scheme:dark]" />
+                  <Input type="date" {...register('onsetDate')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none [color-scheme:dark]" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Visibility</label>
-                  <select {...register('visibility')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none">
+                  <Select {...register('visibility')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none">
                     <option value="PUBLIC_EMERGENCY">Public Emergency ID</option>
                     <option value="EMERGENCY_RESPONDER">Responders Only</option>
                     <option value="DOCTOR_ACCESS">Doctors Only</option>
                     <option value="PRIVATE">Private</option>
-                  </select>
+                  </Select>
                 </div>
               </div>
 

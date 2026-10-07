@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { HeartPulse, Edit2, X, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { Input, Select, Textarea, Button, Label, FieldError } from '@/components/ui/FormSystem';
 
 const profileSchema = z.object({
   bloodType: z.string().max(10).optional(),
@@ -151,52 +152,52 @@ export default function PersonalInfoSection({ profile, user, onUpdate }: { profi
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Blood Type</label>
-                  <select {...register('bloodType')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none">
+                  <Select {...register('bloodType')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none">
                     <option value="">Unknown</option>
                     <option value="A">A</option>
                     <option value="B">B</option>
                     <option value="AB">AB</option>
                     <option value="O">O</option>
-                  </select>
+                  </Select>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">RH Factor</label>
-                  <select {...register('rhFactor')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none">
+                  <Select {...register('rhFactor')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none">
                     <option value="">Unknown</option>
                     <option value="+">+</option>
                     <option value="-">-</option>
-                  </select>
+                  </Select>
                 </div>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Date of Birth</label>
-                <input type="date" {...register('dateOfBirth')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none [color-scheme:dark]" />
+                <Input type="date" {...register('dateOfBirth')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none [color-scheme:dark]" />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Height</label>
-                  <input {...register('height')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. 5'8&quot; or 173cm" />
+                  <Input {...register('height')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. 5'8&quot; or 173cm" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Weight</label>
-                  <input {...register('weight')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. 70kg or 154lbs" />
+                  <Input {...register('weight')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. 70kg or 154lbs" />
                 </div>
               </div>
 
               <div className="pt-2">
                 <label className="block text-sm font-medium text-slate-700 mb-1">Emergency Notes & Directives</label>
-                <textarea {...register('emergencyNotes')} rows={3} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none resize-none" placeholder="Critical instructions for first responders..." />
+                <Textarea {...register('emergencyNotes')} rows={3} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none resize-none" placeholder="Critical instructions for first responders..." />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
                 <label className="flex items-center gap-2 cursor-pointer">
-                  <input type="checkbox" {...register('organDonor')} className="w-4 h-4 rounded border-slate-200 bg-slate-50 text-emerald-500 focus:ring-emerald-500 focus:ring-offset-slate-900" />
+                  <Input type="checkbox" {...register('organDonor')} className="w-4 h-4 rounded border-slate-200 bg-slate-50 text-emerald-500 focus:ring-emerald-500 focus:ring-offset-slate-900" />
                   <span className="text-sm font-medium text-slate-700">Registered Organ Donor</span>
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer">
-                  <input type="checkbox" {...register('dnrStatus')} className="w-4 h-4 rounded border-slate-200 bg-slate-50 text-rose-500 focus:ring-rose-500 focus:ring-offset-slate-900" />
+                  <Input type="checkbox" {...register('dnrStatus')} className="w-4 h-4 rounded border-slate-200 bg-slate-50 text-rose-500 focus:ring-rose-500 focus:ring-offset-slate-900" />
                   <span className="text-sm font-medium text-rose-400">DNR (Do Not Resuscitate)</span>
                 </label>
               </div>
