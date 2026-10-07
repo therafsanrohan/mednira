@@ -60,6 +60,7 @@ const navigationGroups = [
     name: 'ACCOUNT',
     items: [
       { label: 'Account Center', href: '/dashboard/account', icon: Settings },
+      { label: 'Subscription & Billing', href: '/dashboard/subscription', icon: CreditCard },
     ]
   }
 ];
