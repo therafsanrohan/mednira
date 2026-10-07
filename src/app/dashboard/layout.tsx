@@ -29,14 +29,14 @@ export default async function DashboardLayout({ children }: { children: ReactNod
   ];
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col md:flex-row">
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col md:flex-row font-sans">
       {/* Sidebar */}
-      <aside className="w-full md:w-64 bg-slate-900/50 backdrop-blur-xl border-b md:border-b-0 md:border-r border-slate-800 p-4 flex flex-col sticky top-0 md:h-screen z-50">
+      <aside className="w-full md:w-64 bg-white border-b md:border-b-0 md:border-r border-slate-200 p-4 flex flex-col sticky top-0 md:h-screen z-50">
         <div className="flex items-center gap-3 mb-8 px-2 mt-2">
           <div className="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center">
             <Shield className="w-5 h-5 text-white" />
           </div>
-          <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-cyan-400">
+          <span className="text-xl font-bold text-slate-800">
             MedNira
           </span>
         </div>
@@ -46,21 +46,21 @@ export default async function DashboardLayout({ children }: { children: ReactNod
             <Link
               key={item.href}
               href={item.href}
-              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 transition-colors group"
+              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors group"
             >
-              <item.icon className="w-5 h-5 group-hover:text-emerald-400 transition-colors" />
+              <item.icon className="w-5 h-5 text-slate-400 group-hover:text-emerald-600 transition-colors" />
               <span className="font-medium">{item.label}</span>
             </Link>
           ))}
         </nav>
 
-        <div className="mt-auto pt-4 border-t border-slate-800">
+        <div className="mt-auto pt-4 border-t border-slate-200">
           <div className="flex items-center gap-3 px-3 py-2">
-            <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center border border-slate-700">
-              <User className="w-4 h-4 text-slate-400" />
+            <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center border border-slate-200">
+              <User className="w-4 h-4 text-slate-500" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-slate-200 truncate">{session.user?.name || 'User'}</p>
+              <p className="text-sm font-medium text-slate-800 truncate">{session.user?.name || 'User'}</p>
               <p className="text-xs text-slate-500 truncate">{session.user?.email}</p>
             </div>
           </div>
@@ -68,8 +68,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 min-w-0 overflow-y-auto bg-slate-950/50 relative">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-emerald-900/10 via-slate-900/0 to-slate-900/0 pointer-events-none" />
+      <main className="flex-1 min-w-0 overflow-y-auto bg-slate-50 relative">
         <div className="p-4 md:p-8 max-w-7xl mx-auto relative z-10">
           {children}
         </div>

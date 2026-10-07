@@ -99,14 +99,14 @@ export default function VitalsSection({ initialData, onUpdate }: { initialData: 
       case 'SpO2': return 'text-blue-400 bg-blue-500/10 border-blue-500/20';
       case 'Blood Glucose': return 'text-purple-400 bg-purple-500/10 border-purple-500/20';
       case 'Temperature': return 'text-amber-400 bg-amber-500/10 border-amber-500/20';
-      default: return 'text-slate-400 bg-slate-500/10 border-slate-500/20';
+      default: return 'text-slate-500 bg-slate-500/10 border-slate-500/20';
     }
   };
 
   return (
-    <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6 relative">
+    <section className="bg-white border border-slate-200 rounded-2xl p-6 relative">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-slate-100 flex items-center gap-2">
+        <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
           <ActivitySquare className="w-5 h-5 text-indigo-400" /> Vitals & Measurements
         </h2>
         <button onClick={() => openModal()} className="text-emerald-400 hover:text-emerald-300 text-sm font-medium flex items-center gap-1">
@@ -117,14 +117,14 @@ export default function VitalsSection({ initialData, onUpdate }: { initialData: 
       <div className="space-y-3">
         {initialData?.length > 0 ? (
           initialData.map((v: any) => (
-            <div key={v.id} className="flex items-center justify-between border border-slate-800 bg-slate-800/30 rounded-xl p-3 group">
+            <div key={v.id} className="flex items-center justify-between border border-slate-200 bg-slate-50 rounded-xl p-3 group">
               <div className="flex items-center gap-3">
                 <div className={`px-2 py-1 rounded text-xs font-bold border ${getTypeColor(v.vitalType)}`}>
                   {v.vitalType}
                 </div>
                 <div>
-                  <p className="text-slate-200 font-bold text-lg">
-                    {v.value} <span className="text-sm font-medium text-slate-400">{v.unit}</span>
+                  <p className="text-slate-800 font-bold text-lg">
+                    {v.value} <span className="text-sm font-medium text-slate-500">{v.unit}</span>
                   </p>
                   <p className="text-slate-500 text-xs">{new Date(v.measurementDate).toLocaleDateString()} • {v.source}</p>
                 </div>
@@ -141,22 +141,22 @@ export default function VitalsSection({ initialData, onUpdate }: { initialData: 
 
       {/* Modal */}
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl">
-            <div className="flex justify-between items-center p-4 border-b border-slate-800">
-              <h3 className="text-lg font-semibold text-slate-100">Log Vital</h3>
-              <button onClick={closeModal} className="text-slate-400 hover:text-slate-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+          <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl">
+            <div className="flex justify-between items-center p-4 border-b border-slate-200">
+              <h3 className="text-lg font-semibold text-slate-900">Log Vital</h3>
+              <button onClick={closeModal} className="text-slate-500 hover:text-slate-800">
                 <X className="w-5 h-5" />
               </button>
             </div>
             
             <form onSubmit={handleSubmit(onSubmit)} className="p-4 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">Vital Type</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Vital Type</label>
                 <select 
                   {...register('vitalType')} 
                   onChange={handleTypeChange}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-slate-200 outline-none"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none"
                 >
                   <option value="">Select Type...</option>
                   <option value="Blood Pressure">Blood Pressure</option>
@@ -171,26 +171,26 @@ export default function VitalsSection({ initialData, onUpdate }: { initialData: 
 
               <div className="flex gap-3">
                 <div className="flex-1">
-                  <label className="block text-sm font-medium text-slate-300 mb-1">Value</label>
-                  <input {...register('value')} className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-slate-200 outline-none" placeholder={selectedType === 'Blood Pressure' ? '120/80' : '98'} />
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Value</label>
+                  <input {...register('value')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder={selectedType === 'Blood Pressure' ? '120/80' : '98'} />
                   {errors.value && <p className="text-rose-400 text-xs mt-1">{errors.value.message}</p>}
                 </div>
                 <div className="w-24">
-                  <label className="block text-sm font-medium text-slate-300 mb-1">Unit</label>
-                  <input {...register('unit')} className="w-full bg-slate-800/50 border border-slate-700/50 rounded-lg p-2.5 text-slate-400 outline-none" />
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Unit</label>
+                  <input {...register('unit')} className="w-full bg-slate-50 border border-slate-200/50 rounded-lg p-2.5 text-slate-500 outline-none" />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">Date</label>
-                <input type="date" {...register('measurementDate')} className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-slate-200 outline-none [color-scheme:dark]" />
+                <label className="block text-sm font-medium text-slate-700 mb-1">Date</label>
+                <input type="date" {...register('measurementDate')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none [color-scheme:dark]" />
               </div>
 
               <input type="hidden" {...register('source')} />
               <input type="hidden" {...register('visibility')} />
 
-              <div className="pt-4 border-t border-slate-800 flex justify-end gap-3">
-                <button type="button" onClick={closeModal} className="px-4 py-2 text-sm font-medium text-slate-300 hover:text-slate-100 transition-colors">Cancel</button>
+              <div className="pt-4 border-t border-slate-200 flex justify-end gap-3">
+                <button type="button" onClick={closeModal} className="px-4 py-2 text-sm font-medium text-slate-700 hover:text-slate-900 transition-colors">Cancel</button>
                 <button type="submit" disabled={isSubmitting} className="bg-emerald-500 hover:bg-emerald-600 text-white px-5 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-70 flex items-center gap-2">
                   {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Log Data'}
                 </button>

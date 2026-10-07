@@ -50,8 +50,8 @@ export default function DashboardHome() {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-white">Emergency Snapshot</h1>
-          <p className="text-slate-400 mt-1">What responders need to know at a glance.</p>
+          <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Emergency Snapshot</h1>
+          <p className="text-slate-500 mt-1">What responders need to know at a glance.</p>
         </div>
         <div className="flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
           <Shield className="w-5 h-5 text-emerald-400" />
@@ -61,21 +61,21 @@ export default function DashboardHome() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Basic Info */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm">
-          <h3 className="text-sm font-medium text-slate-400 uppercase tracking-wider mb-4">Patient</h3>
-          <div className="space-y-3">
+        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+          <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4">Patient</h3>
+          <div className="space-y-4">
             <div>
               <p className="text-xs text-slate-500">Full Name</p>
-              <p className="text-lg font-semibold text-slate-200">{session?.user?.name || 'Not Set'}</p>
+              <p className="text-lg font-semibold text-slate-900">{session?.user?.name || 'Not Set'}</p>
             </div>
             <div className="flex gap-8">
               <div>
                 <p className="text-xs text-slate-500">Age</p>
-                <p className="text-md font-medium text-slate-200">{age}</p>
+                <p className="text-md font-medium text-slate-900">{age}</p>
               </div>
               <div>
                 <p className="text-xs text-slate-500">Blood</p>
-                <p className="text-md font-medium text-red-400 flex items-center gap-1">
+                <p className="text-md font-medium text-rose-600 flex items-center gap-1">
                   <DropletIcon className="w-4 h-4" /> 
                   {p?.bloodType ? `${p.bloodType}${p.rhFactor || ''}` : 'Unknown'}
                 </p>
@@ -85,15 +85,15 @@ export default function DashboardHome() {
         </div>
 
         {/* Critical Allergies */}
-        <div className="bg-rose-950/20 border border-rose-900/50 rounded-2xl p-5 shadow-sm">
-          <h3 className="text-sm font-medium text-rose-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+        <div className="bg-white border border-rose-200 rounded-2xl p-6 shadow-sm">
+          <h3 className="text-xs font-semibold text-rose-600 uppercase tracking-wider mb-4 flex items-center gap-2">
             <AlertTriangle className="w-4 h-4" /> Allergies
           </h3>
           <ul className="space-y-2">
             {p?.allergies?.filter((a: any) => a.severity === 'LIFE_THREATENING' || a.severity === 'SEVERE').length > 0 ? (
               p.allergies.map((allergy: any) => (
-                <li key={allergy.id} className="text-sm font-medium text-rose-300">
-                  {allergy.substance} ({allergy.severity})
+                <li key={allergy.id} className="text-sm font-medium text-slate-800">
+                  {allergy.substance} <span className="text-xs font-normal text-rose-600">({allergy.severity})</span>
                 </li>
               ))
             ) : (
@@ -103,14 +103,14 @@ export default function DashboardHome() {
         </div>
 
         {/* Critical Conditions */}
-        <div className="bg-amber-950/20 border border-amber-900/50 rounded-2xl p-5 shadow-sm">
-          <h3 className="text-sm font-medium text-amber-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+        <div className="bg-white border border-amber-200 rounded-2xl p-6 shadow-sm">
+          <h3 className="text-xs font-semibold text-amber-600 uppercase tracking-wider mb-4 flex items-center gap-2">
             <Activity className="w-4 h-4" /> Conditions
           </h3>
           <ul className="space-y-2">
             {p?.conditions?.filter((c: any) => c.status === 'Active').length > 0 ? (
               p.conditions.map((c: any) => (
-                <li key={c.id} className="text-sm font-medium text-amber-300">
+                <li key={c.id} className="text-sm font-medium text-slate-800">
                   {c.conditionName}
                 </li>
               ))
@@ -121,16 +121,16 @@ export default function DashboardHome() {
         </div>
 
         {/* Emergency Contacts */}
-        <div className="bg-blue-950/20 border border-blue-900/50 rounded-2xl p-5 shadow-sm">
-          <h3 className="text-sm font-medium text-blue-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+        <div className="bg-white border border-blue-200 rounded-2xl p-6 shadow-sm">
+          <h3 className="text-xs font-semibold text-blue-600 uppercase tracking-wider mb-4 flex items-center gap-2">
             <Phone className="w-4 h-4" /> Contacts
           </h3>
           <ul className="space-y-3">
             {p?.contacts?.length > 0 ? (
               p.contacts.map((c: any) => (
                 <li key={c.id}>
-                  <p className="text-sm font-medium text-blue-300">{c.name}</p>
-                  <p className="text-xs text-slate-400">{c.relationship} • {c.phone}</p>
+                  <p className="text-sm font-medium text-slate-800">{c.name}</p>
+                  <p className="text-xs text-slate-500">{c.relationship} • {c.phone}</p>
                 </li>
               ))
             ) : (

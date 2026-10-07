@@ -85,9 +85,9 @@ export default function ConditionsSection({ initialData, onUpdate }: { initialDa
   };
 
   return (
-    <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6 relative">
+    <section className="bg-white border border-slate-200 rounded-2xl p-6 relative">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-slate-100 flex items-center gap-2">
+        <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
           <Activity className="w-5 h-5 text-amber-400" /> Conditions
         </h2>
         <button onClick={() => openModal()} className="text-emerald-400 hover:text-emerald-300 text-sm font-medium flex items-center gap-1">
@@ -98,16 +98,16 @@ export default function ConditionsSection({ initialData, onUpdate }: { initialDa
       <ul className="space-y-4">
         {initialData?.length > 0 ? (
           initialData.map((c: any) => (
-            <li key={c.id} className="flex items-start justify-between border-b border-slate-800 pb-3 last:border-0 group">
+            <li key={c.id} className="flex items-start justify-between border-b border-slate-200 pb-3 last:border-0 group">
               <div>
-                <p className="text-slate-200 font-medium">{c.conditionName}</p>
-                <p className="text-slate-400 text-sm">
+                <p className="text-slate-800 font-medium">{c.conditionName}</p>
+                <p className="text-slate-500 text-sm">
                   Status: {c.status} {c.severity && `• ${c.severity}`}
                 </p>
                 {c.diagnosedBy && <p className="text-slate-500 text-xs mt-1">Diagnosed by: {c.diagnosedBy}</p>}
               </div>
               <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button onClick={() => openModal(c)} className="text-slate-500 hover:text-slate-300 p-1">
+                <button onClick={() => openModal(c)} className="text-slate-500 hover:text-slate-700 p-1">
                   <Edit2 className="w-4 h-4" />
                 </button>
                 <button onClick={() => deleteCondition(c.id)} disabled={isDeleting === c.id} className="text-slate-500 hover:text-rose-400 p-1 disabled:opacity-50">
@@ -123,26 +123,26 @@ export default function ConditionsSection({ initialData, onUpdate }: { initialDa
 
       {/* Modal */}
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl">
-            <div className="flex justify-between items-center p-4 border-b border-slate-800">
-              <h3 className="text-lg font-semibold text-slate-100">Manage Condition</h3>
-              <button onClick={closeModal} className="text-slate-400 hover:text-slate-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+          <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl">
+            <div className="flex justify-between items-center p-4 border-b border-slate-200">
+              <h3 className="text-lg font-semibold text-slate-900">Manage Condition</h3>
+              <button onClick={closeModal} className="text-slate-500 hover:text-slate-800">
                 <X className="w-5 h-5" />
               </button>
             </div>
             
             <form onSubmit={handleSubmit(onSubmit)} className="p-4 space-y-4 max-h-[75vh] overflow-y-auto">
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">Condition Name</label>
-                <input {...register('conditionName')} className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-slate-200 outline-none" placeholder="e.g. Type 2 Diabetes, Asthma" />
+                <label className="block text-sm font-medium text-slate-700 mb-1">Condition Name</label>
+                <input {...register('conditionName')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. Type 2 Diabetes, Asthma" />
                 {errors.conditionName && <p className="text-rose-400 text-xs mt-1">{errors.conditionName.message}</p>}
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-1">Status</label>
-                  <select {...register('status')} className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-slate-200 outline-none">
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Status</label>
+                  <select {...register('status')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none">
                     <option value="Active">Active</option>
                     <option value="Controlled">Controlled</option>
                     <option value="Resolved">Resolved</option>
@@ -151,8 +151,8 @@ export default function ConditionsSection({ initialData, onUpdate }: { initialDa
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-1">Severity</label>
-                  <select {...register('severity')} className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-slate-200 outline-none">
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Severity</label>
+                  <select {...register('severity')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none">
                     <option value="MILD">Mild</option>
                     <option value="MODERATE">Moderate</option>
                     <option value="SEVERE">Severe</option>
@@ -162,12 +162,12 @@ export default function ConditionsSection({ initialData, onUpdate }: { initialDa
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-1">Diagnosis Date</label>
-                  <input type="date" {...register('diagnosisDate')} className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-slate-200 outline-none [color-scheme:dark]" />
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Diagnosis Date</label>
+                  <input type="date" {...register('diagnosisDate')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none [color-scheme:dark]" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-1">Visibility</label>
-                  <select {...register('visibility')} className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-slate-200 outline-none">
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Visibility</label>
+                  <select {...register('visibility')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none">
                     <option value="PUBLIC_EMERGENCY">Public Emergency ID</option>
                     <option value="EMERGENCY_RESPONDER">Responders Only</option>
                     <option value="DOCTOR_ACCESS">Doctors Only</option>
@@ -177,12 +177,12 @@ export default function ConditionsSection({ initialData, onUpdate }: { initialDa
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">Diagnosed By (Doctor Name)</label>
-                <input {...register('diagnosedBy')} className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-slate-200 outline-none" placeholder="e.g. Dr. Sarah Rahman" />
+                <label className="block text-sm font-medium text-slate-700 mb-1">Diagnosed By (Doctor Name)</label>
+                <input {...register('diagnosedBy')} className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none" placeholder="e.g. Dr. Sarah Rahman" />
               </div>
 
-              <div className="pt-4 border-t border-slate-800 flex justify-end gap-3">
-                <button type="button" onClick={closeModal} className="px-4 py-2 text-sm font-medium text-slate-300 hover:text-slate-100 transition-colors">Cancel</button>
+              <div className="pt-4 border-t border-slate-200 flex justify-end gap-3">
+                <button type="button" onClick={closeModal} className="px-4 py-2 text-sm font-medium text-slate-700 hover:text-slate-900 transition-colors">Cancel</button>
                 <button type="submit" disabled={isSubmitting} className="bg-emerald-500 hover:bg-emerald-600 text-white px-5 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-70 flex items-center gap-2">
                   {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Save Condition'}
                 </button>
